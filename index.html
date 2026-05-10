@@ -4,23 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- حماية وتحسينات الأمان -->
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     
-    <!-- السيو (SEO) -->
-    <title>القائمة الجانبية | المنصة الرقمية القرمانى اكس</title>
-    <meta name="description" content="القائمة الجانبية الرئيسية لمنصة القرماني إكس الفاخرة للاندماج في جميع الصفحات.">
+    <title>المنصة الرقمية القرمانى اكس | Alqurmani X</title>
+    <meta name="description" content="الواجهة الرئيسية لمنصة القرماني إكس الفاخرة.">
     
-    <!-- الخطوط والأيقونات -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* ===================== التنسيقات الأساسية ===================== */
         :root {
-            --bg-color: #0b0f19;
             --sidebar-bg: rgba(11, 15, 25, 0.95);
             --gold: #d4af37;
             --neon-blue: #00d4ff;
@@ -31,16 +27,14 @@
             margin: 0;
             padding: 0;
             font-family: 'Cairo', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-light);
-            overflow-x: hidden; /* لمنع ظهور شريط التمرير الأفقي أثناء حركة القائمة */
+            overflow-x: hidden;
         }
 
-        /* ===================== زر الهامبرغر (أعلى يمين الشاشة) ===================== */
+        /* ===================== زر الهامبرغر (أقصى أعلى اليمين) ===================== */
         .menu-btn {
             position: fixed;
-            top: 25px;
-            right: 25px;
+            top: 10px;
+            right: 10px;
             width: 35px;
             height: 28px;
             cursor: pointer;
@@ -48,7 +42,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.7);
             padding: 10px;
             border-radius: 8px;
             border: 1px solid var(--gold);
@@ -66,7 +60,7 @@
             box-shadow: 0 0 8px var(--gold);
         }
 
-        /* ===================== الغطاء الخلفي (Overlay) ===================== */
+        /* ===================== الغطاء الخلفي للقائمة ===================== */
         .overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -78,34 +72,30 @@
         }
         .overlay.active { opacity: 1; visibility: visible; }
 
-        /* ===================== القائمة الجانبية (تظهر من الشمال وتستقر باليمين) ===================== */
+        /* ===================== القائمة الجانبية (من الشمال لليمين مع حل مشكلة التمرير) ===================== */
         .sidebar {
             position: fixed;
             top: 0;
-            left: -350px; /* البداية من أقصى الشمال خارج الشاشة */
+            left: -350px; /* البداية من أقصى الشمال */
             width: 320px;
             max-width: 100%;
             height: 100vh;
             background: var(--sidebar-bg);
-            border-left: 2px solid var(--gold); /* تم تعديل الحد ليكون على اليسار ليتناسب مع استقرارها يميناً */
+            border-left: 2px solid var(--gold);
             z-index: 9999;
             overflow-y: auto;
+            overflow-x: hidden;
+            box-sizing: border-box;
+            padding-bottom: 120px; /* حل مشكلة شريط التمرير للوصول لآخر القائمة */
             transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: -10px 0 30px rgba(0,0,0,0.9); /* تم تعديل الظل ليكون لليسار */
-            padding-bottom: 30px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.9);
         }
-        
         .sidebar.active { 
-            /* الاستقرار في أقصى اليمين بعد القدوم من الشمال */
-            left: calc(100% - 320px); 
+            left: calc(100% - 320px); /* الاستقرار في أقصى اليمين */
         }
 
-        /* دعم للشاشات الصغيرة جداً لضمان عدم خروج القائمة عن الإطار */
         @media (max-width: 320px) {
-            .sidebar.active {
-                left: 0;
-                width: 100%;
-            }
+            .sidebar.active { left: 0; width: 100%; }
         }
 
         .sidebar::-webkit-scrollbar { width: 6px; }
@@ -147,7 +137,6 @@
             border-radius: 5px;
         }
 
-        /* الأيقونات الاجتماعية */
         .social-icons {
             display: flex;
             justify-content: center;
@@ -169,7 +158,6 @@
         .fa-telegram:hover { color: #0088cc; text-shadow: 0 0 15px #0088cc; }
         .fa-x-twitter:hover { color: #ffffff; text-shadow: 0 0 15px #ffffff; }
 
-        /* روابط القائمة */
         .sidebar-menu { list-style: none; padding: 0; margin: 0; }
         .sidebar-menu li { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .sidebar-menu a {
@@ -188,7 +176,6 @@
             padding-right: 35px;
         }
         
-        /* القوائم المنسدلة */
         .has-dropdown > a { justify-content: space-between; }
         .arrow { font-size: 12px; transition: transform 0.3s; }
         .dropdown {
@@ -201,7 +188,6 @@
         .has-dropdown.open .arrow { transform: rotate(180deg); color: var(--gold); }
         .dropdown a { padding: 12px 45px 12px 20px; font-size: 14px; font-weight: 400; }
 
-        /* أيقونات تسجيل الدخول الملونة */
         .auth-section { padding: 20px; text-align: center; }
         .auth-btn {
             display: inline-block;
@@ -229,7 +215,6 @@
 </head>
 <body>
 
-    <!-- زر فتح القائمة (أعلى اليمين) -->
     <div class="menu-btn" id="menu-btn" title="افتح القائمة">
         <span></span>
         <span></span>
@@ -237,10 +222,8 @@
         <span></span>
     </div>
 
-    <!-- الغطاء المظلم خلف القائمة -->
     <div class="overlay" id="overlay"></div>
 
-    <!-- القائمة الجانبية (تظهر من اليسار وتستقر باليمين) -->
     <nav class="sidebar" id="sidebar" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <div class="close-btn" id="close-btn">✖</div>
         
@@ -315,7 +298,6 @@
     </nav>
 
     <script>
-        // 1. نظام تشغيل القائمة الجانبية والإغلاق
         const menuBtn = document.getElementById('menu-btn');
         const sidebar = document.getElementById('sidebar');
         const closeBtn = document.getElementById('close-btn');
@@ -330,7 +312,6 @@
         closeBtn.addEventListener('click', toggleMenu);
         overlay.addEventListener('click', toggleMenu);
 
-        // 2. نظام القوائم المنسدلة الذكي
         const dropdowns = document.querySelectorAll('.has-dropdown');
         dropdowns.forEach(dropdown => {
             dropdown.addEventListener('click', function(e) {
@@ -345,7 +326,6 @@
             link.addEventListener('click', (e) => e.stopPropagation());
         });
 
-        // 3. نظام الوقت والتاريخ التفاعلي
         function updateTime() {
             const timeElement = document.getElementById('live-time');
             const now = new Date();

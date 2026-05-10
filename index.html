@@ -58,6 +58,67 @@
             &copy; 2026 جميع الحقوق محفوظة
         </div>
     </div>
+<script>
+    (function() {
+        const synth = window.speechSynthesis;
+        let isSpeaking = false;
 
+        // وظيفة النطق الأساسية
+        function speak(text) {
+            if (synth.speaking) synth.cancel(); // إلغاء أي صوت حالي لبدء الصوت الجديد فوراً
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = synth.getVoices();
+            // محاولة جلب صوت أنثوي عربي
+            const femaleVoice = voices.find(v => v.lang.includes('ar') && (v.name.includes('female') || v.name.includes('Google') || v.name.includes('Hoda')));
+            
+            if (femaleVoice) utterance.voice = femaleVoice;
+            utterance.lang = 'ar-SA';
+            utterance.rate = 1.0; 
+            utterance.pitch = 1.2;
+
+            synth.speak(utterance);
+        }
+
+        // 1. الترحيب عند أول تفاعل
+        const startWelcome = () => {
+            const pageName = document.title.split('|')[0].trim();
+            speak(`أهلاً بك في ${pageName}. أنا مساعدتك الذكية، سأكون معك خلال تصفحك.`);
+            window.removeEventListener('mousedown', startWelcome);
+            window.removeEventListener('touchstart', startWelcome);
+        };
+        window.addEventListener('mousedown', startWelcome);
+        window.addEventListener('touchstart', startWelcome);
+
+        // 2. التفاعل مع العناصر (القوائم، الروابط، الأزرار)
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+
+            // إذا ضغط على رابط
+            if (target.tagName === 'A') {
+                speak(`جاري الانتقال إلى ${target.innerText}`);
+            }
+            // إذا ضغط على زر أو قائمة
+            else if (target.tagName === 'BUTTON' || target.getAttribute('role') === 'button') {
+                speak(`تم الضغط على ${target.innerText || 'الزر'}`);
+            }
+            // إذا ضغط على حقل إدخال (Input)
+            else if (target.tagName === 'INPUT') {
+                const label = document.querySelector(`label[for="${target.id}"]`)?.innerText || target.placeholder;
+                speak(`يرجى الكتابة في حقل ${label || 'الإدخال'}`);
+            }
+        });
+
+        // 3. التفاعل عند الوقوف بالماوس (اختياري - يعطي تنبيه قبل الضغط)
+        document.querySelectorAll('nav a, button').forEach(elem => {
+            elem.addEventListener('mouseenter', () => {
+                if (!synth.speaking) {
+                    speak(`أنت تقف الآن على ${elem.innerText}`);
+                }
+            });
+        });
+
+    })();
+</script>
 </body>
 </html>

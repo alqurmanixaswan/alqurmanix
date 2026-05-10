@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- حماية وتحسينات الأمان -->
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     
-    <title>المنصة الرقمية القرمانى اكس | Alqurmani X</title>
-    <meta name="description" content="الواجهة الرئيسية لمنصة القرماني إكس الفاخرة.">
+    <!-- السيو (SEO) -->
+    <title>القائمة الجانبية | المنصة الرقمية القرمانى اكس</title>
+    <meta name="description" content="القائمة الجانبية الرئيسية لمنصة القرماني إكس الفاخرة للاندماج في جميع الصفحات.">
     
+    <!-- الخطوط والأيقونات -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -30,31 +33,10 @@
             font-family: 'Cairo', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-light);
-            overflow-x: hidden;
+            overflow-x: hidden; /* لمنع ظهور شريط التمرير الأفقي أثناء حركة القائمة */
         }
 
-        /* ===================== النقاط الذهبية المتطايرة ===================== */
-        #particles-container {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: -1;
-        }
-        .gold-particle {
-            position: absolute;
-            background: var(--gold);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--gold);
-            opacity: 0;
-            animation: floatParticles linear infinite;
-        }
-        @keyframes floatParticles {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            20% { opacity: 0.8; transform: translateY(80vh) scale(1) translateX(20px); }
-            80% { opacity: 0.5; transform: translateY(20vh) scale(1.2) translateX(-20px); }
-            100% { transform: translateY(-10vh) scale(0); opacity: 0; }
-        }
-
-        /* ===================== زر الهامبرغر (4 شرائط يمين الشاشة) ===================== */
+        /* ===================== زر الهامبرغر (أعلى يمين الشاشة) ===================== */
         .menu-btn {
             position: fixed;
             top: 25px;
@@ -84,7 +66,7 @@
             box-shadow: 0 0 8px var(--gold);
         }
 
-        /* ===================== القائمة الجانبية (من الشمال لليمين) ===================== */
+        /* ===================== الغطاء الخلفي (Overlay) ===================== */
         .overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -96,21 +78,35 @@
         }
         .overlay.active { opacity: 1; visibility: visible; }
 
+        /* ===================== القائمة الجانبية (تظهر من الشمال وتستقر باليمين) ===================== */
         .sidebar {
             position: fixed;
             top: 0;
             left: -350px; /* البداية من أقصى الشمال خارج الشاشة */
             width: 320px;
+            max-width: 100%;
             height: 100vh;
             background: var(--sidebar-bg);
-            border-right: 2px solid var(--gold);
+            border-left: 2px solid var(--gold); /* تم تعديل الحد ليكون على اليسار ليتناسب مع استقرارها يميناً */
             z-index: 9999;
             overflow-y: auto;
-            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 10px 0 30px rgba(0,0,0,0.9);
+            transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.9); /* تم تعديل الظل ليكون لليسار */
             padding-bottom: 30px;
         }
-        .sidebar.active { left: 0; /* الاستقرار في الشاشة بعد القدوم من الشمال */ }
+        
+        .sidebar.active { 
+            /* الاستقرار في أقصى اليمين بعد القدوم من الشمال */
+            left: calc(100% - 320px); 
+        }
+
+        /* دعم للشاشات الصغيرة جداً لضمان عدم خروج القائمة عن الإطار */
+        @media (max-width: 320px) {
+            .sidebar.active {
+                left: 0;
+                width: 100%;
+            }
+        }
 
         .sidebar::-webkit-scrollbar { width: 6px; }
         .sidebar::-webkit-scrollbar-track { background: #050810; }
@@ -151,7 +147,7 @@
             border-radius: 5px;
         }
 
-        /* الأيقونات الاجتماعية الحقيقية */
+        /* الأيقونات الاجتماعية */
         .social-icons {
             display: flex;
             justify-content: center;
@@ -219,6 +215,7 @@
             animation: colorCycle 6s infinite;
             background: transparent;
             cursor: pointer;
+            box-sizing: border-box;
         }
         @keyframes colorCycle {
             0% { border-color: #ff0000; color: #ff0000; box-shadow: 0 0 10px rgba(255,0,0,0.5); }
@@ -232,8 +229,7 @@
 </head>
 <body>
 
-    <div id="particles-container"></div>
-
+    <!-- زر فتح القائمة (أعلى اليمين) -->
     <div class="menu-btn" id="menu-btn" title="افتح القائمة">
         <span></span>
         <span></span>
@@ -241,8 +237,10 @@
         <span></span>
     </div>
 
+    <!-- الغطاء المظلم خلف القائمة -->
     <div class="overlay" id="overlay"></div>
 
+    <!-- القائمة الجانبية (تظهر من اليسار وتستقر باليمين) -->
     <nav class="sidebar" id="sidebar" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <div class="close-btn" id="close-btn">✖</div>
         
@@ -359,27 +357,6 @@
         }
         setInterval(updateTime, 1000);
         updateTime();
-
-        // 4. محرك توليد النقاط الذهبية المتطايرة
-        function createGoldParticles() {
-            const container = document.getElementById('particles-container');
-            const particleCount = 40; 
-
-            for (let i = 0; i < particleCount; i++) {
-                let particle = document.createElement('div');
-                particle.classList.add('gold-particle');
-                
-                let size = Math.random() * 4 + 2; 
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                particle.style.left = Math.random() * 100 + 'vw';
-                particle.style.animationDuration = (Math.random() * 5 + 4) + 's';
-                particle.style.animationDelay = Math.random() * 5 + 's';
-                
-                container.appendChild(particle);
-            }
-        }
-        createGoldParticles();
     </script>
 </body>
 </html>

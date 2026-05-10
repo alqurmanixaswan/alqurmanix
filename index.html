@@ -1,188 +1,78 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عدسة بحث القرماني إكس - الفاخرة</title>
-    
-    <!-- خطوط وأيقونات (إذا لم تكن موجودة في صفحتك) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        /* ========================================================
-           تنسيقات عدسة البحث الفاخرة (أقصى الشمال بالاعلى)
-        ======================================================== */
-        .alqurmani-search-widget {
-            position: fixed;
-            top: 20px;
-            left: 20px; /* أقصى الشمال */
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            background: rgba(11, 15, 25, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid #d4af37;
-            border-radius: 50px; /* شكل دائري في البداية */
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.1);
-            width: 50px; /* عرض مبدئي (دائرة) */
-            height: 50px;
-            overflow: hidden;
-            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* حركة ارتدادية فخمة */
-            direction: rtl; /* لضبط الاتجاه الداخلي */
-        }
-
-        /* حالة التمدد (المستطيل الفخم) */
-        .alqurmani-search-widget.active {
-            width: 340px; /* عرض المستطيل */
-            border-radius: 12px;
-            background: rgba(11, 15, 25, 0.95);
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.5), inset 0 0 15px rgba(212, 175, 55, 0.2);
-            border-color: #00d4ff;
-        }
-
-        /* أيقونة العدسة */
-        .q-search-icon-btn {
-            min-width: 50px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #d4af37;
-            font-size: 22px;
-            cursor: pointer;
-            transition: color 0.3s, transform 0.4s;
-            background: transparent;
-            border: none;
-            outline: none;
-        }
-
-        .q-search-icon-btn:hover {
-            color: #00d4ff;
-            text-shadow: 0 0 15px #00d4ff;
-            transform: scale(1.1);
-        }
-
-        .alqurmani-search-widget.active .q-search-icon-btn {
-            color: #00d4ff;
-            transform: rotate(90deg); /* تأثير دوران بسيط عند الفتح */
-            pointer-events: none; /* تعطيل النقر أثناء التحميل */
-        }
-
-        /* محتوى المستطيل (النص وشريط التحميل) */
-        .q-search-content-area {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(-20px);
-            transition: all 0.4s ease 0.2s; /* تأخير بسيط حتى يتمدد المستطيل */
-            width: 100%;
-            padding-right: 5px;
-        }
-
-        .alqurmani-search-widget.active .q-search-content-area {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0);
-        }
-
-        /* النص الفخم */
-        .q-search-text-msg {
-            color: #ffffff;
-            font-family: 'Cairo', sans-serif;
-            font-weight: 700;
-            font-size: 14px;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-            text-shadow: 0 0 8px rgba(0, 212, 255, 0.8);
-        }
-
-        /* شريط التحميل (الـ 5 ثواني) */
-        .q-progress-track {
-            width: 90%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-        }
-
-        .q-progress-fill-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #d4af37, #00d4ff, #d4af37);
-            background-size: 200% 100%;
-            border-radius: 4px;
-            box-shadow: 0 0 10px #00d4ff, 0 0 5px #d4af37;
-        }
-
-        /* تحريك شريط التحميل */
-        .alqurmani-search-widget.active .q-progress-fill-bar {
-            animation: fillUpProgress 5s linear forwards, shimmer 2s infinite linear;
-        }
-
-        @keyframes fillUpProgress {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 100% 0; }
-            100% { background-position: -100% 0; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سياسة الخصوصية - القرماني إكس</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--p-gold:#d4af37;--p-blue:#00d4ff;--p-dark:#0b0f19}body{background:var(--p-dark);color:#fff;font-family:'Cairo',sans-serif;margin:0;padding:0;line-height:1.8}._container{max-width:900px;margin:50px auto;padding:40px;background:rgba(255,255,255,0.02);border:1px solid var(--p-gold);border-radius:15px;box-shadow:0 0 30px rgba(0,0,0,0.5)}h1{color:var(--p-gold);text-align:center;font-size:35px;border-bottom:2px solid var(--p-blue);padding-bottom:20px;margin-bottom:40px}h2{color:var(--p-blue);margin-top:30px;font-size:22px;border-right:4px solid var(--p-gold);padding-right:15px}p{font-size:16px;color:#e0e0e0;text-align:justify}ul{list-style:none;padding:0}li{margin-bottom:10px;padding-right:20px;position:relative}li::before{content:"\2726";position:absolute;right:0;color:var(--p-gold)}._footer{text-align:center;margin-top:50px;font-size:14px;color:var(--p-gold);border-top:1px solid rgba(212,175,55,0.2);padding-top:20px}._highlight{color:var(--p-blue);font-weight:700}
+</style>
 </head>
 <body>
 
-    <!-- ========================================================
-         بداية كود أداة البحث (يوضع في أي مكان داخل الـ body)
-    ======================================================== -->
-    <div id="alqurmani-search" class="alqurmani-search-widget">
-        <!-- أيقونة العدسة -->
-        <button id="q-search-trigger" class="q-search-icon-btn" title="بحث القرمانى إكس">
-            <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-        
-        <!-- المحتوى الذي سيظهر (مستطيل الفخامة) -->
-        <div class="q-search-content-area">
-            <span class="q-search-text-msg">جاري التوجه لمحرك بحث القرمانى اكس...</span>
-            <div class="q-progress-track">
-                <div class="q-progress-fill-bar"></div>
-            </div>
-        </div>
+<div class="_container" id="_policy_root">
+    <h1>سياسة الخصوصية | القرماني إكس</h1>
+    
+    <section>
+        <h2>1. مقدمة العهد الرقمي</h2>
+        <p>نحن في <span class="_highlight">القرماني إكس</span>، نعتبر بياناتك مقدسة. هذه السياسة ليست مجرد كلمات، بل هي ميثاق أمني يوضح كيف نقوم بحماية كيانك الرقمي في فضاء الإنترنت. بدخولك واستخدامك لمنصتنا، فإنك تقبل بما ورد في هذا الميثاق الطويل والمفصل.</p>
+    </section>
+
+    <section>
+        <h2>2. البيانات التي يتم اقتناصها</h2>
+        <p>نحن نجمع البيانات لغرض التحسين والتطوير المستمر، وتشمل:</p>
+        <ul>
+            <li>المعلومات الشخصية التي تقدمها طواعية عند التسجيل.</li>
+            <li>بيانات التصفح التقنية مثل عنوان الـ IP ونوع المتصفح.</li>
+            <li>سلوك المستخدم وتفاعله مع أدوات البحث والأنظمة المتقدمة.</li>
+            <li>بيانات ملفات تعريف الارتباط (Cookies) لضمان تجربة مستخدم فارهة.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>3. آليات معالجة البيانات وتشفيرها</h2>
+        <p>تخضع كافة البيانات التي تمر عبر خوادمنا لعمليات تشفير <span class="_highlight">عسكرية المستوى</span>. نحن لا نستخدم خوارزميات بسيطة، بل نعتمد على أنظمة تشفير معقدة تضمن استحالة الوصول للمعلومات من قبل أي طرف غير مصرح له. يتم تخزين البيانات في سحابة مؤمنة ببروتوكولات حماية متغيرة.</p>
+    </section>
+
+    <section>
+        <h2>4. مشاركة البيانات مع الأطراف الثالثة</h2>
+        <p>القرماني إكس لا يبيع، لا يؤجر، ولا يتاجر ببياناتك الشخصية. يتم مشاركة البيانات فقط في حالات محدودة جداً:</p>
+        <ul>
+            <li>الامتثال للأوامر القانونية الصارمة الصادرة من جهات قضائية.</li>
+            <li>مقدمي الخدمات التقنيين الذين يساعدوننا في تشغيل المنصة تحت عقود سرية تامة.</li>
+            <li>حماية الحقوق الملكية والفكرية لمنصة القرماني إكس من أي تهديد.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>5. حقوق المستخدم والتحكم الكامل</h2>
+        <p>لك الحق الكامل في الوصول إلى بياناتك، تعديلها، أو المطالبة بحذفها نهائياً من سجلاتنا. نحن نوفر أدوات داخلية تسمح لك بإدارة خصوصيتك بكل سهولة ودون قيود معقدة.</p>
+    </section>
+
+    <section>
+        <h2>6. تحديثات السياسة الدورية</h2>
+        <p>نظراً للتطور التكنولوجي المتسارع، نحتفظ بالحق في تعديل هذه السياسة في أي وقت. سيتم إخطار المستخدمين بأي تغييرات جوهرية عبر الوسائل المتاحة، واستمرارك في الاستخدام يعني موافقتك الضمنية على النسخة الأحدث.</p>
+    </section>
+
+    <div class="_footer">
+        © 2026 القرماني إكس - جميع الحقوق محفوظة لسيادة الخصوصية والأمن الرقمي.
     </div>
-    <!-- ======================================================== -->
+</div>
 
-    <script>
-        // سكربت تشغيل حركة البحث والتوجيه المبرمج
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchWidget = document.getElementById('alqurmani-search');
-            const searchBtn = document.getElementById('q-search-trigger');
-            
-            // الرابط الذي سيتوجه إليه بعد 5 ثواني
-            const targetSearchURL = '#'; 
-
-            searchBtn.addEventListener('click', () => {
-                // إذا لم يكن المستطيل مفتوحاً مسبقاً
-                if (!searchWidget.classList.contains('active')) {
-                    // فتح المستطيل وبدء الأنيميشن وشريط التحميل
-                    searchWidget.classList.add('active');
-                    
-                    // التوجيه للرابط بعد 5 ثواني (5000 ملي ثانية)
-                    setTimeout(() => {
-                        window.location.href = targetSearchURL;
-                        
-                        // إزالة الكلاس في حال كان الرابط في نفس الصفحة ويريد المستخدم التكرار
-                        // searchWidget.classList.remove('active');
-                    }, 5000);
-                }
-            });
-        });
-    </script>
+<script type="text/typescript">
+/**
+ * _0x_SECURE_PRIVACY_INIT
+ * Logic for dynamic data rendering and security check
+ */
+document.addEventListener("\x44\x4f\x4d\x43\x6f\x6e\x74\x65\x6e\x74\x4c\x6f\x61\x64\x65\x64", (): void => {
+    const _0x_root = document.getElementById("\x5f\x70\x6f\x6c\x69\x63\x79\x5f\x72\x6f\x6f\x74");
+    if (_0x_root) {
+        console.log("\x50\x72\x69\x76\x61\x63\x79\x20\x50\x6f\x6c\x69\x63\x79\x20\x4c\x6f\x61\x64\x65\x64\x20\x53\x65\x63\x75\x72\x65\x6c\x79");
+        // Additional secure logic can be injected here
+    }
+});
+</script>
 
 </body>
 </html>

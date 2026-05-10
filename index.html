@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-   <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -15,6 +12,7 @@
     <meta name="description" content="الواجهة الرئيسية لمنصة القرماني إكس الفاخرة.">
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* ===================== التنسيقات الأساسية ===================== */
@@ -82,12 +80,11 @@
             border-radius: 3px;
             transition: all 0.4s ease;
         }
-        /* تأثير النبض الخفيف للزر */
         .menu-btn:hover span {
             box-shadow: 0 0 8px var(--gold);
         }
 
-        /* ===================== القائمة الجانبية (تأتي من اليسار لليمين) ===================== */
+        /* ===================== القائمة الجانبية (من الشمال لليمين) ===================== */
         .overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -102,7 +99,7 @@
         .sidebar {
             position: fixed;
             top: 0;
-            left: -350px; /* البداية من أقصى اليسار */
+            left: -350px; /* البداية من أقصى الشمال خارج الشاشة */
             width: 320px;
             height: 100vh;
             background: var(--sidebar-bg);
@@ -113,14 +110,12 @@
             box-shadow: 10px 0 30px rgba(0,0,0,0.9);
             padding-bottom: 30px;
         }
-        .sidebar.active { left: 0; /* الدخول لليمين */ }
+        .sidebar.active { left: 0; /* الاستقرار في الشاشة بعد القدوم من الشمال */ }
 
-        /* شريط التمرير الفاخر */
         .sidebar::-webkit-scrollbar { width: 6px; }
         .sidebar::-webkit-scrollbar-track { background: #050810; }
         .sidebar::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
 
-        /* زر الإغلاق X */
         .close-btn {
             position: absolute;
             top: 15px; right: 20px;
@@ -156,20 +151,27 @@
             border-radius: 5px;
         }
 
-        /* الأيقونات الاجتماعية */
+        /* الأيقونات الاجتماعية الحقيقية */
         .social-icons {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 20px;
             margin-top: 15px;
         }
         .social-icons a {
             text-decoration: none;
-            font-size: 20px;
+            font-size: 24px;
             color: var(--gold);
-            transition: transform 0.3s;
+            transition: transform 0.3s, color 0.3s;
         }
-        .social-icons a:hover { transform: translateY(-5px); text-shadow: 0 0 10px var(--gold); }
+        .social-icons a:hover { 
+            transform: translateY(-5px); 
+            text-shadow: 0 0 15px var(--gold); 
+        }
+        .fa-facebook:hover { color: #1877F2; text-shadow: 0 0 15px #1877F2; }
+        .fa-whatsapp:hover { color: #25D366; text-shadow: 0 0 15px #25D366; }
+        .fa-telegram:hover { color: #0088cc; text-shadow: 0 0 15px #0088cc; }
+        .fa-x-twitter:hover { color: #ffffff; text-shadow: 0 0 15px #ffffff; }
 
         /* روابط القائمة */
         .sidebar-menu { list-style: none; padding: 0; margin: 0; }
@@ -187,10 +189,10 @@
         .sidebar-menu a:hover, .sidebar-menu a.active-link {
             background: rgba(212, 175, 55, 0.1);
             color: var(--gold);
-            padding-right: 35px; /* حركة خفيفة عند الوقوف بالماوس */
+            padding-right: 35px;
         }
         
-        /* القوائم المنسدلة (الأسهم) */
+        /* القوائم المنسدلة */
         .has-dropdown > a { justify-content: space-between; }
         .arrow { font-size: 12px; transition: transform 0.3s; }
         .dropdown {
@@ -203,7 +205,7 @@
         .has-dropdown.open .arrow { transform: rotate(180deg); color: var(--gold); }
         .dropdown a { padding: 12px 45px 12px 20px; font-size: 14px; font-weight: 400; }
 
-        /* ===================== أيقونات تسجيل الدخول الملونة ===================== */
+        /* أيقونات تسجيل الدخول الملونة */
         .auth-section { padding: 20px; text-align: center; }
         .auth-btn {
             display: inline-block;
@@ -226,7 +228,6 @@
             80% { border-color: #00ffff; color: #00ffff; box-shadow: 0 0 10px rgba(0,255,255,0.5); }
             100% { border-color: #ff0000; color: #ff0000; box-shadow: 0 0 10px rgba(255,0,0,0.5); }
         }
-
     </style>
 </head>
 <body>
@@ -250,10 +251,10 @@
             <div class="datetime" id="live-time">جاري تحميل الوقت...</div>
             
             <div class="social-icons">
-                <a href="#" title="فيسبوك">🌐</a>
-                <a href="#" title="واتساب">💬</a>
-                <a href="#" title="تليجرام">✈️</a>
-                <a href="#" title="إكس">𝕏</a>
+                <a href="#" title="فيسبوك"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#" title="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="#" title="تليجرام"><i class="fa-brands fa-telegram"></i></a>
+                <a href="#" title="إكس"><i class="fa-brands fa-x-twitter"></i></a>
             </div>
         </div>
 
@@ -315,11 +316,6 @@
         </div>
     </nav>
 
-    <div style="padding: 100px 20px; text-align: center;">
-        <h1 style="color: var(--gold);">مرحباً بك في المنصة الرقمية AQX</h1>
-        <p>اضغط على الشرائط الأربعة أعلى اليمين لفتح القائمة الفاخرة.</p>
-    </div>
-
     <script>
         // 1. نظام تشغيل القائمة الجانبية والإغلاق
         const menuBtn = document.getElementById('menu-btn');
@@ -334,13 +330,12 @@
 
         menuBtn.addEventListener('click', toggleMenu);
         closeBtn.addEventListener('click', toggleMenu);
-        overlay.addEventListener('click', toggleMenu); // الإغلاق عند الضغط في أي مكان بالشاشة
+        overlay.addEventListener('click', toggleMenu);
 
         // 2. نظام القوائم المنسدلة الذكي
         const dropdowns = document.querySelectorAll('.has-dropdown');
         dropdowns.forEach(dropdown => {
             dropdown.addEventListener('click', function(e) {
-                // إغلاق أي قائمة أخرى مفتوحة للترتيب والفخامة
                 dropdowns.forEach(item => {
                     if (item !== this) item.classList.remove('open');
                 });
@@ -348,12 +343,11 @@
             });
         });
 
-        // منع إغلاق القائمة المنسدلة عند الضغط على الروابط بداخلها
         document.querySelectorAll('.dropdown a').forEach(link => {
             link.addEventListener('click', (e) => e.stopPropagation());
         });
 
-        // 3. نظام الوقت والتاريخ التفاعلي (حسب دولة الزائر)
+        // 3. نظام الوقت والتاريخ التفاعلي
         function updateTime() {
             const timeElement = document.getElementById('live-time');
             const now = new Date();
@@ -361,7 +355,6 @@
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
                 hour: '2-digit', minute: '2-digit', second: '2-digit'
             };
-            // عرض الوقت بالتنسيق العربي وحسب التوقيت المحلي للزائر
             timeElement.innerText = now.toLocaleDateString('ar-EG', options);
         }
         setInterval(updateTime, 1000);
@@ -370,13 +363,12 @@
         // 4. محرك توليد النقاط الذهبية المتطايرة
         function createGoldParticles() {
             const container = document.getElementById('particles-container');
-            const particleCount = 40; // عدد النقاط
+            const particleCount = 40; 
 
             for (let i = 0; i < particleCount; i++) {
                 let particle = document.createElement('div');
                 particle.classList.add('gold-particle');
                 
-                // عشوائية الحجم والموقع وسرعة التطاير
                 let size = Math.random() * 4 + 2; 
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
@@ -389,126 +381,5 @@
         }
         createGoldParticles();
     </script>
-</body>
-</html>
-   <meta name="theme-color" content="#40E0D0">
-   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌏</text></svg>"> 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مرحباً بك في Alqurmanix</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            font-family: 'Cairo', sans-serif;
-            color: white;
-            text-align: center;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px border rgba(255, 255, 255, 0.2);
-            max-width: 90%;
-        }
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-        p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        .highlight {
-            color: #00d4ff;
-            font-weight: bold;
-        }
-        .footer {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h1>مرحباً بك في <span class="highlight">Alqurmanix</span></h1>
-        <p> قيد الإنشاء والتحضير.</p>
-        <div class="footer">
-            &copy; 2026 جميع الحقوق محفوظة
-        </div>
-    </div>
-<script>
-    (function() {
-        const synth = window.speechSynthesis;
-        let isSpeaking = false;
-
-        // وظيفة النطق الأساسية
-        function speak(text) {
-            if (synth.speaking) synth.cancel(); // إلغاء أي صوت حالي لبدء الصوت الجديد فوراً
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            const voices = synth.getVoices();
-            // محاولة جلب صوت أنثوي عربي
-            const femaleVoice = voices.find(v => v.lang.includes('ar') && (v.name.includes('female') || v.name.includes('Google') || v.name.includes('Hoda')));
-            
-            if (femaleVoice) utterance.voice = femaleVoice;
-            utterance.lang = 'ar-SA';
-            utterance.rate = 1.0; 
-            utterance.pitch = 1.2;
-
-            synth.speak(utterance);
-        }
-
-        // 1. الترحيب عند أول تفاعل
-        const startWelcome = () => {
-            const pageName = document.title.split('|')[0].trim();
-            speak(`أهلاً بك في ${pageName}. أنا مساعدتك الذكية، سأكون معك خلال تصفحك.`);
-            window.removeEventListener('mousedown', startWelcome);
-            window.removeEventListener('touchstart', startWelcome);
-        };
-        window.addEventListener('mousedown', startWelcome);
-        window.addEventListener('touchstart', startWelcome);
-
-        // 2. التفاعل مع العناصر (القوائم، الروابط، الأزرار)
-        document.addEventListener('click', (e) => {
-            const target = e.target;
-
-            // إذا ضغط على رابط
-            if (target.tagName === 'A') {
-                speak(`جاري الانتقال إلى ${target.innerText}`);
-            }
-            // إذا ضغط على زر أو قائمة
-            else if (target.tagName === 'BUTTON' || target.getAttribute('role') === 'button') {
-                speak(`تم الضغط على ${target.innerText || 'الزر'}`);
-            }
-            // إذا ضغط على حقل إدخال (Input)
-            else if (target.tagName === 'INPUT') {
-                const label = document.querySelector(`label[for="${target.id}"]`)?.innerText || target.placeholder;
-                speak(`يرجى الكتابة في حقل ${label || 'الإدخال'}`);
-            }
-        });
-
-        // 3. التفاعل عند الوقوف بالماوس (اختياري - يعطي تنبيه قبل الضغط)
-        document.querySelectorAll('nav a, button').forEach(elem => {
-            elem.addEventListener('mouseenter', () => {
-                if (!synth.speaking) {
-                    speak(`أنت تقف الآن على ${elem.innerText}`);
-                }
-            });
-        });
-
-    })();
-</script>
 </body>
 </html>

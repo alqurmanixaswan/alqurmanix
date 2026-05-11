@@ -1,1 +1,1194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AQX Speed Analyzer</title>
+
+<meta name="theme-color" content="#00d9ff">
+
+<style>
+
+/* =========================
+RESET
+========================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+body{
+
+font-family:Tahoma,sans-serif;
+
+background:
+radial-gradient(circle at top,#0f172a,#020617 70%);
+
+min-height:100vh;
+
+overflow-x:hidden;
+
+color:#fff;
+
+padding:15px;
+
+position:relative;
+
+}
+
+/* =========================
+BACKGROUND
+========================= */
+
+.bg{
+position:fixed;
+inset:0;
+overflow:hidden;
+z-index:-1;
+}
+
+.bg span{
+
+position:absolute;
+
+width:3px;
+height:3px;
+
+background:#38bdf8;
+
+border-radius:50%;
+
+box-shadow:
+0 0 10px #38bdf8,
+0 0 20px #38bdf8,
+0 0 40px #38bdf8;
+
+animation:float linear infinite;
+
+opacity:.5;
+
+}
+
+@keyframes float{
+
+0%{
+transform:
+translateY(100vh)
+scale(0);
+}
+
+100%{
+transform:
+translateY(-10vh)
+scale(1);
+}
+
+}
+
+/* =========================
+CONTAINER
+========================= */
+
+.container{
+max-width:1400px;
+margin:auto;
+}
+
+/* =========================
+LOGO
+========================= */
+
+.logo{
+
+font-size:clamp(35px,7vw,75px);
+
+font-weight:bold;
+
+text-align:center;
+
+text-transform:uppercase;
+
+letter-spacing:6px;
+
+margin-top:20px;
+
+animation:neon 1.5s infinite alternate;
+
+word-break:break-word;
+
+}
+
+@keyframes neon{
+
+0%{
+
+opacity:.5;
+
+text-shadow:
+0 0 5px #00d9ff,
+0 0 10px #00d9ff,
+0 0 20px #00d9ff,
+0 0 40px #00d9ff;
+
+}
+
+100%{
+
+opacity:1;
+
+text-shadow:
+0 0 10px #fff,
+0 0 20px #38bdf8,
+0 0 40px #38bdf8,
+0 0 80px #00d9ff,
+0 0 120px #00d9ff;
+
+}
+
+}
+
+.subtitle{
+
+text-align:center;
+
+color:#94a3b8;
+
+margin-top:10px;
+margin-bottom:30px;
+
+line-height:1.8;
+
+font-size:15px;
+
+}
+
+/* =========================
+GLASS
+========================= */
+
+.glass{
+
+background:
+rgba(15,23,42,.55);
+
+backdrop-filter:
+blur(18px);
+
+border:
+1px solid rgba(255,255,255,.08);
+
+border-radius:30px;
+
+padding:20px;
+
+box-shadow:
+0 0 25px rgba(0,217,255,.08);
+
+overflow:hidden;
+
+}
+
+/* =========================
+INPUT
+========================= */
+
+.input-box{
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:10px;
+font-size:15px;
+color:#cbd5e1;
+}
+
+input{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+outline:none;
+
+border-radius:18px;
+
+background:#0f172a;
+
+border:
+1px solid #1e293b;
+
+color:#fff;
+
+font-size:15px;
+
+transition:.3s;
+
+}
+
+input:focus{
+
+border-color:#38bdf8;
+
+box-shadow:
+0 0 20px rgba(56,189,248,.3);
+
+}
+
+/* =========================
+BUTTONS
+========================= */
+
+.buttons{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(150px,1fr));
+
+gap:12px;
+
+margin-top:20px;
+
+}
+
+button{
+
+padding:15px;
+
+border:none;
+
+border-radius:18px;
+
+cursor:pointer;
+
+font-size:14px;
+
+font-weight:bold;
+
+color:#fff;
+
+transition:.3s;
+
+background:
+linear-gradient(
+135deg,
+#0ea5e9,
+#06b6d4
+);
+
+box-shadow:
+0 0 15px rgba(14,165,233,.35);
+
+}
+
+button:hover{
+
+transform:
+translateY(-3px)
+scale(1.03);
+
+box-shadow:
+0 0 25px rgba(14,165,233,.7);
+
+}
+
+/* =========================
+LOADING
+========================= */
+
+.loading{
+
+display:none;
+
+text-align:center;
+
+margin-top:30px;
+
+}
+
+.loader{
+
+width:100px;
+height:100px;
+
+margin:auto;
+
+border-radius:50%;
+
+border:6px solid rgba(255,255,255,.1);
+
+border-top-color:#00d9ff;
+
+animation:spin 1s linear infinite;
+
+box-shadow:
+0 0 20px #00d9ff;
+
+}
+
+@keyframes spin{
+
+100%{
+transform:rotate(360deg);
+}
+
+}
+
+.loading p{
+margin-top:15px;
+color:#38bdf8;
+}
+
+/* =========================
+RESULTS
+========================= */
+
+.results{
+
+margin-top:30px;
+
+display:none;
+
+}
+
+.grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+
+gap:18px;
+
+}
+
+.card{
+
+background:
+rgba(15,23,42,.6);
+
+border:
+1px solid rgba(255,255,255,.08);
+
+border-radius:25px;
+
+padding:22px;
+
+text-align:center;
+
+backdrop-filter:
+blur(10px);
+
+transition:.3s;
+
+}
+
+.card:hover{
+
+transform:
+translateY(-5px);
+
+box-shadow:
+0 0 20px rgba(0,217,255,.25);
+
+}
+
+.card h3{
+
+font-size:16px;
+
+margin-bottom:15px;
+
+color:#cbd5e1;
+
+}
+
+.value{
+
+font-size:35px;
+
+font-weight:bold;
+
+color:#38bdf8;
+
+text-shadow:
+0 0 10px rgba(56,189,248,.5);
+
+word-break:break-word;
+
+}
+
+/* =========================
+SCORE
+========================= */
+
+.score-wrap{
+
+display:flex;
+
+justify-content:center;
+
+margin:35px 0;
+
+}
+
+.circle{
+
+width:220px;
+height:220px;
+
+border-radius:50%;
+
+background:
+conic-gradient(
+#00d9ff 0deg,
+#00d9ff 320deg,
+rgba(255,255,255,.08) 320deg
+);
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+box-shadow:
+0 0 30px rgba(0,217,255,.3);
+
+position:relative;
+
+}
+
+.circle::before{
+
+content:'';
+
+position:absolute;
+
+width:170px;
+height:170px;
+
+background:#020617;
+
+border-radius:50%;
+
+}
+
+.score{
+
+position:relative;
+
+font-size:55px;
+
+font-weight:bold;
+
+color:#fff;
+
+text-shadow:
+0 0 15px #00d9ff;
+
+}
+
+/* =========================
+PROGRESS
+========================= */
+
+.progress-box{
+margin-top:35px;
+}
+
+.progress-item{
+margin-bottom:18px;
+}
+
+.progress-item span{
+display:block;
+margin-bottom:8px;
+}
+
+.progress{
+
+height:14px;
+
+background:#1e293b;
+
+border-radius:20px;
+
+overflow:hidden;
+
+}
+
+.progress div{
+
+height:100%;
+
+border-radius:20px;
+
+background:
+linear-gradient(
+90deg,
+#06b6d4,
+#38bdf8
+);
+
+}
+
+/* =========================
+POPUP
+========================= */
+
+.popup{
+
+position:fixed;
+
+top:20px;
+left:50%;
+
+transform:
+translateX(-50%);
+
+width:95%;
+max-width:380px;
+
+padding:22px;
+
+border-radius:28px;
+
+background:
+rgba(15,23,42,.72);
+
+backdrop-filter:
+blur(20px);
+
+border:
+1px solid rgba(255,255,255,.08);
+
+overflow:hidden;
+
+z-index:999999;
+
+display:none;
+
+animation:popupShow .5s ease;
+
+box-shadow:
+0 0 15px #0ea5e9,
+0 0 30px #0ea5e9,
+0 0 60px rgba(14,165,233,.5);
+
+}
+
+.popup::before{
+
+content:'';
+
+position:absolute;
+
+width:200%;
+height:200%;
+
+top:-50%;
+left:-50%;
+
+background:
+conic-gradient(
+transparent,
+rgba(14,165,233,.45),
+transparent 30%
+);
+
+animation:rotate 4s linear infinite;
+
+}
+
+.popup-content{
+position:relative;
+z-index:2;
+}
+
+.popup h2{
+
+font-size:30px;
+
+text-align:center;
+
+margin-bottom:12px;
+
+animation:neon 1.5s infinite alternate;
+
+}
+
+.popup p{
+text-align:center;
+line-height:1.8;
+color:#cbd5e1;
+}
+
+@keyframes popupShow{
+
+from{
+
+opacity:0;
+
+transform:
+translateX(-50%)
+translateY(-20px)
+scale(.8);
+
+}
+
+to{
+
+opacity:1;
+
+transform:
+translateX(-50%)
+translateY(0)
+scale(1);
+
+}
+
+}
+
+@keyframes rotate{
+
+100%{
+transform:rotate(360deg);
+}
+
+}
+
+/* =========================
+FOOTER
+========================= */
+
+.footer{
+
+text-align:center;
+
+margin-top:40px;
+
+color:#38bdf8;
+
+font-size:15px;
+
+animation:neon 1.5s infinite alternate;
+
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media(max-width:600px){
+
+.circle{
+width:180px;
+height:180px;
+}
+
+.circle::before{
+width:135px;
+height:135px;
+}
+
+.score{
+font-size:42px;
+}
+
+.card{
+padding:18px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- BACKGROUND -->
+
+<div class="bg" id="bg"></div>
+
+<div class="container">
+
+<!-- LOGO -->
+
+<div class="logo">
+alqurmani x
+</div>
+
+<div class="subtitle">
+AQX SPEED ANALYZER — WEBSITE PERFORMANCE CHECKER
+</div>
+
+<!-- MAIN -->
+
+<div class="glass">
+
+<div class="input-box">
+
+<label>
+أدخل رابط الموقع
+</label>
+
+<input
+type="text"
+id="url"
+placeholder="https://example.com"
+>
+
+</div>
+
+<div class="buttons">
+
+<button onclick="analyzeSite()">
+فحص الموقع
+</button>
+
+<button onclick="clearAll()">
+مسح النتائج
+</button>
+
+<button onclick="randomData()">
+تجربة عشوائية
+</button>
+
+</div>
+
+<!-- LOADING -->
+
+<div class="loading" id="loading">
+
+<div class="loader"></div>
+
+<p>
+جارى تحليل الموقع...
+</p>
+
+</div>
+
+<!-- RESULTS -->
+
+<div class="results" id="results">
+
+<!-- SCORE -->
+
+<div class="score-wrap">
+
+<div class="circle" id="circle">
+
+<div class="score" id="score">
+0
+</div>
+
+</div>
+
+</div>
+
+<!-- CARDS -->
+
+<div class="grid">
+
+<div class="card">
+
+<h3>
+حجم الصفحة
+</h3>
+
+<div class="value" id="pageSize">
+0 MB
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>
+عدد الصور
+</h3>
+
+<div class="value" id="images">
+0
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>
+عدد السكربتات
+</h3>
+
+<div class="value" id="scripts">
+0
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>
+ملفات CSS
+</h3>
+
+<div class="value" id="cssFiles">
+0
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>
+عدد الطلبات
+</h3>
+
+<div class="value" id="requests">
+0
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>
+وقت التحميل
+</h3>
+
+<div class="value" id="loadTime">
+0s
+</div>
+
+</div>
+
+</div>
+
+<!-- PROGRESS -->
+
+<div class="progress-box">
+
+<div class="progress-item">
+
+<span>
+SEO Optimization
+</span>
+
+<div class="progress">
+<div id="seoBar" style="width:0%"></div>
+</div>
+
+</div>
+
+<div class="progress-item">
+
+<span>
+Performance
+</span>
+
+<div class="progress">
+<div id="perfBar" style="width:0%"></div>
+</div>
+
+</div>
+
+<div class="progress-item">
+
+<span>
+Mobile Friendly
+</span>
+
+<div class="progress">
+<div id="mobileBar" style="width:0%"></div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer">
+Powered By AQX
+</div>
+
+</div>
+
+<!-- POPUP -->
+
+<div class="popup" id="popup">
+
+<div class="popup-content">
+
+<h2>
+alqurmani x
+</h2>
+
+<p id="popupText">
+تم الفحص بنجاح 🚀
+</p>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+BACKGROUND
+========================= */
+
+for(let i=0;i<90;i++){
+
+let star=document.createElement("span");
+
+star.style.left=Math.random()*100+"%";
+
+star.style.top=Math.random()*100+"%";
+
+star.style.animationDuration=
+5+Math.random()*15+"s";
+
+star.style.opacity=Math.random();
+
+document
+.getElementById("bg")
+.appendChild(star);
+
+}
+
+/* =========================
+POPUP
+========================= */
+
+function showPopup(text){
+
+let popup=
+document.getElementById("popup");
+
+document.getElementById(
+"popupText"
+).innerText=text;
+
+popup.style.display="block";
+
+setTimeout(()=>{
+
+popup.style.display="none";
+
+},3000);
+
+}
+
+/* =========================
+ANALYZE
+========================= */
+
+function analyzeSite(){
+
+let url=
+document.getElementById("url").value;
+
+if(url.trim()==""){
+
+showPopup(
+"أدخل رابط الموقع أولاً"
+);
+
+return;
+
+}
+
+document.getElementById(
+"loading"
+).style.display="block";
+
+document.getElementById(
+"results"
+).style.display="none";
+
+/* Fake Scan */
+
+setTimeout(()=>{
+
+let score=
+Math.floor(
+80+Math.random()*20
+);
+
+let pageSize=
+(
+Math.random()*3+0.5
+).toFixed(1);
+
+let images=
+Math.floor(
+10+Math.random()*50
+);
+
+let scripts=
+Math.floor(
+5+Math.random()*20
+);
+
+let css=
+Math.floor(
+2+Math.random()*10
+);
+
+let requests=
+Math.floor(
+20+Math.random()*100
+);
+
+let loadTime=
+(
+Math.random()*3+0.5
+).toFixed(1);
+
+let seo=
+Math.floor(
+80+Math.random()*20
+);
+
+let perf=
+Math.floor(
+75+Math.random()*25
+);
+
+let mobile=
+Math.floor(
+85+Math.random()*15
+);
+
+/* Set Data */
+
+document.getElementById(
+"score"
+).innerText=score;
+
+document.getElementById(
+"pageSize"
+).innerText=
+pageSize+" MB";
+
+document.getElementById(
+"images"
+).innerText=images;
+
+document.getElementById(
+"scripts"
+).innerText=scripts;
+
+document.getElementById(
+"cssFiles"
+).innerText=css;
+
+document.getElementById(
+"requests"
+).innerText=requests;
+
+document.getElementById(
+"loadTime"
+).innerText=
+loadTime+"s";
+
+/* Bars */
+
+document.getElementById(
+"seoBar"
+).style.width=
+seo+"%";
+
+document.getElementById(
+"perfBar"
+).style.width=
+perf+"%";
+
+document.getElementById(
+"mobileBar"
+).style.width=
+mobile+"%";
+
+/* Circle */
+
+document.getElementById(
+"circle"
+).style.background=
+`conic-gradient(
+#00d9ff 0deg,
+#00d9ff ${score*3.6}deg,
+rgba(255,255,255,.08)
+${score*3.6}deg
+)`;
+
+/* Finish */
+
+document.getElementById(
+"loading"
+).style.display="none";
+
+document.getElementById(
+"results"
+).style.display="block";
+
+showPopup(
+"تم تحليل الموقع بنجاح 🔥"
+);
+
+},2500);
+
+}
+
+/* =========================
+CLEAR
+========================= */
+
+function clearAll(){
+
+document.getElementById(
+"url"
+).value="";
+
+document.getElementById(
+"results"
+).style.display="none";
+
+showPopup(
+"تم مسح النتائج"
+);
+
+}
+
+/* =========================
+RANDOM DATA
+========================= */
+
+function randomData(){
+
+document.getElementById(
+"url"
+).value=
+"https://alqurmanix.com";
+
+analyzeSite();
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,1 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محرك بحث AQX | قيد التطوير</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --gold: #d4af37;
+            --dark-bg: #050810;
+            --neon-blue: #00d4ff;
+        }
 
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* خلفية متحركة */
+        .bg-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--gold);
+            filter: blur(150px);
+            opacity: 0.1;
+            z-index: -1;
+            animation: pulse 5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); opacity: 0.1; }
+            to { transform: scale(1.5); opacity: 0.2; }
+        }
+
+        .container {
+            padding: 20px;
+            z-index: 1;
+        }
+
+        /* أيقونة المحرك المتحركة */
+        .search-loader {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+        }
+
+        .search-loader i {
+            font-size: 50px;
+            color: var(--gold);
+            line-height: 100px;
+            animation: rotateMagnifier 4s infinite ease-in-out;
+        }
+
+        .circle-ring {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: 2px solid transparent;
+            border-top-color: var(--neon-blue);
+            border-bottom-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes rotateMagnifier {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(15deg); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--gold), #fff, var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #aaa;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        /* نظام النقاط الوامضة */
+        .status-tag {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold);
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--gold);
+            border-radius: 50%;
+            margin-left: 10px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; box-shadow: 0 0 5px var(--gold); }
+            50% { opacity: 0.3; }
+        }
+
+        .back-btn {
+            margin-top: 40px;
+            display: inline-block;
+            text-decoration: none;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 25px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <div class="container">
+        <div class="search-loader">
+            <div class="circle-ring"></div>
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+
+        <div class="status-tag">
+            <div class="dot"></div>
+            قيد التطوير البرمجي
+        </div>
+
+        <h1>محرك بحث AQX الذكي</h1>
+        <p>نعمل حالياً على بناء أقوى محرك بحث داخلي لمنصة القرماني إكس، لتوفير تجربة بحث فائقة السرعة مدعومة بالذكاء الاصطناعي.</p>
+
+        <a href="index.html" class="back-btn">
+            <i class="fa-solid fa-arrow-right"></i> العودة للرئيسية
+        </a>
+    </div>
+
+</body>
+  </html>

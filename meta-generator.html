@@ -1,193 +1,864 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>مولد Meta Tags - AQX</title>
 
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Tahoma,sans-serif;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    body{
-      background:#0f172a;
-      color:#fff;
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding:20px;
-    }
+<title>AQX Ultimate SEO Tool</title>
 
-    .box{
-      width:100%;
-      max-width:800px;
-      background:#111827;
-      border:1px solid #1e293b;
-      border-radius:18px;
-      padding:25px;
-      box-shadow:0 0 25px rgba(0,0,0,.4);
-    }
+<meta name="theme-color" content="#00d9ff">
 
-    h1{
-      text-align:center;
-      margin-bottom:25px;
-      color:#38bdf8;
-      font-size:32px;
-    }
+<link rel="manifest" href="manifest.json">
 
-    .input-box{
-      margin-bottom:18px;
-    }
+<style>
 
-    label{
-      display:block;
-      margin-bottom:8px;
-      color:#cbd5e1;
-      font-size:15px;
-    }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Tajawal,sans-serif;
+}
 
-    input, textarea{
-      width:100%;
-      padding:14px;
-      border:none;
-      outline:none;
-      border-radius:12px;
-      background:#1e293b;
-      color:#fff;
-      font-size:15px;
-    }
+body{
+background:
+radial-gradient(circle at top,#0f172a,#020617 70%);
+min-height:100vh;
+overflow-x:hidden;
+color:#fff;
+padding:20px;
+}
 
-    textarea{
-      resize:vertical;
-      min-height:100px;
-    }
+/* ===== Animated Background ===== */
 
-    button{
-      width:100%;
-      padding:15px;
-      border:none;
-      border-radius:14px;
-      background:#0ea5e9;
-      color:#fff;
-      font-size:18px;
-      cursor:pointer;
-      transition:.3s;
-      font-weight:bold;
-      margin-top:10px;
-    }
+.bg{
+position:fixed;
+inset:0;
+overflow:hidden;
+z-index:-1;
+}
 
-    button:hover{
-      background:#0284c7;
-    }
+.bg span{
+position:absolute;
+display:block;
+width:4px;
+height:4px;
+background:#38bdf8;
+border-radius:50%;
+box-shadow:
+0 0 10px #38bdf8,
+0 0 20px #38bdf8,
+0 0 40px #38bdf8;
+animation:float 15s linear infinite;
+opacity:.5;
+}
 
-    .result{
-      margin-top:25px;
-    }
+@keyframes float{
 
-    pre{
-      background:#020617;
-      padding:20px;
-      border-radius:14px;
-      overflow:auto;
-      color:#38bdf8;
-      direction:ltr;
-      text-align:left;
-      white-space:pre-wrap;
-      word-wrap:break-word;
-      border:1px solid #1e293b;
-    }
+0%{
+transform:translateY(100vh) scale(0);
+}
 
-    .copy-btn{
-      margin-top:15px;
-      background:#22c55e;
-    }
+100%{
+transform:translateY(-10vh) scale(1);
+}
 
-    .copy-btn:hover{
-      background:#16a34a;
-    }
-  </style>
+}
+
+/* ===== Main ===== */
+
+.container{
+max-width:1400px;
+margin:auto;
+}
+
+.logo{
+text-align:center;
+font-size:58px;
+font-weight:bold;
+margin-bottom:10px;
+text-transform:uppercase;
+letter-spacing:5px;
+
+animation:neon 1.5s infinite alternate;
+}
+
+@keyframes neon{
+
+0%{
+opacity:.5;
+text-shadow:
+0 0 5px #00d9ff,
+0 0 10px #00d9ff,
+0 0 20px #00d9ff;
+}
+
+100%{
+opacity:1;
+text-shadow:
+0 0 10px #fff,
+0 0 20px #38bdf8,
+0 0 40px #38bdf8,
+0 0 80px #00d9ff;
+}
+
+}
+
+.subtitle{
+text-align:center;
+color:#94a3b8;
+margin-bottom:35px;
+font-size:18px;
+}
+
+/* ===== Glass ===== */
+
+.glass{
+background:rgba(15,23,42,.55);
+border:1px solid rgba(255,255,255,.08);
+backdrop-filter:blur(18px);
+border-radius:30px;
+padding:25px;
+box-shadow:
+0 0 25px rgba(0,217,255,.08);
+}
+
+/* ===== Grid ===== */
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+}
+
+@media(max-width:900px){
+
+.grid{
+grid-template-columns:1fr;
+}
+
+.logo{
+font-size:40px;
+}
+
+}
+
+/* ===== Inputs ===== */
+
+.input-box{
+margin-bottom:18px;
+}
+
+label{
+display:block;
+margin-bottom:10px;
+font-size:15px;
+color:#cbd5e1;
+}
+
+input,
+textarea{
+width:100%;
+padding:15px;
+border:none;
+outline:none;
+background:#0f172a;
+border-radius:16px;
+color:#fff;
+font-size:15px;
+border:1px solid #1e293b;
+transition:.3s;
+}
+
+input:focus,
+textarea:focus{
+border-color:#38bdf8;
+box-shadow:0 0 20px rgba(56,189,248,.3);
+}
+
+textarea{
+min-height:120px;
+resize:vertical;
+}
+
+/* ===== Buttons ===== */
+
+.buttons{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-top:20px;
+}
+
+button{
+padding:15px;
+border:none;
+border-radius:16px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+color:#fff;
+background:
+linear-gradient(135deg,#0ea5e9,#06b6d4);
+box-shadow:
+0 0 15px rgba(14,165,233,.4);
+}
+
+button:hover{
+transform:translateY(-3px) scale(1.03);
+box-shadow:
+0 0 25px rgba(14,165,233,.7);
+}
+
+/* ===== Output ===== */
+
+.output{
+margin-top:25px;
+}
+
+pre{
+background:#020617;
+padding:20px;
+border-radius:20px;
+overflow:auto;
+white-space:pre-wrap;
+word-wrap:break-word;
+direction:ltr;
+border:1px solid #1e293b;
+color:#38bdf8;
+max-height:500px;
+}
+
+/* ===== Preview ===== */
+
+.preview-title{
+margin-bottom:15px;
+font-size:22px;
+color:#38bdf8;
+}
+
+.google-preview{
+background:#fff;
+padding:20px;
+border-radius:18px;
+direction:ltr;
+font-family:Arial;
+}
+
+.google-preview .title{
+font-size:22px;
+color:#1a0dab;
+margin-bottom:5px;
+}
+
+.google-preview .url{
+color:#006621;
+font-size:14px;
+margin-bottom:5px;
+}
+
+.google-preview .desc{
+font-size:15px;
+color:#4d5156;
+line-height:1.7;
+}
+
+.fb-preview{
+margin-top:20px;
+background:#fff;
+border-radius:18px;
+overflow:hidden;
+direction:ltr;
+}
+
+.fb-image{
+height:220px;
+background:
+linear-gradient(135deg,#0ea5e9,#06b6d4);
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:35px;
+font-weight:bold;
+}
+
+.fb-content{
+padding:15px;
+color:#000;
+}
+
+.fb-title{
+font-size:20px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+/* ===== Popup ===== */
+
+.popup{
+position:fixed;
+top:25px;
+right:25px;
+width:350px;
+padding:25px;
+border-radius:25px;
+background:rgba(15,23,42,.7);
+backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,.1);
+
+box-shadow:
+0 0 15px #0ea5e9,
+0 0 30px #0ea5e9,
+0 0 60px rgba(14,165,233,.5);
+
+display:none;
+z-index:99999;
+overflow:hidden;
+animation:show .5s ease;
+}
+
+.popup::before{
+content:'';
+position:absolute;
+width:200%;
+height:200%;
+top:-50%;
+left:-50%;
+
+background:conic-gradient(
+transparent,
+rgba(14,165,233,.5),
+transparent 30%
+);
+
+animation:rotate 4s linear infinite;
+}
+
+.popup-content{
+position:relative;
+z-index:2;
+}
+
+.popup h2{
+text-align:center;
+margin-bottom:10px;
+font-size:30px;
+text-transform:uppercase;
+
+animation:neon 1.5s infinite alternate;
+}
+
+.popup p{
+text-align:center;
+line-height:1.8;
+color:#cbd5e1;
+}
+
+.progress{
+height:6px;
+background:#1e293b;
+border-radius:20px;
+overflow:hidden;
+margin-top:18px;
+}
+
+.progress span{
+display:block;
+height:100%;
+background:
+linear-gradient(90deg,#06b6d4,#38bdf8);
+animation:load 3s linear forwards;
+}
+
+@keyframes show{
+
+from{
+opacity:0;
+transform:translateY(-20px) scale(.8);
+}
+
+to{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+
+}
+
+@keyframes rotate{
+
+100%{
+transform:rotate(360deg);
+}
+
+}
+
+@keyframes load{
+
+from{
+width:100%;
+}
+
+to{
+width:0%;
+}
+
+}
+
+/* ===== Theme ===== */
+
+.light-mode{
+background:#e2e8f0;
+color:#000;
+}
+
+.light-mode .glass{
+background:rgba(255,255,255,.6);
+}
+
+</style>
+
 </head>
 
 <body>
 
-  <div class="box">
-    <h1>مولد Meta Tags</h1>
+<div class="bg" id="bg"></div>
 
-    <div class="input-box">
-      <label>عنوان الموقع</label>
-      <input type="text" id="title" placeholder="مثال: القرماني X">
-    </div>
+<div class="container">
 
-    <div class="input-box">
-      <label>وصف الموقع</label>
-      <textarea id="description" placeholder="اكتب وصف الموقع هنا"></textarea>
-    </div>
+<div class="logo">
+alqurmani x
+</div>
 
-    <div class="input-box">
-      <label>الكلمات المفتاحية</label>
-      <input type="text" id="keywords" placeholder="مثال: القرماني, AQX, alqurmani x">
-    </div>
+<div class="subtitle">
+AQX Ultimate SEO + META + SCHEMA + PWA Generator
+</div>
 
-    <button onclick="generateMeta()">
-      توليد Meta Tags
-    </button>
+<div class="grid">
 
-    <div class="result">
-      <pre id="output"></pre>
+<!-- LEFT -->
 
-      <button class="copy-btn" onclick="copyCode()">
-        نسخ الكود
-      </button>
-    </div>
+<div class="glass">
 
-  </div>
+<div class="input-box">
+<label>عنوان الموقع</label>
+<input type="text" id="title">
+</div>
+
+<div class="input-box">
+<label>وصف الموقع</label>
+<textarea id="description"></textarea>
+</div>
+
+<div class="input-box">
+<label>الكلمات المفتاحية</label>
+<input type="text" id="keywords">
+</div>
+
+<div class="input-box">
+<label>رابط الموقع</label>
+<input type="text" id="url">
+</div>
+
+<div class="input-box">
+<label>اسم المؤلف</label>
+<input type="text" id="author">
+</div>
+
+<div class="buttons">
+
+<button onclick="generateAll()">
+توليد كل الملفات
+</button>
+
+<button onclick="copyAll()">
+نسخ الكل
+</button>
+
+<button onclick="downloadAll()">
+تحميل HTML
+</button>
+
+<button onclick="toggleTheme()">
+Dark / Light
+</button>
+
+</div>
+
+<div class="output">
+
+<pre id="output"></pre>
+
+</div>
+
+</div>
+
+<!-- RIGHT -->
+
+<div class="glass">
+
+<div class="preview-title">
+Google Preview
+</div>
+
+<div class="google-preview">
+
+<div class="title" id="gTitle">
+عنوان الموقع
+</div>
+
+<div class="url" id="gUrl">
+https://example.com
+</div>
+
+<div class="desc" id="gDesc">
+وصف الموقع يظهر هنا...
+</div>
+
+</div>
+
+<div class="preview-title" style="margin-top:25px">
+Facebook Preview
+</div>
+
+<div class="fb-preview">
+
+<div class="fb-image">
+AQX
+</div>
+
+<div class="fb-content">
+
+<div class="fb-title" id="fbTitle">
+عنوان الموقع
+</div>
+
+<div id="fbDesc">
+وصف الموقع
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Popup -->
+
+<div class="popup" id="popup">
+
+<div class="popup-content">
+
+<h2>alqurmani x</h2>
+
+<p>
+تم توليد جميع ملفات SEO بنجاح 🚀
+</p>
+
+<div class="progress">
+<span></span>
+</div>
+
+</div>
+
+</div>
 
 <script>
 
-function generateMeta(){
+/* ===== Background ===== */
 
-  let title = document.getElementById("title").value;
-  let description = document.getElementById("description").value;
-  let keywords = document.getElementById("keywords").value;
+for(let i=0;i<80;i++){
 
-  let code = `<!-- Primary Meta Tags -->
-<title>${title}</title>
+let s=document.createElement("span");
 
-<meta name="title" content="${title}">
-<meta name="description" content="${description}">
-<meta name="keywords" content="${keywords}">
-<meta name="robots" content="index, follow">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+s.style.left=Math.random()*100+"%";
 
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website">
-<meta property="og:title" content="${title}">
-<meta property="og:description" content="${description}">
+s.style.animationDuration=
+5+Math.random()*15+"s";
 
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:title" content="${title}">
-<meta property="twitter:description" content="${description}">`;
+s.style.opacity=Math.random();
 
-  document.getElementById("output").textContent = code;
+document.getElementById("bg").appendChild(s);
+
 }
 
-function copyCode(){
+/* ===== Save ===== */
 
-  let text = document.getElementById("output").textContent;
+function saveData(){
 
-  navigator.clipboard.writeText(text);
+localStorage.setItem(
+"aqxData",
 
-  alert("تم نسخ الكود بنجاح");
+JSON.stringify({
+
+title:title.value,
+description:description.value,
+keywords:keywords.value,
+url:url.value,
+author:author.value
+
+})
+
+);
+
+}
+
+/* ===== Load ===== */
+
+window.onload=()=>{
+
+let data=
+JSON.parse(localStorage.getItem("aqxData"));
+
+if(data){
+
+title.value=data.title;
+description.value=data.description;
+keywords.value=data.keywords;
+url.value=data.url;
+author.value=data.author;
+
+generateAll();
+
+}
+
+}
+
+/* ===== Generate ===== */
+
+function generateAll(){
+
+saveData();
+
+let t=title.value || "AQX";
+let d=description.value || "Website Description";
+let k=keywords.value || "";
+let u=url.value || "https://example.com";
+let a=author.value || "AQX";
+
+/* Preview */
+
+gTitle.innerText=t;
+gUrl.innerText=u;
+gDesc.innerText=d;
+
+fbTitle.innerText=t;
+fbDesc.innerText=d;
+
+/* Robots */
+
+let robots=
+`User-agent: *
+Allow: /
+
+Sitemap: ${u}/sitemap.xml`;
+
+/* Sitemap */
+
+let sitemap=
+`<?xml version="1.0" encoding="UTF-8"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+<url>
+<loc>${u}</loc>
+<priority>1.00</priority>
+</url>
+
+</urlset>`;
+
+/* Manifest */
+
+let manifest=
+`{
+"name":"${t}",
+"short_name":"${t}",
+"start_url":"${u}",
+"display":"standalone",
+"background_color":"#020617",
+"theme_color":"#00d9ff"
+}`;
+
+/* Meta */
+
+let meta=
+`<!-- META TAGS -->
+
+<title>${t}</title>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<meta name="title"
+content="${t}">
+
+<meta name="description"
+content="${d}">
+
+<meta name="keywords"
+content="${k}">
+
+<meta name="author"
+content="${a}">
+
+<meta name="robots"
+content="index, follow">
+
+<link rel="canonical"
+href="${u}">
+
+<!-- Open Graph -->
+
+<meta property="og:type"
+content="website">
+
+<meta property="og:title"
+content="${t}">
+
+<meta property="og:description"
+content="${d}">
+
+<meta property="og:url"
+content="${u}">
+
+<!-- Twitter -->
+
+<meta property="twitter:card"
+content="summary_large_image">
+
+<meta property="twitter:title"
+content="${t}">
+
+<meta property="twitter:description"
+content="${d}">
+
+<!-- JSON-LD -->
+
+<script type="application/ld+json">
+
+{
+"@context":"https://schema.org",
+"@type":"WebSite",
+"name":"${t}",
+"url":"${u}",
+"description":"${d}",
+"author":{
+"@type":"Person",
+"name":"${a}"
+}
+}
+
+<\/script>
+
+/* robots.txt */
+
+${robots}
+
+/* sitemap.xml */
+
+${sitemap}
+
+/* manifest.json */
+
+${manifest}`;
+
+output.textContent=meta;
+
+showPopup();
+
+}
+
+/* ===== Copy ===== */
+
+function copyAll(){
+
+navigator.clipboard.writeText(
+output.textContent
+);
+
+showPopup("تم النسخ بنجاح");
+
+}
+
+/* ===== Download ===== */
+
+function downloadAll(){
+
+let blob=
+new Blob(
+[output.textContent],
+{type:"text/html"}
+);
+
+let a=document.createElement("a");
+
+a.href=
+URL.createObjectURL(blob);
+
+a.download="aqx-seo.html";
+
+a.click();
+
+showPopup("تم التحميل");
+
+}
+
+/* ===== Popup ===== */
+
+function showPopup(){
+
+popup.style.display="block";
+
+setTimeout(()=>{
+
+popup.style.display="none";
+
+},3000);
+
+}
+
+/* ===== Theme ===== */
+
+function toggleTheme(){
+
+document.body.classList.toggle(
+"light-mode"
+);
+
+}
+
+/* ===== Auto Update ===== */
+
+document.querySelectorAll(
+"input,textarea"
+).forEach(el=>{
+
+el.addEventListener(
+"input",
+generateAll
+);
+
+});
+
+/* ===== PWA ===== */
+
+if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register(
+"sw.js"
+);
+
 }
 
 </script>
 
 </body>
+
 </html>

@@ -149,7 +149,7 @@
             const searchWidget = document.getElementById('alqurmani-search');
             const searchBtn = document.getElementById('q-search-trigger');
             
-            const targetSearchURL = '#'; 
+            const targetSearchURL = 'https://alqurmanix.alqurmanix.com/aqx-search.html'; 
 
             searchBtn.addEventListener('click', () => {
                 if (!searchWidget.classList.contains('active')) {

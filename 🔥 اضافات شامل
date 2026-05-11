@@ -1,1 +1,121 @@
 
+<script>
+(() => {
+
+  // ===================== AUTO DATA SCRAPING =====================
+  const title =
+    document.querySelector("h1")?.innerText ||
+    document.title ||
+    "AQX - القرماني اكس";
+
+  const desc =
+    document.querySelector("meta[name='description']")?.content ||
+    document.querySelector("p")?.innerText ||
+    "منصة AQX - القرماني اكس";
+
+  const url = location.href;
+
+  const img =
+    document.querySelector("img")?.src ||
+    document.querySelector("meta[property='og:image']")?.content ||
+    "https://alqurmanix.alqurmanix.com/logo.png";
+
+  const author =
+    document.querySelector("meta[name='author']")?.content ||
+    "محمد بسيوني (أبو عبدالله القرماني)";
+
+  const now = new Date().toISOString().split("T")[0];
+
+  // ===================== TITLE AUTO =====================
+  document.title = title + " | AQX";
+
+  // ===================== META CREATOR =====================
+  const setMeta = (name, content, prop = false) => {
+    if (!content) return;
+    const m = document.createElement("meta");
+    if (prop) m.setAttribute("property", name);
+    else m.name = name;
+    m.content = content;
+    document.head.appendChild(m);
+  };
+
+  // ===================== BASIC SEO =====================
+  setMeta("description", desc);
+  setMeta("robots", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
+
+  // ===================== OPEN GRAPH =====================
+  setMeta("og:type", "article", true);
+  setMeta("og:title", title, true);
+  setMeta("og:description", desc, true);
+  setMeta("og:url", url, true);
+  setMeta("og:image", img, true);
+  setMeta("og:site_name", "AQX - القرماني اكس", true);
+
+  // ===================== TWITTER =====================
+  setMeta("twitter:card", "summary_large_image");
+  setMeta("twitter:title", title);
+  setMeta("twitter:description", desc);
+  setMeta("twitter:image", img);
+
+  // ===================== CANONICAL AUTO =====================
+  const link = document.createElement("link");
+  link.rel = "canonical";
+  link.href = url;
+  document.head.appendChild(link);
+
+  // ===================== JSON-LD AUTO (ARTICLE + ORGANIZATION) =====================
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": title,
+    "description": desc,
+    "image": img,
+    "author": {
+      "@type": "Person",
+      "name": author
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "AQX - القرماني اكس",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://alqurmanix.alqurmanix.com/logo.png"
+      }
+    },
+    "datePublished": now,
+    "dateModified": now,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": url
+    }
+  };
+
+  const script = document.createElement("script");
+  script.type = "application/ld+json";
+  script.text = JSON.stringify(schema);
+  document.head.appendChild(script);
+
+})();
+</script>
+
+<!-- ===================== AQX FULL AUTO SEO ENGINE END ===================== -->
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌏</text></svg>">
+
+<meta name="theme-color" content="#40E0D0">
+
+
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<script>
+const allowed = [
+  "alqurmanix.alqurmanix.com",
+  "localhost"
+];
+
+if (!allowed.includes(location.hostname)) {
+  location.replace("https://alqurmanix.alqurmanix.com/");
+}
+</script>

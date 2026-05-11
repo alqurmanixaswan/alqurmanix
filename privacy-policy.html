@@ -1,6 +1,239 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <div id="qx-gold-space">
+
+    <div id="qx-trigger-btn">
+        <span id="qx-btn-text">نورتنا ✨</span>
+        <div id="qx-hide-btn" title="إخفاء نهائي">×</div>
+    </div>
+
+    <div id="qx-dua-overlay">
+        <div class="qx-dua-card">
+            <div class="qx-close-x" onclick="closeGoldDua()">×</div>
+            <div class="qx-badge-label">رسالة قرمانية</div>
+            <p id="qx-dua-content"></p>
+            <div class="qx-gold-line"></div>
+            <div class="qx-user-name">مؤسس alqurmani x</div>
+            <div class="qx-user-sub">محمد بسيوني</div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+/* إعدادات الألوان */
+:root { --main-clr: #bf953f; }
+
+#qx-trigger-btn {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    background: var(--main-clr);
+    color: #000;
+    padding: 12px 22px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: grab;
+    z-index: 9999999;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    user-select: none;
+    direction: rtl;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s;
+}
+
+#qx-trigger-btn:active {
+    cursor: grabbing;
+}
+
+/* زر الإغلاق الذي يظهر بعد الضغطة المطولة */
+#qx-hide-btn {
+    display: none;
+    background: #ff4c4c;
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 76, 76, 0.6);
+    animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+#qx-dua-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 99999999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.qx-dua-card {
+    background: #0a0a0a;
+    border: 2px solid var(--main-clr);
+    padding: 40px 25px;
+    max-width: 500px;
+    width: 85%;
+    text-align: center;
+    color: #fff;
+    border-radius: 20px;
+    position: relative;
+    direction: rtl;
+}
+
+.qx-badge-label {
+    background: var(--main-clr);
+    color: #000;
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+#qx-dua-content {
+    font-size: 19px;
+    line-height: 1.7;
+    color: #eee;
+    margin: 15px 0;
+}
+
+.qx-gold-line {
+    width: 60px;
+    height: 3px;
+    background: var(--main-clr);
+    margin: 20px auto;
+}
+
+.qx-user-name { font-size: 22px; font-weight: bold; }
+.qx-user-sub { color: var(--main-clr); margin-top: 5px; }
+
+.qx-close-x {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    color: var(--main-clr);
+    font-size: 35px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.qx-close-x:hover { color: #fff; }
+</style>
+
+<script>
+(function() {
+    // 1. النصوص (بدون تشكيل)
+    const homeText = "اللهم اجعل هذا العمل شاهدا لي لا علي، واجعله خالصا لوجهك الكريم، وفي ميزان حسناتي وحسنات والدي، وارزقني فيه الاخلاص والقبول، وبارك لي فيه، واجعل كل حرف فيه سببا في رزق واسع لي، واغفر لي به ذنوبي، وارفع به درجاتي، وانفع به عبادك، ولا تجعل فيه رياء ولا سمعة، واجعله صدقة جارية لي ولوالدي يا أرحم الراحمين.";
+
+    const otherTexts = [
+        "اللهم ارزقني رزقا حلالا طيبا مباركا فيه.",
+        "اللهم افتح لي ابواب الخير والتوفيق.",
+        "اللهم بارك لي في عملي واجعله نفعا للناس.",
+        "اللهم اجعل هذا العمل نورا لي في الدنيا والآخرة.",
+        "اللهم وفقني لما تحب وترضى.",
+        "اللهم ارزقني التوفيق وسداد الرأي.",
+        "اللهم ارزقني النجاح والفلاح في كل اموري."
+    ];
+
+    const altColors = ["#3498db", "#2ecc71", "#e67e22", "#e91e63", "#9b59b6"];
+
+    window.addEventListener("load", function() {
+        const btn = document.getElementById("qx-trigger-btn");
+        const box = document.getElementById("qx-dua-overlay");
+        const txt = document.getElementById("qx-dua-content");
+        const hideBtn = document.getElementById("qx-hide-btn");
+
+        if (!btn || !box || !txt) return;
+
+        // 2. فحص الصفحة متوافق مع GitHub Pages
+        const path = window.location.pathname;
+        const isHomePage = path === "/" || path.endsWith("/index.html") || path.split('/').pop() === "";
+
+        if (isHomePage) {
+            // الصفحة الرئيسية
+            txt.innerHTML = homeText;
+            document.documentElement.style.setProperty("--main-clr", "#bf953f");
+        } else {
+            // الصفحات الداخلية
+            const randomTxt = otherTexts[Math.floor(Math.random() * otherTexts.length)];
+            const randomClr = altColors[Math.floor(Math.random() * altColors.length)];
+            txt.innerHTML = randomTxt;
+            document.documentElement.style.setProperty("--main-clr", randomClr);
+        }
+
+        // 3. نظام الإغلاق والنافذة
+        window.closeGoldDua = function() { box.style.display = "none"; };
+        box.onclick = function(e) { if(e.target === box) closeGoldDua(); };
+
+        // 4. نظام السحب (Drag) والضغطة المطولة (Long Press)
+        let isMoving = false, isDragging = false, px, py;
+        let pressTimer;
+
+        // عند بداية الضغط (ماوس أو لمس)
+        btn.onmousedown = btn.ontouchstart = function(e) {
+            if(e.target === hideBtn) return; // تجاهل إذا كان الضغط على زر X نفسه
+
+            isMoving = true;
+            isDragging = false;
+            let ev = e.touches ? e.touches[0] : e;
+            px = ev.clientX - btn.offsetLeft;
+            py = ev.clientY - btn.offsetTop;
+
+            // بدء مؤقت الضغطة المطولة (1000 ملي ثانية = ثانية واحدة)
+            pressTimer = window.setTimeout(function() {
+                hideBtn.style.display = "block"; // إظهار زر الإخفاء
+            }, 1000);
+        };
+
+        // أثناء السحب
+        document.onmousemove = document.ontouchmove = function(e) {
+            if (!isMoving) return;
+            isDragging = true; // المستخدم يقوم بالسحب وليس مجرد نقرة
+            clearTimeout(pressTimer); // إلغاء الضغطة المطولة لأن المستخدم يسحب
+
+            let ev = e.touches ? e.touches[0] : e;
+            btn.style.left = (ev.clientX - px) + "px";
+            btn.style.top = (ev.clientY - py) + "px";
+            btn.style.bottom = "auto";
+        };
+
+        // عند رفع الإصبع/الماوس
+        document.onmouseup = document.ontouchend = function() { 
+            isMoving = false; 
+            clearTimeout(pressTimer); // إلغاء المؤقت إذا رفع يده قبل ثانية
+        };
+
+        // حدث النقر على الزر الرئيسي
+        btn.onclick = function(e) {
+            // إذا كان النقرة على علامة X
+            if (e.target === hideBtn) {
+                btn.style.display = "none"; // إخفاء الزر نهائياً حتى يتم تحديث الصفحة
+                e.stopPropagation();
+                return;
+            }
+            
+            // فتح النافذة فقط إذا لم يكن المستخدم يقوم بالسحب
+            if (!isDragging) {
+                box.style.display = "flex";
+                hideBtn.style.display = "none"; // إعادة إخفاء X عند فتح النافذة
+            }
+        };
+    });
+})();
+</script>
     <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>

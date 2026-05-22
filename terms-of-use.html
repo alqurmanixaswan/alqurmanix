@@ -1,94 +1,300 @@
-<!-- مُعرّفات وثيقة السياسة السيادية لمنصة القرماني إكس -->
-<div align="center">
-  
-  <!-- الشعار الفاخر للهوية -->
-  <kbd>
-    <img src="https://img.shields.io/badge/ALQURMANIX_X-AQX-goldenrod?style=for-the-badge&logo=shield&logoColor=white&labelColor=black" alt="AQX Identity" height="35">
-  </kbd>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وثيقة سياسة الخصوصية الرسمية | AQX Protocol</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
 
-  <br><br>
+        :root {
+            --bg-color: #0b0b0b;
+            --card-bg: #121212;
+            --primary-gold: #D4AF37;
+            --secondary-gold: #AA7C11;
+            --text-color: #E0E0E0;
+            --muted-text: #A0A0A0;
+            --border-color: #222222;
+        }
 
-  <!-- العنوان الرئيسي الملكي -->
-  <h1 style="font-size: 2.8em; font-weight: 800; color: #D4AF37; letter-spacing: 2px; margin-bottom: 0px;">
-    📜 الميثاق القانوني والسيادي لحماية الخصوصية
-  </h1>
-  <p style="font-size: 1.3em; color: #888; font-style: italic; margin-top: 5px;">
-    The Ultimate Privacy & Data Governance Protocol for Alqurmanix (AQX)
-  </p>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.8;
+        }
 
-  <!-- شارات الحالة والتوثيق الرقمي (Badges) -->
-  <img src="https://img.shields.io/badge/الوضع_القانوني-مـعـتـمـد_ومـلـزم-black?style=flat-square&logo=gitbook&logoColor=D4AF37&color=111111" alt="Legal Status">
-  <img src="https://img.shields.io/badge/التصنيف-سري_وللغاية-black?style=flat-square&logo=probot&logoColor=red&color=111111" alt="Classification">
-  <img src="https://img.shields.io/badge/تحديث_النظام-2026_V4.0-black?style=flat-square&logo=speedtest&logoColor=00E676&color=111111" alt="Version">
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-top: 5px solid var(--primary-gold);
+            border-radius: 8px;
+            padding: 50px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
 
-  <br><br>
-  
-  <!-- خط فاصل إمبراطوري مخصص -->
-  <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="100%">
+        .header {
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 40px;
+            margin-bottom: 40px;
+        }
 
-</div>
+        .logo-badge {
+            background: linear-gradient(135deg, #1a1a1a, #000000);
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            display: inline-block;
+            padding: 8px 25px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+        }
 
-<br>
+        h1 {
+            color: var(--primary-gold);
+            font-size: 2.3rem;
+            font-weight: 800;
+            margin: 10px 0;
+        }
 
-<!-- اقتباس تمهيدي رفيع المستوى -->
-<blockquote>
-  <p align="right" style="font-size: 1.1em; line-height: 1.8; color: #E0E0E0;">
-    <b>إعلان سيادي:</b> تُعد هذه الوثيقة الرقمية بمثابة معاهدة استخدام ملزمة قانوناً وصارمة التطبيق. إن مجرد الولوج إلى الأنظمة والمنصات التابعة لـ <b>القرماني إكس (Alqurmanix - AQX)</b> يعد إقراراً واعياً ومطلقاً بالخضوع التام لكافة المعايير والبنود الدستورية الواردة في هذا الميثاق.
-  </p>
-</blockquote>
+        .subtitle {
+            color: var(--muted-text);
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-top: 5px;
+        }
 
-<br>
+        .meta-tags {
+            margin-top: 20px;
+        }
 
-<!-- القسم الأول: تصنيف وهيكلة البيانات -->
-## 🏛️ 01. بروتوكول حصر وهيكلة البيانات (Data Ingestion Protocol)
+        .tag {
+            display: inline-block;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 3px;
+            margin: 0 5px;
+            color: var(--text-color);
+        }
 
-تخضع عمليات جمع البيانات في منصة **AQX** لرقابة خوارزمية دقيقة، حيث تُصنّف البيانات التي يتم التعامل معها إلى مسارات معزولة تضمن الأمان المطلق:
+        .tag.active {
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+        }
 
-<br>
+        blockquote {
+            border-right: 4px solid var(--primary-gold);
+            background: rgba(212, 175, 55, 0.03);
+            margin: 30px 0;
+            padding: 20px;
+            border-radius: 0 4px 4px 0;
+            font-style: italic;
+        }
 
-<table width="100%">
-  <thead>
-    <tr style="background-color: #111111; color: #D4AF37;">
-      <th width="30%" align="right">📂 فئة البيانات</th>
-      <th width="45%" align="right">🔍 العناصر المشمولة بالرصد</th>
-      <th width="25%" align="center">🛡️ مستوى التشفير</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><b>الهوية الرقمية السيادية</b></td>
-      <td>الاسم الثلاثي، معرّفات الحساب الموثقة، العناوين المشفرة، والبريد الإلكتروني المؤسسي.</td>
-      <td align="center"><code style="color: #D4AF37;">AES-GCM-256</code></td>
-    </tr>
-    <tr>
-      <td><b>المعاملات والتفاعل التقني</b></td>
-      <td>عناوين الـ IP الديناميكية، البصمة الرقمية للجهاز (Device Fingerprint)، وسجلات الجلسات الحية.</td>
-      <td align="center"><code style="color: #00E676;">TLS 1.3 Secure</code></td>
-    </tr>
-    <tr>
-      <td><b>البيانات المالية والتعاقدية</b></td>
-      <td>سجلات وتدفقات الخدمات الرقمية، أرشيف المعاملات، والمستندات والشهادات المرفوعة.</td>
-      <td align="center"><code style="color: #D4AF37;">End-to-End Vault</code></td>
-    </tr>
-  </tbody>
-</table>
+        h2 {
+            color: var(--primary-gold);
+            font-size: 1.6rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-top: 40px;
+            font-weight: 700;
+        }
 
-<br>
+        h3 {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            margin-top: 25px;
+            font-weight: 600;
+        }
 
-<!-- القسم الثاني: معالجة البيانات وأغراضها -->
-## ⚙️ 02. الحوكمة التنفيذية والمعالجة الذكية (Data Governance)
+        p, ul {
+            color: var(--text-color);
+            font-size: 1.05rem;
+            text-align: justify;
+        }
 
-لا يتم تحريك أو معالجة أي جزء من بياناتكم داخل أنظمة **Alqurmanix** إلا من خلال عمليات مؤتمتة بالكامل لخدمة الأغراض الاستراتيجية التالية:
+        ul {
+            padding-right: 20px;
+        }
 
-* **الهندسة التشغيلية المستدامة:** لإنشاء بيئة عمل مخصصة وفورية تضمن أعلى مستويات الكفاءة والسرعة لمستخدمي **AQX**.
-* **التحصين الأمني الوقائي:** تحليل أنماط التصفح والولوج بشكل استباقي لرصد الهجمات السيبرانية أو محاولات الاختراق وكسر الصلاحيات قبل حدوثها.
-* **الامتثال التشريعي الدولي:** مطابقة البيانات المرفوعة مع المعايير الدولية لحوكمة البيانات والخصوصية المعتمدة لعام 2026.
+        li {
+            margin-bottom: 10px;
+        }
 
-<br>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-size: 0.95rem;
+        }
 
-<!-- القسم الثالث: حظر مشاركة البيانات -->
-## 🚫 03. ميثاق الحظر المطلق للطرف الثالث (Non-Disclosure & Anti-Trade)
+        th {
+            background-color: #161616;
+            color: var(--primary-gold);
+            text-align: right;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            font-weight: 700;
+        }
 
-```diff
-- [تحذير صارم] يحظر حظراً تاماً وبموجب القوانين الجنائية الرقمية بيع أو مشاركة بيانات مستخدمي AQX.
-+ [مبدأ راسخ] تبقى كافة البيانات مخزنة في خوادم سحابية معزولة ومحمية ومملوكة حصرياً لـ القرماني إكس.
+        td {
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255,255,255,0.01);
+        }
+
+        .alert-box {
+            background: rgba(211, 47, 47, 0.05);
+            border: 1px solid #d32f2f;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 30px 0;
+            color: #ef5350;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--muted-text);
+        }
+
+        .footer p {
+            text-align: center;
+        }
+
+        a {
+            color: var(--primary-gold);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--secondary-gold);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="header">
+            <div class="logo-badge">ALQURMANIX X | AQX</div>
+            <h1>📜 ميثاق سياسة الخصوصية والحوكمة القانونية</h1>
+            <div class="subtitle">المعاهدة الرسمية الملزمة لحماية وحصر البيانات الرقمية لعام 2026</div>
+            
+            <div class="meta-tags">
+                <span class="tag active">الوضع: سارية ومفعّلة</span>
+                <span class="tag">التصنيف: وثيقة سيادية</span>
+                <span class="tag">الإصدار: V4.1.0</span>
+            </div>
+        </div>
+
+        <blockquote>
+            <b>إعلان دستوري صارم:</b> تُشكل هذه الوثيقة الرقمية اتفاقية قانونية ملزمة وشاملة بين إدارة منصة <b>القرماني إكس (Alqurmanix - AQX)</b> وبين أي مستخدم يتفاعل مع بروتوكولاتها التشغيلية. إن تصفحك أو استخدامك للمنصة يُعد إقراراً واعياً ومطلقاً بالخضوع التام لكافة المعايير والبنود القانونية الواردة أدناه.
+        </blockquote>
+
+        <h2>🏛️ المادة الأولى: التمهيد والصفة التشريعية</h2>
+        <p>تضع منصة <b>القرماني إكس (AQX)</b> حماية البيانات الرقمية والسيادة السيبرانية للمستخدمين في صدارة أولوياتها الاستراتيجية. تم صياغة هذا الميثاق ليكون مرجعاً قانونياً صارماً يوضح آليات معالجة وتخزين وحماية المعلومات، ومطابقتها التامة مع أحدث التشريعات الدولية المنظمة للأمن الرقمي لعام 2026.</p>
+
+        <h2>🔍 المادة الثانية: بنية البيانات الخاضعة للحصر</h2>
+        <p>بموجب مبدأ الحد الأدنى من البيانات، تقتصر عمليات الجمع والمعالجة على المسارات الحتمية لتسيير الخدمات وضمان استقرار الأنظمة:</p>
+        
+        <h3>1. البيانات المباشرة بإرادة المستخدم</h3>
+        <ul>
+            <li>معلومات الهوية الفردية: الأسماء الكاملة، معرّفات الحسابات الموثقة، وعناوين البريد الإلكتروني الرسمية.</li>
+            <li>المستندات والرموز البرمجية المرفوعة بهدف المعالجة أو التخزين المؤقت.</li>
+        </ul>
+
+        <h3>2. البيانات التقنية التلقائية</h3>
+        <ul>
+            <li>عناوين بروتوكول الإنترنت (IP Addresses) والبصمات الرقمية للأجهزة لغرض الحماية الاستباقية.</li>
+            <li>سجلات الأنشطة الفنية (Logs)، طوابع الوقت، ونوع البيئة التشغيلية للمتصفحات.</li>
+        </ul>
+
+        <h2>⚙️ المادة الثالثة: حوكمة وأغراض المعالجة الآلية</h2>
+        <p>تتم معالجة كافة الأصول الرقمية المجمعة من خلال خوارزميات مشفرة ومؤتمتة بالكامل لخدمة الأغراض التالية دون سواها:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>سياق المعالجة</th>
+                    <th>الهدف الاستراتيجي</th>
+                    <th>المعيار الأمني</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>إدارة الحسابات</b></td>
+                    <td>تفعيل وضمان كفاءة الخدمات التشغيلية للمستخدم.</td>
+                    <td>تشفير تام صلب</td>
+                </tr>
+                <tr>
+                    <td><b>التحصين السيبراني</b></td>
+                    <td>رصد الهجمات الإلكترونية والدخول غير المصرح به وإحباطها.</td>
+                    <td>مراقبة استباقية 24/7</td>
+                </tr>
+                <tr>
+                    <td><b>الامتثال التشريعي</b></td>
+                    <td>مطابقة المعايير الفنية مع حوكمة البيانات الدولية.</td>
+                    <td>Zero-Knowledge</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>🚫 المادة الرابعة: حظر مشاركة البيانات والتعامل التجاري</h2>
+        <div class="alert-box">
+            <b>تحذير جنائي صارم:</b> تحظر إدارة القرماني إكس (Alqurmanix) حظراً باتاً وقاطعاً بيع، أو تأجير، أو إفشاء، أو مبادلة أي جزء من بيانات المستخدمين مع أي أطراف ثالثة إعلانية أو تجارية بغرض تحقيق مكاسب مالية. البيانات أصول سيادية غير قابلة للتداول.
+        </div>
+        <p>ولا يتم استثناء هذا الحظر إلا في حالتين حصريتين:</p>
+        <ul>
+            <li>صدور أمر قضائي صريح ونهائي نافذ من سلطة قانونية عليا وموجه مباشرة للمنصة.</li>
+            <li>مُعالجو البنية التحتية السحابية العالمية المرتبطون بعقود حماية بيانات صارمة ومطابقة لمعايير AQX.</li>
+        </ul>
+
+        <h2>🛡️ المادة الخامسة: بروتوكولات التحصين والأمن الرقمي</h2>
+        <p>تعتمد منظومة <b>AQX</b> على بنية تحتية عسكرية لحماية الخوادم والبيانات ضد أي تهديدات رقمية:</p>
+        <ul>
+            <li><b>التشفير السيادي:</b> يتم تشفير البيانات أثناء النقل عبر بروتوكولات <code>TLS 1.3</code> وتشفيرها أثناء التخزين الثابت بخوارزميات <code>AES-256-GCM</code>.</li>
+            <li><b>عزل الصلاحيات:</b> لا تمنح المنصة أي حق وصول مباشر للمطورين أو المهندسين لكلمات المرور المشفرة أحادية الاتجاه.</li>
+            <li><b>النسخ الاحتياطي السحابي المستمر:</b> حفظ نسخ احتياطية معزولة جغرافياً لضمان عدم فقدان البيانات تحت أي ظرف طارئ أو قاهر.</li>
+        </ul>
+
+        <h2>📑 المادة السادسة: الحقوق الدستورية للمستخدم الرقمي</h2>
+        <p>تضمن المنصة للمستخدم ممارسة كامل حقوقه السيادية على بياناته دون قيد أو شرط:</p>
+        <ul>
+            <li><b>حق الوصول والمعرفة:</b> الاطلاع الكامل على نوع وحجم البيانات المخزنة وآلية معالجتها.</li>
+            <li><b>حق التحديث والتصحيح:</b> تعديل أو تحديث أي بيانات تالفة أو غير دقيقة مرتبطة بحسابه.</li>
+            <li><b>حق المحو الشامل (حق النسيان):</b> طلب حذف حسابه وكافة بياناته وسجلاته نهائياً من الخوادم، ويتم التنفيذ برمجياً خلال 72 ساعة كحد أقصى.</li>
+        </ul>
+
+        <h2>🔄 المادة السابعة: التحديثات الدورية والقنوات الرسمية</h2>
+        <p>تمتلك إدارة القرماني إكس الحق المطلق في تعديل وتطوير هذه الوثيقة لمواكبة التغيرات التشريعية. وتُعتبر التغييرات سارية بمجرد تحديث هذا الملف الرسمي.</p>
+
+        <div class="footer">
+            <p>لأي استفسارات قانونية أو بلاغات أمنية، يرجى التواصل مع مكتب حماية البيانات عبر القنوات المعتمدة:</p>
+            <p>البريد المباشر: <a href="mailto:legal@alqurmanix.com">legal@alqurmanix.com</a> | المنصة الرئيسية: <a href="https://alqurmanix.com" target="_blank">Alqurmanix Global</a></p>
+            <hr style="border-color: var(--border-color); margin: 20px 0;">
+            <p>حقوق الطبع والنشر والسيادة الرقمية © 2026 محفوظة بالكامل لمنصة القرماني إكس (Alqurmanix - AQX).</p>
+        </div>
+
+    </div>
+
+</body>
+</html>

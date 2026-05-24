@@ -2,165 +2,190 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>توظيف أفراد أمن - شركة ايه جى للأمن والحراسة | AQX</title>  <!-- SEO Meta -->  <meta name="description" content="فرص عمل مميزة لدى شركة ايه جى للأمن والحراسة في الساحل الشمالي والعلمين. رواتب مجزية، سكن، مواصلات. قدم الآن لوظيفة أفراد أمن." />
-  <meta name="keywords" content="وظائف أمن, توظيف أفراد أمن, وظائف الساحل الشمالي, وظائف العلمين, شركة ايه جى للأمن والحراسة, AQX, وظائف حراسة" />
-  <meta name="author" content="alqurmani x - AQX" />  <!-- Open Graph -->  <meta property="og:title" content="وظائف أفراد أمن - شركة ايه جى للأمن والحراسة" />
-  <meta property="og:description" content="قدم الآن لوظيفة أفراد أمن برواتب مجزية وسكن ومواصلات." />
-  <meta property="og:type" content="website" />  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0a0a0a, #1c1c1c);
-      color: #fff;
+  <title>AQX | القرماني هاب - وظائف أفراد أمن</title>  <meta name="description" content="فرص عمل فاخرة لدى شركة ايه جى للأمن والحراسة AQX برواتب مميزة وسكن ومواصلات." />  <style>
+    body{
+      margin:0;
+      font-family:Arial;
+      background:#050505;
+      color:#fff;
+      overflow-x:hidden;
     }
 
-    header {
-      padding: 40px 20px;
-      text-align: center;
-      background: linear-gradient(90deg, #000, #1f1f1f);
-      border-bottom: 2px solid gold;
+    /* GOLD PARTICLES BACKGROUND */
+    .particles {
+      position:fixed;
+      width:100%;
+      height:100%;
+      top:0;
+      left:0;
+      pointer-events:none;
+      z-index:0;
     }
 
-    .badge {
-      display: inline-block;
-      padding: 8px 16px;
-      border: 1px solid gold;
-      border-radius: 30px;
-      color: gold;
-      font-weight: bold;
-      margin-bottom: 10px;
+    .particle {
+      position:absolute;
+      width:4px;
+      height:4px;
+      background:gold;
+      border-radius:50%;
+      opacity:0.6;
+      animation: float 6s infinite ease-in-out;
     }
 
-    h1 {
-      margin: 10px 0;
-      font-size: 28px;
-      color: #ffd700;
+    @keyframes float {
+      0% {transform:translateY(0) translateX(0); opacity:0.2;}
+      50% {opacity:1;}
+      100% {transform:translateY(-800px) translateX(50px); opacity:0;}
     }
 
-    .container {
-      padding: 20px;
-      max-width: 1100px;
-      margin: auto;
+    header{
+      position:relative;
+      z-index:2;
+      text-align:center;
+      padding:60px 20px;
+      background:linear-gradient(90deg,#000,#1a1a1a);
+      border-bottom:2px solid gold;
     }
 
-    .card {
-      background: #141414;
-      border: 1px solid #333;
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 15px rgba(255,215,0,0.1);
+    .logo{
+      font-size:28px;
+      font-weight:bold;
+      color:gold;
+      letter-spacing:2px;
+      animation: glow 2s infinite alternate;
     }
 
-    .highlight {
-      color: gold;
-      font-weight: bold;
+    @keyframes glow{
+      from{ text-shadow:0 0 5px gold; }
+      to{ text-shadow:0 0 25px gold; }
     }
 
-    .btn {
-      display: inline-block;
-      padding: 12px 20px;
-      margin: 10px 5px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: 0.3s;
+    h1{
+      margin-top:10px;
+      font-size:26px;
     }
 
-    .btn-whatsapp {
-      background: #25D366;
-      color: #fff;
+    .container{
+      position:relative;
+      z-index:2;
+      max-width:1000px;
+      margin:auto;
+      padding:20px;
     }
 
-    .btn-apply {
-      background: gold;
-      color: #000;
+    .card{
+      background:#111;
+      border:1px solid #333;
+      border-radius:15px;
+      padding:20px;
+      margin:15px 0;
+      transition:0.3s;
     }
 
-    .btn:hover {
-      transform: scale(1.05);
+    .card:hover{
+      transform:scale(1.02);
+      border-color:gold;
+      box-shadow:0 0 20px rgba(255,215,0,0.2);
     }
 
-    ul {
-      line-height: 2;
+    .gold{
+      color:gold;
+      font-weight:bold;
     }
 
-    footer {
-      text-align: center;
-      padding: 20px;
-      border-top: 1px solid #333;
-      color: #aaa;
+    .btn{
+      display:inline-block;
+      padding:12px 18px;
+      margin:10px 5px;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:bold;
+      transition:0.3s;
+    }
+
+    .btn:hover{
+      transform:scale(1.1);
+    }
+
+    .whatsapp{
+      background:#25D366;
+      color:#fff;
+    }
+
+    .apply{
+      background:gold;
+      color:#000;
+      animation:pulse 1.5s infinite;
+    }
+
+    @keyframes pulse{
+      0%{box-shadow:0 0 0 0 rgba(255,215,0,0.5);}
+      100%{box-shadow:0 0 0 15px rgba(255,215,0,0);}
+    }
+
+    ul{line-height:2;}
+
+    footer{
+      text-align:center;
+      padding:30px;
+      color:#aaa;
+      border-top:1px solid #333;
     }
   </style></head>
-<body><header>
-  <div class="badge">AG SECURITY | AQX</div>
-  <h1>توظيف أفراد أمن - فرص عمل مميزة</h1>
-  <p>شركة ايه جى للأمن والحراسة - الساحل الشمالي & العلمين</p>
+<body><div class="particles" id="particles"></div><header>
+  <div class="logo">القرماني هاب | AQX</div>
+  <h1>وظائف أفراد أمن - فرصة عمل فاخرة</h1>
+  <p>شركة ايه جى للأمن والحراسة - الساحل الشمالي والعلمين</p>
 </header><div class="container">  <div class="card">
+    <h2>💼 تفاصيل الوظيفة</h2>
+    <ul>
+      <li>ساعات العمل: 12 ساعة</li>
+      <li class="gold">راتب أسبوعي: 700 جنيه (تحفيزي)</li>
+      <li>سكن + مواصلات متوفرة</li>
+    </ul>
+  </div>  <div class="card">
     <h2>📍 مواقع العمل</h2>
     <ul>
-      <li>الساحل الشمالي - زاوية العوام - قرية منتن فيو</li>
+      <li>الساحل الشمالي - قرية منتن فيو</li>
       <li>العلمين - قرية بو آيلاند</li>
     </ul>
   </div>  <div class="card">
-    <h2>💰 الرواتب</h2>
+    <h2>💰 الرواتب الأساسية</h2>
     <ul>
-      <li><span class="highlight">9000 جنيه</span> على 26 يوم</li>
-      <li><span class="highlight">10200 جنيه</span> على 30 يوم</li>
+      <li>9000 جنيه / 26 يوم</li>
+      <li>10200 جنيه / 30 يوم</li>
     </ul>
   </div>  <div class="card">
-    <h2>🏠 المميزات</h2>
+    <h2>🔥 لماذا تنضم إلينا؟</h2>
     <ul>
-      <li>سكن متوفر بالكامل</li>
-      <li>مواصلات من السكن إلى العمل والعكس</li>
-      <li>شيفت عمل 12 ساعة</li>
-      <li>بيئة عمل احترافية وآمنة</li>
+      <li>بيئة عمل احترافية</li>
+      <li>استقرار وظيفي</li>
+      <li>فرص ترقية</li>
+      <li>دعم كامل للموظف</li>
     </ul>
   </div>  <div class="card">
-    <h2>📄 الأوراق المطلوبة</h2>
-    <ul>
-      <li>صورة بطاقة الرقم القومي</li>
-      <li>فيش جنائي ساري موجه باسم الشركة</li>
-      <li>صورة المؤهل الدراسي (إن وجد)</li>
-    </ul>
-  </div>  <div class="card">
-    <h2>🚀 قدم الآن</h2>
-    <p>اغتنم الفرصة الآن وابدأ مسيرتك المهنية مع واحدة من أقوى شركات الأمن في مصر.</p><a class="btn btn-whatsapp" href="https://wa.me/201027834695" target="_blank">
-  💬 تواصل واتساب
-</a>
+    <h2>🚀 التقديم الآن</h2>
+    <p>لو بتدور على شغل محترم ومستقر — الفرصة دي ليك الآن.</p><a class="btn whatsapp" href="https://wa.me/201027834695">💬 واتساب</a>
+<a class="btn apply" href="cv.html">📄 قدم الآن</a>
 
-<a class="btn btn-apply" href="AGX_CV_Template.pdf" target="_blank">📄 قدم CV الآن</a>
-
-  </div>  <div id="apply" class="card">
-    <h2>📤 تقديم السيرة الذاتية</h2>
-    <p>ارفع بياناتك أو اكتبها وسيتم التواصل معك مباشرة.</p>
-    <form>
-      <input type="text" placeholder="الاسم الكامل" style="width:100%;padding:10px;margin:5px 0;" />
-      <input type="tel" placeholder="رقم الهاتف" style="width:100%;padding:10px;margin:5px 0;" />
-      <textarea placeholder="ملاحظات / خبرات" style="width:100%;padding:10px;margin:5px 0;"></textarea>
-      <button type="button" class="btn btn-apply">إرسال الطلب</button>
-    </form>
+  </div>  <div class="card">
+    <h2>✨ خاتمة</h2>
+    <p>
+      القرماني هاب ليست مجرد منصة وظائف، بل بداية طريق جديد لحياة أفضل.
+      اختار الاستقرار… واختار المستقبل.
+    </p>
   </div></div><footer>
-  © 2026 AQX - alqurmani x hab | جميع الحقوق محفوظة
-</footer><!-- JSON-LD SEO JobPosting --><script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "JobPosting",
-  "title": "أفراد أمن",
-  "description": "وظائف أفراد أمن في الساحل الشمالي والعلمين برواتب مجزية وسكن ومواصلات.",
-  "hiringOrganization": {
-    "@type": "Organization",
-    "name": "شركة ايه جى للأمن والحراسة"
-  },
-  "employmentType": "FULL_TIME",
-  "jobLocation": {
-    "@type": "Place",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "الساحل الشمالي",
-      "addressCountry": "EG"
-    }
-  }
+  © 2026 AQX | القرماني هاب - جميع الحقوق محفوظة
+</footer><script>
+// GOLD PARTICLES
+const container = document.getElementById('particles');
+for(let i=0;i<40;i++){
+  let p=document.createElement('div');
+  p.className='particle';
+  p.style.left=Math.random()*100+'%';
+  p.style.top=Math.random()*100+'%';
+  p.style.animationDuration=(3+Math.random()*5)+'s';
+  container.appendChild(p);
 }
 </script></body>
 </html>

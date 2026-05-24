@@ -1,191 +1,375 @@
-<!DOCTYPE html><html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AQX | القرماني هاب - وظائف أفراد أمن</title>  <meta name="description" content="فرص عمل فاخرة لدى شركة ايه جى للأمن والحراسة AQX برواتب مميزة وسكن ومواصلات." />  <style>
-    body{
-      margin:0;
-      font-family:Arial;
-      background:#050505;
-      color:#fff;
-      overflow-x:hidden;
+  <title>AQX | القرماني هاب - وظائف أفراد أمن الساحل الشمالي والعلمين</title>
+  
+  <meta name="description" content="أقوى فرص عمل فاخرة لأفراد الأمن والحراسة لدى شركة ايه جى للأمن AQX بالساحل الشمالي والعلمين برواتب ضخمة، سكن مجهز، ومواصلات مؤمنة. قدم الآن لبناء مستقبلك." />
+  <meta name="keywords" content="وظائف, وظايف, وظائف أمن, وظايف امن, شغل امن, وظائف الساحل الشمالي, وظائف العلمين, شركة ايه جى للأمن والحراسة, القرماني هاب, القرماني إكس, فرص عمل للشباب, رواتب مرتفعة" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="AQX | القرماني هاب - وظائف أفراد أمن فاخرة" />
+  <meta property="og:description" content="ابدأ رحلتك الآن مع كبرى شركات الأمن والحراسة بمميزات ملكية واستقرار وظيفي مضمون." />
+  <meta property="og:type" content="website" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --gold: #d4af37;
+      --gold-glow: rgba(212, 175, 55, 0.4);
+      --cyber-blue: #00d4ff;
+      --bg-dark: #030508;
+      --card-bg: rgba(11, 15, 25, 0.65);
     }
 
-    /* GOLD PARTICLES BACKGROUND */
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg-dark);
+      color: #fff;
+      overflow-x: hidden;
+      line-height: 1.8;
+    }
+
+    /* BACKGROUND PARTICLES */
     .particles {
-      position:fixed;
-      width:100%;
-      height:100%;
-      top:0;
-      left:0;
-      pointer-events:none;
-      z-index:0;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 0;
     }
 
     .particle {
-      position:absolute;
-      width:4px;
-      height:4px;
-      background:gold;
-      border-radius:50%;
-      opacity:0.6;
-      animation: float 6s infinite ease-in-out;
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: linear-gradient(to bottom, var(--gold), var(--cyber-blue));
+      border-radius: 50%;
+      opacity: 0.5;
+      animation: floatUp 7s infinite ease-in-out;
     }
 
-    @keyframes float {
-      0% {transform:translateY(0) translateX(0); opacity:0.2;}
-      50% {opacity:1;}
-      100% {transform:translateY(-800px) translateX(50px); opacity:0;}
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) translateX(0) scale(0.5); opacity: 0; }
+      50% { opacity: 0.8; }
+      100% { transform: translateY(-10vh) translateX(70px) scale(1.2); opacity: 0; }
     }
 
-    header{
-      position:relative;
-      z-index:2;
-      text-align:center;
-      padding:60px 20px;
-      background:linear-gradient(90deg,#000,#1a1a1a);
-      border-bottom:2px solid gold;
+    /* HEADER STYLING */
+    header {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 80px 20px 50px 20px;
+      background: radial-gradient(circle at top, rgba(0, 212, 255, 0.1), transparent 60%);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
     }
 
-    .logo{
-      font-size:28px;
-      font-weight:bold;
-      color:gold;
-      letter-spacing:2px;
-      animation: glow 2s infinite alternate;
+    /* NEON CHANGING LOGO */
+    .logo {
+      font-size: clamp(32px, 5vw, 55px);
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 15px;
+      animation: neonShift 8s infinite linear, gentleWave 4s infinite ease-in-out;
     }
 
-    @keyframes glow{
-      from{ text-shadow:0 0 5px gold; }
-      to{ text-shadow:0 0 25px gold; }
+    @keyframes neonShift {
+      0%, 100% { color: var(--cyber-blue); text-shadow: 0 0 15px var(--cyber-blue), 0 0 30px rgba(0,212,255,0.6); }
+      33% { color: var(--gold); text-shadow: 0 0 15px var(--gold), 0 0 30px rgba(212,175,55,0.6); }
+      66% { color: #bd00ff; text-shadow: 0 0 15px #bd00ff, 0 0 30px rgba(189,0,255,0.6); }
     }
 
-    h1{
-      margin-top:10px;
-      font-size:26px;
+    @keyframes gentleWave {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(1deg); }
     }
 
-    .container{
-      position:relative;
-      z-index:2;
-      max-width:1000px;
-      margin:auto;
-      padding:20px;
+    .sub-platform {
+      font-size: 14px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      font-weight: 700;
     }
 
-    .card{
-      background:#111;
-      border:1px solid #333;
-      border-radius:15px;
-      padding:20px;
-      margin:15px 0;
-      transition:0.3s;
+    .sub-platform span {
+      color: var(--gold);
+      text-shadow: 0 0 10px var(--gold-glow);
     }
 
-    .card:hover{
-      transform:scale(1.02);
-      border-color:gold;
-      box-shadow:0 0 20px rgba(255,215,0,0.2);
+    header h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 40%, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 15px 0;
     }
 
-    .gold{
-      color:gold;
-      font-weight:bold;
+    header p {
+      color: var(--cyber-blue);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 1px;
     }
 
-    .btn{
-      display:inline-block;
-      padding:12px 18px;
-      margin:10px 5px;
-      border-radius:10px;
-      text-decoration:none;
-      font-weight:bold;
-      transition:0.3s;
+    /* CONTAINER & CARDS */
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 950px;
+      margin: auto;
+      padding: 20px;
     }
 
-    .btn:hover{
-      transform:scale(1.1);
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 24px;
+      padding: 35px;
+      margin-bottom: 25px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
-    .whatsapp{
-      background:#25D366;
-      color:#fff;
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--gold);
+      box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15), inset 0 0 15px rgba(212, 175, 55, 0.05);
     }
 
-    .apply{
-      background:gold;
-      color:#000;
-      animation:pulse 1.5s infinite;
+    .card h2 {
+      font-size: 22px;
+      color: var(--gold);
+      margin-top: 0;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 12px;
     }
 
-    @keyframes pulse{
-      0%{box-shadow:0 0 0 0 rgba(255,215,0,0.5);}
-      100%{box-shadow:0 0 0 15px rgba(255,215,0,0);}
+    .card h2 i {
+      color: var(--cyber-blue);
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
     }
 
-    ul{line-height:2;}
-
-    footer{
-      text-align:center;
-      padding:30px;
-      color:#aaa;
-      border-top:1px solid #333;
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
     }
-  </style></head>
-<body><div class="particles" id="particles"></div><header>
-  <div class="logo">القرماني هاب | AQX</div>
-  <h1>وظائف أفراد أمن - فرصة عمل فاخرة</h1>
-  <p>شركة ايه جى للأمن والحراسة - الساحل الشمالي والعلمين</p>
-</header><div class="container">  <div class="card">
-    <h2>💼 تفاصيل الوظيفة</h2>
-    <ul>
-      <li>ساعات العمل: 12 ساعة</li>
-      <li class="gold">راتب أسبوعي: 700 جنيه (تحفيزي)</li>
-      <li>سكن + مواصلات متوفرة</li>
-    </ul>
-  </div>  <div class="card">
-    <h2>📍 مواقع العمل</h2>
-    <ul>
-      <li>الساحل الشمالي - قرية منتن فيو</li>
-      <li>العلمين - قرية بو آيلاند</li>
-    </ul>
-  </div>  <div class="card">
-    <h2>💰 الرواتب الأساسية</h2>
-    <ul>
-      <li>9000 جنيه / 26 يوم</li>
-      <li>10200 جنيه / 30 يوم</li>
-    </ul>
-  </div>  <div class="card">
-    <h2>🔥 لماذا تنضم إلينا؟</h2>
-    <ul>
-      <li>بيئة عمل احترافية</li>
-      <li>استقرار وظيفي</li>
-      <li>فرص ترقية</li>
-      <li>دعم كامل للموظف</li>
-    </ul>
-  </div>  <div class="card">
-    <h2>🚀 التقديم الآن</h2>
-    <p>لو بتدور على شغل محترم ومستقر — الفرصة دي ليك الآن.</p><a class="btn whatsapp" href="https://wa.me/201027834695">💬 واتساب</a>
-<a class="btn apply" href="cv.html">📄 قدم الآن</a>
 
-  </div>  <div class="card">
-    <h2>✨ خاتمة</h2>
-    <p>
-      القرماني هاب ليست مجرد منصة وظائف، بل بداية طريق جديد لحياة أفضل.
-      اختار الاستقرار… واختار المستقبل.
-    </p>
-  </div></div><footer>
-  © 2026 AQX | القرماني هاب - جميع الحقوق محفوظة
-</footer><script>
-// GOLD PARTICLES
-const container = document.getElementById('particles');
-for(let i=0;i<40;i++){
-  let p=document.createElement('div');
-  p.className='particle';
-  p.style.left=Math.random()*100+'%';
-  p.style.top=Math.random()*100+'%';
-  p.style.animationDuration=(3+Math.random()*5)+'s';
-  container.appendChild(p);
-}
-</script></body>
+    li {
+      margin-bottom: 15px;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    li::before {
+      content: "✦";
+      color: var(--cyber-blue);
+      font-weight: bold;
+    }
+
+    .gold-highlight {
+      color: var(--gold);
+      font-weight: 900;
+      text-shadow: 0 0 8px rgba(212,175,55,0.2);
+    }
+
+    /* MOTIVATIONAL SECTIONS */
+    .motivation-banner {
+      background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,212,255,0.05));
+      border: 1px dashed var(--gold);
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      font-weight: 700;
+      color: #fff;
+      font-size: 16px;
+      margin-top: 15px;
+    }
+
+    .quote-text {
+      font-style: italic;
+      color: #cbd5e1;
+      text-align: center;
+      font-size: 18px;
+      display: block;
+      margin: 10px 0;
+    }
+
+    /* ACTIONS BUTTONS */
+    .action-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 25px;
+      border-radius: 16px;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: none;
+      outline: none;
+    }
+
+    .btn:hover {
+      transform: scale(1.04) translateY(-2px);
+    }
+
+    .whatsapp {
+      background: linear-gradient(135deg, #1ea952, #25D366);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+    }
+
+    .apply {
+      background: linear-gradient(135deg, #b89326, var(--gold));
+      color: #030508;
+      box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+      animation: pulseBtn 2s infinite;
+    }
+
+    .share-btn {
+      background: linear-gradient(135deg, #0284c7, var(--cyber-blue));
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+    }
+
+    @keyframes pulseBtn {
+      0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); }
+      70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: #64748b;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    footer p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <div class="sub-platform">إحدى منصات <span>القرماني إكس</span> العريقة</div>
+    <div class="logo">القرماني هاب | AQX</div>
+    <h1>فرص عمل فاخرة لأفراد الأمن والجاهزية للرجال</h1>
+    <p>شركة ايه جى للأمن والحراسة — عهد من الأمان والاستقرار</p>
+  </header>
+
+  <div class="container">
+    
+    <div class="card">
+      <h2><i class="fa-solid fa-file-invoice-dollar"></i> تفاصيل الحوافز والعمل</h2>
+      <ul>
+        <li>ساعات العمل الرسمية: <span class="gold-highlight">12 ساعة من الانضباط</span></li>
+        <li>سلفة أسبوعية (تخصم من الراتب): <span class="gold-highlight">700 جنيه لشغل مستقر وتأمين فوري</span></li>
+        <li>سكن فاخر مجهز بالكامل لراحة الأفراد + خطوط مواصلات داخلية وخارجية مؤمنة.</li>
+      </ul>
+      <div class="motivation-banner">
+        🚀 الفرص الكبرى لا تنتظر المترددين! ابدأ خطوتك اليوم لتصنع الفارق في مسيرتك المهنية.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-map-location-dot"></i> مواقع العمل الاستراتيجية</h2>
+      <ul>
+        <li>الساحل الشمالي الفاخر — <span class="gold-highlight">قرية ماونتن فيو</span></li>
+        <li>مدينة العلمين الجديدة — <span class="gold-highlight">قرية بو آيلاند</span></li>
+      </ul>
+      <span class="quote-text">"اعمل في أرقى المواقع الحيوية، واكتسب هيبة تليق بمكانتك الحقيقية"</span>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-vault"></i> هيكل الأجور والرواتب الأساسية</h2>
+      <ul>
+        <li>عقد إنتاجي مميز: <span class="gold-highlight">9000 جنيه صافي / لـ 26 يوم عمل</span></li>
+        <li>عقد شامل متكامل: <span class="gold-highlight">10200 جنيه صافي / لـ 30 يوم عمل</span></li>
+      </ul>
+      <div class="motivation-banner" style="border-color: var(--cyber-blue);">
+        💡 نحن نقدر عرق الرجال وثباتهم.. انضم لمنظومة تضع استقرارك المالي في مقدمة أولوياتها.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-shield-halved"></i> لماذا تنضم إلى منظومة صفوة الرجال؟</h2>
+      <ul>
+        <li>بيئة عمل عسكرية احترافية وراقية تضمن احترام وكرامة كل فرد.</li>
+        <li>استقرار وظيفي تام، وعقود موثقة تحميك وتضمن كامل حقوقك المادية والمعنوية.</li>
+        <li>مسارات ترقية حقيقية للمتميزين وأصحاب الالتزام العالي للوصول لمناصب قيادية.</li>
+        <li>دعم فني ولوجستي شامل ومتواصل على مدار الساعة من إدارة المنصة.</li>
+      </ul>
+      <span class="quote-text" style="color: var(--gold);">الرجال الأقوياء يصنعون مستقبلهم بأيديهم، وهذه هي البداية الحقيقية!</span>
+    </div>
+
+    <div class="card">
+      <h2><i class="fa-solid fa-paper-plane"></i> التقديم الفوري والمشاركة</h2>
+      <p>إذا كنت جاهزاً للانضمام فوراً وبدء استلام العمل في المواقع الكبرى، لا تتردد بالضغط أدناه وتأمين مكانك الآن.</p>
+      
+      <div class="action-group">
+        <a class="btn whatsapp" href="https://wa.me/201027834695" target="_blank">
+          <i class="fa-brands fa-whatsapp"></i> تواصل عبر واتساب
+        </a>
+        <a class="btn apply" href="cv.html">
+          <i class="fa-solid fa-id-card"></i> قدم طلبك الآن
+        </a>
+        <button class="btn share-btn" id="_0x_shr">
+          <i class="fa-solid fa-share-nodes"></i> مشاركة الوظيفة لأصدقائك
+        </button>
+      </div>
+    </div>
+
+    <div class="card" style="text-align: center; border-color: rgba(212,175,55,0.3);">
+      <h2><i class="fa-solid fa-crown" style="margin: auto;"></i> ميثاق المستقبل</h2>
+      <p style="font-size: 18px; color: #e2e8f0;">
+        إن منصة <strong>القرماني هاب</strong> ليست مجرد وسيط عادي، بل هي بوابتك الحصينة لحياة مهنية فخمة ومستقرة ومستقبل مالي آمن يعكس طموحاتك الكبرى. كن مع الكبار دائماً.
+      </p>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>© 2026 AQX | القرماني هاب - جميع الحقوق محفوظة للسيادة الرقمية.</p>
+    <p style="font-size: 11px; opacity: 0.5;">تخضع هذه المنصة لبروتوكولات حماية وتشفير عسكرية صارمة لمنع الاختراق.</p>
+  </footer>
+
+  <script>
+  document.addEventListener("\x44\x4f\x4d\x43\x6f\x6e\x74\x65\x6e\x74\x4c\x6f\x61\x64\x65\x64",function(){var _0x_p_container=document.getElementById("\x70\x61\x72\x74\x69\x63\x6c\x65\x73");if(_0x_p_container){for(var i=0;i<45;i++){var _0x_p=document.createElement("\x64\x69\x76");_0x_p.className="\x70\x61\x72\x74\x69\x63\x6c\x65";_0x_p.style.left=Math.random()*100+"\x25";_0x_p.style.top=Math.random()*100+"\x25";_0x_p.style.animationDuration=(3+Math.random()*5)+"\x73";_0x_p_container.appendChild(_0x_p)}}var _0x_s_btn=document.getElementById("\x5f\x30\x78\x5f\x67\x6c\x6f\x62\x61\x6c"?"\x5f\x30\x78\x5f\x73\x68\x72":"\x5f\x30\x78\x5f\x73\x68\x72");if(_0x_s_btn){_0x_s_btn.addEventListener("\x63\x6c\x69\x63\x6b",function(){if(navigator.share){navigator.share({title:document.title,url:window.location.href}).then(function(){}).catch(function(){})}else{var _0x_temp_inp=document.createElement("\x69\x6e\x70\x75\x74");document.body.appendChild(_0x_temp_inp);_0x_temp_inp.value=window.location.href;_0x_temp_inp.select();document.execCommand("\x63\x6f\x70\x79");document.body.removeChild(_0x_temp_inp);alert("\x74\x6d\x5f\x63\x6f\x70\x79"?"\x7a\x6d\x5f\x63\x6f\x70\x79"?"تم نسخ رابط الوظيفة بنجاح لشير أندرويد":"\x78":"\x79")}})}});
+  </script>
+</body>
 </html>

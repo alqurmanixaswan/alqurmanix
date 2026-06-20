@@ -55,19 +55,45 @@ window.snd = function(type){
   }catch(e){}
 };
 
-// ─── PARTICLES ──────────────────────────────────────
+// ─── TABS ENGINE ────────────────────────────────────
+window.switchTab = function(tab) {
+  snd('tab');
+  const tLogin = document.getElementById('tLogin');
+  const tReg = document.getElementById('tReg');
+  const pLogin = document.getElementById('pLogin');
+  const pReg = document.getElementById('pReg');
+  
+  if (tab === 'login') {
+    tLogin.classList.add('active');
+    tReg.classList.remove('active');
+    pLogin.style.display = 'block';
+    pReg.style.display = 'none';
+  } else {
+    tReg.classList.add('active');
+    tLogin.classList.remove('active');
+    pReg.style.display = 'block';
+    pLogin.style.display = 'none';
+  }
+};
+
+// ─── PARTICLES (MAX DENSITY GOLD & SILVER) ──────────
 function initParticles(){
   const cv=document.getElementById('cv'), cx=cv.getContext('2d');
   function resize(){ cv.width=innerWidth; cv.height=innerHeight; }
   resize(); window.addEventListener('resize',resize);
-  const cols=['#C0C0C0','#FFD700','#B8860B','#E8E8E8','#DAA520','#c084fc','#a855f7','#e879f9'];
-  const pts=Array.from({length:130},()=>({
+  
+  // ألوان ذهبية وفضية غنية ومتنوعة لتغطية الخلفية بشكل مبهر
+  const cols=['#FFD700','#C0C0C0','#DAA520','#E8E8E8','#B8860B','#FFFFFF','#F4F4F4','#FFE4B5','#DCDCDC'];
+  
+  // رفع العدد إلى 260 نقطة طائرة لتكثيف التأثير البصري الفخم
+  const pts=Array.from({length:260},()=>({
     x:Math.random()*innerWidth, y:Math.random()*innerHeight,
-    r:Math.random()*2.5+.5,
+    r:Math.random()*2.8+.6,
     c:cols[Math.floor(Math.random()*cols.length)],
-    vx:(Math.random()-.5)*.5, vy:(Math.random()-.5)*.5,
-    a:Math.random()*.8+.1, tw:Math.random()*6.28, ts:Math.random()*.04+.01
+    vx:(Math.random()-.5)*.7, vy:(Math.random()-.5)*.7,
+    a:Math.random()*.85+.15, tw:Math.random()*6.28, ts:Math.random()*.05+.01
   }));
+  
   (function loop(){
     cx.clearRect(0,0,cv.width,cv.height);
     pts.forEach(p=>{
@@ -76,7 +102,7 @@ function initParticles(){
       if(p.y<0)p.y=cv.height; if(p.y>cv.height)p.y=0;
       const al=p.a*(.5+.5*Math.sin(p.tw));
       cx.save(); cx.globalAlpha=al;
-      cx.shadowBlur=8; cx.shadowColor=p.c;
+      cx.shadowBlur=10; cx.shadowColor=p.c;
       cx.fillStyle=p.c;
       cx.beginPath(); cx.arc(p.x,p.y,p.r,0,6.28); cx.fill();
       cx.restore();
@@ -96,7 +122,7 @@ window.showModal = function(cfg){
   const cc=document.getElementById('mConfetti');
   cc.innerHTML='';
   if(cfg.celebrate){
-    for(let i=0;i<35;i++){
+    for(let i=0;i<45;i++){
       const d=document.createElement('div');
       d.className='cp';
       d.style.cssText=`left:${Math.random()*100}%;animation-delay:${Math.random()*2}s;width:${Math.random()*8+4}px;height:${Math.random()*8+4}px;background:${['#FFD700','#C0C0C0','#c084fc','#a855f7','#FF69B4'][Math.floor(Math.random()*5)]}`;
@@ -175,7 +201,10 @@ window.doLogin = async function(){
     laserScan(async()=>{
       const ud=await getDoc(doc(db,'users',cr.user.uid));
       const nm=ud.exists()?ud.data().name:'عزيزنا';
+      
+      // إرسال البيانات فوراً إلى المحرك الخلفي دون حظر الواجهة الرئيسي
       fetch(SERVER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'login',email:em,uid:cr.user.uid,ts:new Date().toISOString()})}).catch(()=>{});
+      
       snd('ok');
       showModal({icon:'👑',title:'أهلاً وسهلاً!',celebrate:true,
         msg:`<p>مرحباً بعودتك <b style="color:#FFD700">${nm}</b>!</p>
@@ -202,12 +231,30 @@ window.doReg = async function(){
   if(pw!==pw2){ showModal({icon:'🔐',title:'كلمتا المرور غير متطابقتين',msg:'تأكد من تطابق كلمتي المرور.',extra:`<button class="mbtn-o" onclick="closeModal()">حسناً</button>`}); return; }
   const sc=Object.values({r1:pw.length>=8,r2:/[A-Z]/.test(pw),r3:/[a-z]/.test(pw),r4:/[0-9]/.test(pw),r5:/[^A-Za-z0-9]/.test(pw)}).filter(Boolean).length;
   if(sc<3){ showModal({icon:'🛡️',title:'كلمة مرور ضعيفة',msg:'يجب أن تكون كلمة المرور أقوى. أضف أرقاماً وأحرفاً كبيرة ورموزاً.',extra:`<button class="mbtn-o" onclick="closeModal()">حسناً</button>`}); return; }
-  const btn=document.getElementById('rBtn'); btn.disabled=true; btn.innerHTML='<span class="sp"></span> جارٍ الإنشاء...';
+  
+  const btn=document.getElementById('rBtn'); 
+  btn.disabled=true; 
+  btn.innerHTML='<span class="sp"></span> جارٍ الإنشاء وحفظ القواعد...';
+  
   try{
     const cr=await createUserWithEmailAndPassword(auth,em,pw);
     await sendEmailVerification(cr.user);
-    await setDoc(doc(db,'users',cr.user.uid),{email:em,createdAt:serverTimestamp(),uid:cr.user.uid,emailVerified:false});
-    fetch(SERVER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'register',email:em,uid:cr.user.uid,ts:new Date().toISOString()})}).catch(()=>{});
+    
+    // ربط فوري ومباشر مع قواعد البيانات
+    await setDoc(doc(db,'users',cr.user.uid),{
+      email:em,
+      createdAt:serverTimestamp(),
+      uid:cr.user.uid,
+      emailVerified:false
+    });
+    
+    // استدعاء محرك السيرفر بشكل خلفي فوري لتجنب أي تعليق أو تأخير للواجهة
+    fetch(SERVER,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'register',email:em,uid:cr.user.uid,ts:new Date().toISOString()})
+    }).catch(()=>{});
+    
     snd('pop');
     showModal({icon:'🎉',title:'مرحباً في عائلة AQX!',celebrate:true,
       msg:`<p>تم إنشاء حسابك بنجاح وأصبحت جزءاً من عالم <b style="color:#FFD700">القرماني اكس AQX</b>!</p>
@@ -215,16 +262,18 @@ window.doReg = async function(){
            <p style="margin-top:8px;font-size:.9em;color:#aaa">بإتمام التسجيل وافقت على جميع الشروط والأحكام ✨</p>
            <p style="margin-top:10px;color:#FFD700;font-size:1.05em">عالم بلا حدود ينتظرك!</p>`,
       extra:`<button class="mbtn" onclick="resendLink('${em}','${pw.replace(/'/g,"\\'")}')">📨 إعادة إرسال رابط التفعيل</button>
-             <button class="mbtn-o" onclick="closeModal()">رائع، سأفعّل لاحقاً</button>`});
+             <button class="mbtn-o" onclick="closeModal(); switchTab('login');">رائع، سأفعّل وأسجل دخولي</button>`});
+             
   }catch(e){
-    let icon='❌', msg='حدث خطأ. حاول مجدداً.';
+    let icon='❌', msg='حدث خطأ أثناء الاشتراك. حاول مجدداً.';
     if(e.code==='auth/email-already-in-use'){
       icon='📛';
-      msg=`<p>هذا البريد <b>مسجّل مسبقاً</b>.</p><p style="margin-top:8px">يمكنك <a href="#" onclick="switchTab('login');closeModal()" style="color:#FFD700">تسجيل الدخول</a> أو <a href="#" onclick="forgotPwd();closeModal()" style="color:#c084fc">استعادة كلمة المرور</a></p>`;
+      msg=`<p>هذا البريد <b>مسجّل مسبقاً</b>.</p><p style="margin-top:8px">يمكنك <a href="#" onclick="switchTab('login');closeModal();return false;" style="color:#FFD700">تسجيل الدخول</a> أو <a href="#" onclick="forgotPwd();closeModal();return false;" style="color:#c084fc">استعادة كلمة المرور</a></p>`;
     } else if(e.code==='auth/invalid-email'){ msg='البريد الإلكتروني غير صالح.'; }
     showModal({icon,title:'تعذّر إنشاء الحساب',msg,extra:`<button class="mbtn-o" onclick="closeModal()">حسناً</button>`});
   }
-  btn.disabled=false; btn.innerHTML='إنشاء حساب';
+  btn.disabled=false; 
+  btn.innerHTML='إنشاء حساب';
 };
 
 // ─── INIT ────────────────────────────────────────────
@@ -399,7 +448,7 @@ header{text-align:center;padding:18px 0 26px;width:100%}
   background:linear-gradient(135deg,rgba(150,50,255,.28),rgba(100,10,200,.45));
   border:2px solid var(--gd);border-radius:50%;display:flex;align-items:center;
   justify-content:center;margin:0 auto 14px;font-size:1.9rem;
-  box-shadow:0 0 25px rgba(255,215,0,.3);animation:ig 3s ease-in-out infinite}
+  box-shadow:0 0 18px rgba(255,215,0,.3);animation:ig 3s ease-in-out infinite}
 @keyframes ig{0%,100%{box-shadow:0 0 18px rgba(255,215,0,.3)}50%{box-shadow:0 0 35px rgba(255,215,0,.6),0 0 55px rgba(150,50,255,.35)}}
 .ch-title{font-size:clamp(1.5rem,3vw,2rem);font-weight:900;color:var(--tw);
   text-shadow:0 0 20px rgba(200,150,255,.5);margin-bottom:5px}
@@ -472,7 +521,7 @@ header{text-align:center;padding:18px 0 26px;width:100%}
 
 /* FEATURES */
 .feats{width:100%;max-width:1100px;display:grid;
-  grid-template-columns:repeat(5,1fr);gap:14px;margin-top:36px;padding:0 8px}
+  grid-template-columns:repeat(5,1fr);gap:14px;margin-top:36px;padding:0 8px;z-index:10}
 @media(max-width:900px){.feats{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:540px){.feats{grid-template-columns:repeat(2,1fr);gap:10px}}
 
@@ -484,14 +533,14 @@ header{text-align:center;padding:18px 0 26px;width:100%}
 .feat-t{font-size:.83rem;font-weight:700;color:var(--tw);margin-bottom:3px}
 .feat-d{font-size:.72rem;color:rgba(200,170,255,.45)}
 
-footer{text-align:center;padding:20px;color:rgba(200,170,255,.38);font-size:.78rem;margin-top:20px}
+footer{text-align:center;padding:20px;color:rgba(200,170,255,.38);font-size:.78rem;margin-top:20px;width:100%;z-index:10}
 
-/* SCROLL */
+/* SCROLL BAR */
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:var(--dp)}
 ::-webkit-scrollbar-thumb{background:var(--pu);border-radius:3px}
 
-/* RESPONSIVE */
+/* RESPONSIVE FIXED */
 @media(max-width:500px){
   .tabs{max-width:340px}
   .tab-btn{padding:11px 18px;font-size:.92rem}
@@ -506,13 +555,11 @@ footer{text-align:center;padding:20px;color:rgba(200,170,255,.38);font-size:.78r
 <div class="floor-glow"></div>
 <canvas id="cv"></canvas>
 
-<!-- Laser -->
 <div id="laser">
   <div class="laser-line"></div>
   <div class="laser-txt">🔒 جارٍ فحص بيانات الأمان...</div>
 </div>
 
-<!-- Modal -->
 <div id="mOv" onclick="if(event.target===this)closeModal()">
   <div class="mbox">
     <div id="mConfetti"></div>
@@ -526,7 +573,6 @@ footer{text-align:center;padding:20px;color:rgba(200,170,255,.38);font-size:.78r
 
 <div class="pw">
 
-  <!-- HEADER -->
   <header>
     <span class="crown">👑</span>
     <span class="logo">AQX</span>
@@ -535,13 +581,11 @@ footer{text-align:center;padding:20px;color:rgba(200,170,255,.38);font-size:.78r
     <div class="logo-div">✦ تجربة استثنائية... لعالم بلا حدود ✦</div>
   </header>
 
-  <!-- TABS -->
   <div class="tabs">
-    <button class="tab-btn active" id="tLogin" onclick="showTab('login')">تسجيل الدخول</button>
-    <button class="tab-btn" id="tReg" onclick="showTab('reg')">الإشتراك</button>
+    <button class="tab-btn active" id="tLogin" onclick="switchTab('login')">تسجيل الدخول</button>
+    <button class="tab-btn" id="tReg" onclick="switchTab('reg')">الإشتراك</button>
   </div>
 
-  <!-- LOGIN CARD -->
   <div class="card" id="pLogin">
     <div class="ch">
       <div class="ch-icon">👤</div>
@@ -569,7 +613,6 @@ footer{text-align:center;padding:20px;color:rgba(200,170,255,.38);font-size:.78r
     <button id="lBtn" class="sub-btn" onclick="doLogin()">تسجيل الدخول</button>
   </div>
 
-  <!-- REGISTER CARD -->
   <div class="card" id="pReg" style="display:none">
     <div class="ch">
       <div class="ch-icon">✨</div>
@@ -615,7 +658,6 @@ footer{text-align:center;padding:20px;color:rgba(200,170,255,.38);font-size:.78r
     </p>
   </div>
 
-  <!-- FEATURES -->
   <div class="feats">
     <div class="feat" onmouseenter="snd('hover')">
       <div class="feat-ic">🛡️</div>
@@ -625,12 +667,12 @@ footer{text-align:center;padding:20px;color:rgba(200,170,255,.38);font-size:.78r
     <div class="feat" onmouseenter="snd('hover')">
       <div class="feat-ic">⚡</div>
       <div class="feat-t">سرعة وأداء استثنائي</div>
-      <div class="feat-d">تقنية متطورة الأفضل تجربة</div>
+      <div class="feat-d">تقنية متطورة لأفضل تجربة</div>
     </div>
     <div class="feat" onmouseenter="snd('hover')">
       <div class="feat-ic">👑</div>
       <div class="feat-t">جودة بلا حدود</div>
-      <div class="feat-d">نرتقي بمعايير التميز</div>
+      <div class="feat-d">نرتقي بمعايير التميز الدائم</div>
     </div>
     <div class="feat" onmouseenter="snd('hover')">
       <div class="feat-ic">💎</div>
@@ -640,21 +682,12 @@ footer{text-align:center;padding:20px;color:rgba(200,170,255,.38);font-size:.78r
     <div class="feat" onmouseenter="snd('hover')">
       <div class="feat-ic">🏆</div>
       <div class="feat-t">دعم فني احترافي</div>
-      <div class="feat-d">نحن هنا لخدمتكم دائماً</div>
+      <div class="feat-d">نحن هنا لخدمتكم دائماً وعلي مدار الساعة</div>
     </div>
   </div>
 
-  <footer>جميع الحقوق محفوظة - AQX © 2024 | القرماني اكس</footer>
+  <footer>جميع الحقوق محفوظة - AQX © 2026 | القرماني اكس</footer>
 </div>
 
-<script>
-window.showTab = function(tab){
-  snd('tab');
-  document.getElementById('pLogin').style.display = tab==='login' ? 'block' : 'none';
-  document.getElementById('pReg').style.display   = tab==='reg'   ? 'block' : 'none';
-  document.getElementById('tLogin').classList.toggle('active', tab==='login');
-  document.getElementById('tReg').classList.toggle('active',   tab==='reg');
-};
-</script>
 </body>
 </html>

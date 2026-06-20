@@ -1,0 +1,109 @@
+// استيراد Firebase (إذا كنت لا تستخدم npm/Vite، استبدل المسارات بروابط CDN)
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+// 1. إعدادات Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBICr62Oa_-69hATpfFrdTDfO9WV4bVVvU",
+  authDomain: "alqurmanix-d49f7.firebaseapp.com",
+  projectId: "alqurmanix-d49f7",
+  storageBucket: "alqurmanix-d49f7.firebasestorage.app",
+  messagingSenderId: "1017946245702",
+  appId: "1:1017946245702:web:575c425860c82166411847",
+  measurementId: "G-5XN1NMG997"
+};
+
+// تشغيل Firebase بأمان (يمنع الخطأ إذا كان قد تم تشغيله مسبقاً)
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+const auth = getAuth(app);
+
+// متغيرات الحالة
+let monitorInterval = null;
+let failureCount = 0; 
+
+// دالة معرفة للاستماع للرجوع
+const handlePopState = () => {
+    verifySessionWithEngine();
+};
+
+function getTabId() {
+  let tabId = sessionStorage.getItem("active_tab_id");
+  if (!tabId) {
+    tabId = "tab_" + Math.random().toString(36).substr(2, 9);
+    sessionStorage.setItem("active_tab_id", tabId);
+  }
+  return tabId;
+}
+
+async function verifySessionWithEngine() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  try {
+    const token = await user.getIdToken(true);
+    const tabId = getTabId();
+    const pageId = window.location.pathname;
+
+    const response = await fetch("https://eo3phbvoihx4diw.m.pipedream.net", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ tabId, pageId }) 
+    });
+
+    const result = await response.json();
+    failureCount = 0; // نجاح الاتصال = تصفير العداد
+
+    if (result.status?.action === "REDIRECT") {
+      alert("تم إغلاق الجلسة لأسباب أمنية.");
+      await signOut(auth);
+      window.location.href = "/login";
+    } else if (result.status?.action === "WARN") {
+      console.warn("تحذير أمني: محاولات متبقية " + (3 - result.status.count));
+    }
+  } catch (error) {
+    failureCount++;
+    console.error("Security Engine Connection Failed (Attempt: " + failureCount + ")", error);
+
+    if (failureCount >= 3) {
+      console.error("Fatal Connection Error: Logging out user.");
+      await signOut(auth);
+      window.location.href = "/login";
+    }
+  }
+}
+
+// 4. نظام المراقبة
+function startSecurityMonitor() {
+  // منع تشغيل المراقبة أكثر من مرة
+  if (monitorInterval) return;
+
+  verifySessionWithEngine(); // تحقق فوري
+  
+  monitorInterval = setInterval(() => {
+    if (auth.currentUser) verifySessionWithEngine();
+  }, 4 * 60 * 1000); 
+
+  window.addEventListener('popstate', handlePopState);
+  history.pushState(null, null, location.href);
+}
+
+function stopSecurityMonitor() {
+  if (monitorInterval) {
+    clearInterval(monitorInterval);
+    monitorInterval = null;
+  }
+  window.removeEventListener('popstate', handlePopState);
+  failureCount = 0; 
+}
+
+// 5. التشغيل
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    startSecurityMonitor();
+  } else {
+    stopSecurityMonitor();
+  }
+});

@@ -1,167 +1,1611 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عدسة بحث القرماني إكس</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>القرماني اكس - AQX | بوابة الدخول</title>
 
-    <style>
-        /* ========================================================
-           تنسيقات عدسة البحث الفاخرة المحدثة
-        ======================================================== */
-        .alqurmani-search-widget {
-            position: absolute; /* تم التغيير من fixed لـ absolute عشان تختفي مع النزول لتحت */
-            top: 10px; /* نفس مستوى زر القائمة الجانبية بالضبط */
-            left: 10px; /* أقصى أقصى الشمال */
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            background: rgba(11, 15, 25, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid #d4af37;
-            border-radius: 50px;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.1);
-            width: 45px; /* تم تصغيرها قليلاً لتطابق حجم زر القائمة */
-            height: 45px;
-            overflow: hidden;
-            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            direction: rtl;
-        }
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 
-        .alqurmani-search-widget.active {
-            width: 340px; 
-            border-radius: 12px;
-            background: rgba(11, 15, 25, 0.95);
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.5), inset 0 0 15px rgba(212, 175, 55, 0.2);
-            border-color: #00d4ff;
-        }
+  const firebaseConfig = {
+    apiKey: "AIzaSyBICr62Oa_-69hATpfFrdTDfO9WV4bVVvU",
+    authDomain: "alqurmanix-d49f7.firebaseapp.com",
+    projectId: "alqurmanix-d49f7",
+    storageBucket: "alqurmanix-d49f7.firebasestorage.app",
+    messagingSenderId: "1017946245702",
+    appId: "1:1017946245702:web:575c425860c82166411847",
+    measurementId: "G-5XN1NMG997"
+  };
 
-        .q-search-icon-btn {
-            min-width: 45px;
-            height: 45px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #d4af37;
-            font-size: 20px;
-            cursor: pointer;
-            transition: color 0.3s, transform 0.4s;
-            background: transparent;
-            border: none;
-            outline: none;
-        }
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const googleProvider = new GoogleAuthProvider();
 
-        .q-search-icon-btn:hover {
-            color: #00d4ff;
-            text-shadow: 0 0 15px #00d4ff;
-            transform: scale(1.1);
-        }
+  const SERVER_URL = "https://eor9kq0o458dz5g.m.pipedream.net";
 
-        .alqurmani-search-widget.active .q-search-icon-btn {
-            color: #00d4ff;
-            transform: rotate(90deg);
-            pointer-events: none; 
-        }
+  // ===== SOUND ENGINE =====
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let audioCtx;
 
-        .q-search-content-area {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(-20px);
-            transition: all 0.4s ease 0.2s; 
-            width: 100%;
-            padding-right: 5px;
-        }
+  function getAudio() {
+    if (!audioCtx) audioCtx = new AudioCtx();
+    return audioCtx;
+  }
 
-        .alqurmani-search-widget.active .q-search-content-area {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0);
-        }
+  function playSound(type) {
+    try {
+      const ctx = getAudio();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
 
-        .q-search-text-msg {
-            color: #ffffff;
-            font-family: 'Cairo', sans-serif;
-            font-weight: 700;
-            font-size: 14px;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-            text-shadow: 0 0 8px rgba(0, 212, 255, 0.8);
-        }
+      const sounds = {
+        click: { freq: 880, type: 'sine', duration: 0.08, vol: 0.15 },
+        hover: { freq: 660, type: 'sine', duration: 0.05, vol: 0.08 },
+        success: { freq: [523, 659, 784, 1047], type: 'sine', duration: 0.6, vol: 0.2 },
+        error: { freq: [200, 150], type: 'sawtooth', duration: 0.3, vol: 0.15 },
+        tab: { freq: 740, type: 'sine', duration: 0.1, vol: 0.12 },
+        type: { freq: 1200, type: 'sine', duration: 0.03, vol: 0.05 },
+        scan: { freq: [400, 800, 400], type: 'sine', duration: 0.15, vol: 0.1 },
+        modal: { freq: [523, 659], type: 'sine', duration: 0.4, vol: 0.18 },
+        popup: { freq: [784, 1047, 1319], type: 'sine', duration: 0.5, vol: 0.2 }
+      };
 
-        .q-progress-track {
-            width: 90%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-        }
+      const s = sounds[type] || sounds.click;
 
-        .q-progress-fill-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #d4af37, #00d4ff, #d4af37);
-            background-size: 200% 100%;
-            border-radius: 4px;
-            box-shadow: 0 0 10px #00d4ff, 0 0 5px #d4af37;
-        }
+      if (Array.isArray(s.freq)) {
+        s.freq.forEach((f, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.connect(g); g.connect(ctx.destination);
+          o.type = s.type;
+          o.frequency.setValueAtTime(f, ctx.currentTime + i * (s.duration / s.freq.length));
+          g.gain.setValueAtTime(s.vol, ctx.currentTime + i * (s.duration / s.freq.length));
+          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + s.duration);
+          o.start(ctx.currentTime + i * (s.duration / s.freq.length));
+          o.stop(ctx.currentTime + s.duration + 0.1);
+        });
+      } else {
+        osc.type = s.type;
+        osc.frequency.setValueAtTime(s.freq, ctx.currentTime);
+        gain.gain.setValueAtTime(s.vol, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + s.duration);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + s.duration + 0.05);
+      }
+    } catch(e) {}
+  }
 
-        .alqurmani-search-widget.active .q-progress-fill-bar {
-            animation: fillUpProgress 5s linear forwards, shimmer 2s infinite linear;
-        }
+  window.playSound = playSound;
 
-        @keyframes fillUpProgress {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
+  // ===== PARTICLES =====
+  function initParticles() {
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-        @keyframes shimmer {
-            0% { background-position: 100% 0; }
-            100% { background-position: -100% 0; }
-        }
-    </style>
+    const particles = [];
+    const colors = ['#C0C0C0', '#FFD700', '#B8860B', '#E8E8E8', '#DAA520', '#9370DB', '#8A2BE2'];
+
+    for (let i = 0; i < 120; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 3 + 0.5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        speedX: (Math.random() - 0.5) * 0.6,
+        speedY: (Math.random() - 0.5) * 0.6,
+        opacity: Math.random() * 0.7 + 0.2,
+        twinkle: Math.random() * Math.PI * 2,
+        twinkleSpeed: Math.random() * 0.03 + 0.01
+      });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.twinkle += p.twinkleSpeed;
+        const alpha = p.opacity * (0.5 + 0.5 * Math.sin(p.twinkle));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + Math.floor(alpha * 255).toString(16).padStart(2, '0');
+        ctx.fill();
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = p.color;
+        p.x += p.speedX;
+        p.y += p.speedY;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  }
+
+  // ===== TABS =====
+  window.switchTab = function(tab) {
+    playSound('tab');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+    document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+  };
+
+  // ===== PASSWORD STRENGTH =====
+  window.checkPasswordStrength = function(pwd) {
+    const bar = document.getElementById('strengthBar');
+    const text = document.getElementById('strengthText');
+    const rules = {
+      r1: pwd.length >= 8,
+      r2: /[A-Z]/.test(pwd),
+      r3: /[a-z]/.test(pwd),
+      r4: /[0-9]/.test(pwd),
+      r5: /[^A-Za-z0-9]/.test(pwd)
+    };
+    Object.keys(rules).forEach(k => {
+      const el = document.getElementById(k);
+      if (el) {
+        el.classList.toggle('met', rules[k]);
+      }
+    });
+    const score = Object.values(rules).filter(Boolean).length;
+    const pct = (score / 5) * 100;
+    const colors = ['#ff4444', '#ff8800', '#ffcc00', '#88cc00', '#00cc44'];
+    const labels = ['ضعيفة جداً', 'ضعيفة', 'متوسطة', 'جيدة', 'قوية جداً 💪'];
+    bar.style.width = pct + '%';
+    bar.style.background = colors[score - 1] || '#ff4444';
+    bar.style.boxShadow = `0 0 10px ${colors[score - 1] || '#ff4444'}`;
+    text.textContent = score > 0 ? labels[score - 1] : '';
+    text.style.color = colors[score - 1] || '#ff4444';
+    return score;
+  };
+
+  // ===== MODAL SYSTEM =====
+  window.showModal = function(config) {
+    playSound('modal');
+    const overlay = document.getElementById('modalOverlay');
+    const icon = document.getElementById('modalIcon');
+    const title = document.getElementById('modalTitle');
+    const msg = document.getElementById('modalMsg');
+    const extra = document.getElementById('modalExtra');
+    const confetti = document.getElementById('modalConfetti');
+
+    icon.innerHTML = config.icon || '✨';
+    title.textContent = config.title || '';
+    msg.innerHTML = config.message || '';
+    extra.innerHTML = config.extra || '';
+    confetti.innerHTML = config.celebrate ? generateConfetti() : '';
+
+    overlay.classList.add('show');
+
+    if (config.autoClose) {
+      setTimeout(() => closeModal(), config.autoClose);
+    }
+    if (config.redirect) {
+      setTimeout(() => { window.location.href = config.redirect; }, config.redirectDelay || 4000);
+    }
+  };
+
+  window.closeModal = function() {
+    playSound('click');
+    document.getElementById('modalOverlay').classList.remove('show');
+  };
+
+  function generateConfetti() {
+    let html = '';
+    for (let i = 0; i < 30; i++) {
+      const colors = ['#FFD700', '#C0C0C0', '#9370DB', '#8A2BE2', '#FF69B4'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const left = Math.random() * 100;
+      const delay = Math.random() * 2;
+      const size = Math.random() * 8 + 4;
+      html += `<div class="confetti-piece" style="left:${left}%;animation-delay:${delay}s;width:${size}px;height:${size}px;background:${color}"></div>`;
+    }
+    return html;
+  }
+
+  // ===== LASER SCAN =====
+  function laserScan(callback) {
+    const scan = document.getElementById('laserScan');
+    scan.classList.add('active');
+    let count = 0;
+    const interval = setInterval(() => {
+      playSound('scan');
+      count++;
+      if (count >= 4) {
+        clearInterval(interval);
+        scan.classList.remove('active');
+        callback();
+      }
+    }, 600);
+  }
+
+  // ===== REGISTER =====
+  window.doRegister = async function() {
+    playSound('click');
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pwd = document.getElementById('reg-pwd').value;
+    const pwd2 = document.getElementById('reg-pwd2').value;
+
+    if (!name || !email || !pwd || !pwd2) {
+      showModal({ icon: '⚠️', title: 'حقول ناقصة', message: 'يرجى ملء جميع الحقول للمتابعة.' });
+      return;
+    }
+    if (pwd !== pwd2) {
+      showModal({ icon: '🔐', title: 'كلمة المرور غير متطابقة', message: 'تأكد من تطابق كلمتي المرور.' });
+      return;
+    }
+    const strength = checkPasswordStrength(pwd);
+    if (strength < 3) {
+      showModal({ icon: '🛡️', title: 'كلمة مرور ضعيفة', message: 'يجب أن تكون كلمة المرور قوية. أضف أحرفاً كبيرة وأرقاماً ورموزاً.' });
+      return;
+    }
+
+    const btn = document.getElementById('reg-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-spinner"></span> جارٍ الإنشاء...';
+
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, pwd);
+      await sendEmailVerification(cred.user);
+
+      await setDoc(doc(db, 'users', cred.user.uid), {
+        name, email,
+        createdAt: serverTimestamp(),
+        uid: cred.user.uid,
+        emailVerified: false
+      });
+
+      // Notify server
+      fetch(SERVER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'register', name, email, uid: cred.user.uid, timestamp: new Date().toISOString() })
+      }).catch(() => {});
+
+      playSound('popup');
+      showModal({
+        icon: '🎉',
+        title: 'مرحباً بك في عائلة AQX!',
+        message: `
+          <p>أهلاً وسهلاً يا <strong>${name}</strong>!</p>
+          <p>لقد أكملت تسجيلك بنجاح وأصبحت جزءاً من مجتمع <span style="color:#FFD700">القرماني اكس AQX</span> الحصري!</p>
+          <p style="margin-top:12px;color:#c9a0ff">📧 تم إرسال رابط التفعيل إلى بريدك الإلكتروني</p>
+          <p style="font-size:0.9em;color:#aaa;margin-top:8px">بإتمام التسجيل، وافقت على جميع الشروط والأحكام وسياسة الخصوصية.</p>
+          <p style="font-size:1em;color:#FFD700;margin-top:12px">✨ عالم لا حدود ينتظرك!</p>
+        `,
+        celebrate: true,
+        extra: `<a href="#" class="modal-btn" onclick="resendVerification()">📨 إعادة إرسال رابط التفعيل</a>`
+      });
+
+    } catch (err) {
+      let msg = 'حدث خطأ غير متوقع. حاول مجدداً.';
+      let icon = '❌';
+      if (err.code === 'auth/email-already-in-use') {
+        icon = '📛';
+        msg = `<p>هذا البريد الإلكتروني <strong>مسجل مسبقاً</strong> في منصة AQX.</p><p style="margin-top:8px">إذا كنت صاحب الحساب، يمكنك <a href="#" onclick="switchTab('login');closeModal()" style="color:#FFD700">تسجيل الدخول</a> أو <a href="#" onclick="forgotPassword();closeModal()" style="color:#c9a0ff">استعادة كلمة المرور</a>.</p>`;
+      } else if (err.code === 'auth/invalid-email') {
+        msg = 'البريد الإلكتروني غير صالح. تحقق من الصيغة.';
+      } else if (err.code === 'auth/weak-password') {
+        msg = 'كلمة المرور ضعيفة جداً. استخدم 6 أحرف على الأقل.';
+      }
+      showModal({ icon, title: 'تعذّر إنشاء الحساب', message: msg });
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = 'إنشاء حساب';
+  };
+
+  // ===== LOGIN =====
+  window.doLogin = async function() {
+    playSound('click');
+    const email = document.getElementById('login-email').value.trim();
+    const pwd = document.getElementById('login-pwd').value;
+
+    if (!email || !pwd) {
+      showModal({ icon: '⚠️', title: 'بيانات ناقصة', message: 'يرجى إدخال البريد الإلكتروني وكلمة المرور.' });
+      return;
+    }
+
+    const btn = document.getElementById('login-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-spinner"></span> جارٍ التحقق...';
+
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, pwd);
+      const user = cred.user;
+
+      if (!user.emailVerified) {
+        auth.signOut();
+        showModal({
+          icon: '📬',
+          title: 'الحساب يحتاج تفعيلاً',
+          message: `
+            <p>بريدك الإلكتروني <strong>${email}</strong> لم يتم تفعيله بعد.</p>
+            <p style="margin-top:8px;color:#c9a0ff">يرجى التحقق من بريدك الإلكتروني والنقر على رابط التفعيل.</p>
+          `,
+          extra: `
+            <a href="#" class="modal-btn" onclick="resendVerification2('${email}','${pwd}')">📨 إعادة إرسال رابط التفعيل</a>
+            <a href="#" class="modal-btn-outline" onclick="forgotPassword()">🔑 هل نسيت كلمة المرور؟</a>
+          `
+        });
+        btn.disabled = false;
+        btn.innerHTML = 'تسجيل الدخول';
+        return;
+      }
+
+      // Laser scan animation
+      laserScan(async () => {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        const userData = userDoc.exists() ? userDoc.data() : { name: 'مستخدم AQX' };
+
+        fetch(SERVER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'login', email, uid: user.uid, timestamp: new Date().toISOString() })
+        }).catch(() => {});
+
+        playSound('success');
+        showModal({
+          icon: '👑',
+          title: 'أهلاً وسهلاً!',
+          message: `
+            <p>مرحباً بعودتك <strong style="color:#FFD700">${userData.name || 'البطل'}</strong>!</p>
+            <p style="margin-top:10px">تم تسجيل دخولك بنجاح إلى عالم <span style="color:#c9a0ff">القرماني اكس AQX</span></p>
+            <p style="margin-top:10px;font-size:0.95em;color:#aaa">✨ المجد ينتظرك، انطلق نحو القمة!</p>
+            <p style="margin-top:8px;font-size:0.85em;color:#888">جارٍ نقلك إلى لوحة التحكم...</p>
+          `,
+          celebrate: true,
+          redirect: 'dashboard.html',
+          redirectDelay: 3500
+        });
+      });
+
+    } catch (err) {
+      let msg = 'حدث خطأ. حاول مجدداً.';
+      let icon = '❌';
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        icon = '🔒';
+        msg = `
+          <p>البريد الإلكتروني أو كلمة المرور <strong>غير صحيحة</strong>.</p>
+          <p style="margin-top:8px">هل نسيت كلمة المرور؟</p>
+        `;
+      } else if (err.code === 'auth/user-disabled') {
+        icon = '🚫';
+        msg = `<p>هذا الحساب <strong>معطّل</strong> مؤقتاً.</p><p style="margin-top:8px;color:#c9a0ff">للتنشيط، يرجى التواصل مع الدعم الفني.</p>`;
+      } else if (err.code === 'auth/too-many-requests') {
+        msg = 'تم تجاوز عدد المحاولات. حاول لاحقاً أو أعد تعيين كلمة المرور.';
+      }
+      showModal({
+        icon,
+        title: 'تعذّر تسجيل الدخول',
+        message: msg,
+        extra: `<a href="#" class="modal-btn-outline" onclick="forgotPassword()">🔑 إعادة تعيين كلمة المرور</a>`
+      });
+      btn.disabled = false;
+      btn.innerHTML = 'تسجيل الدخول';
+    }
+  };
+
+  window.forgotPassword = async function() {
+    playSound('click');
+    const email = document.getElementById('login-email').value.trim() || prompt('أدخل بريدك الإلكتروني:');
+    if (!email) return;
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showModal({ icon: '📧', title: 'تم الإرسال!', message: `تم إرسال رابط إعادة تعيين كلمة المرور إلى <strong>${email}</strong>. تفقد صندوق الوارد.` });
+    } catch(e) {
+      showModal({ icon: '❌', title: 'خطأ', message: 'تأكد من صحة البريد الإلكتروني وحاول مجدداً.' });
+    }
+  };
+
+  window.resendVerification = async function() {
+    const user = auth.currentUser;
+    if (user) {
+      await sendEmailVerification(user);
+      showModal({ icon: '📨', title: 'تم الإرسال!', message: 'تم إعادة إرسال رابط التفعيل إلى بريدك الإلكتروني.' });
+    }
+  };
+
+  window.resendVerification2 = async function(email, pwd) {
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, pwd);
+      await sendEmailVerification(cred.user);
+      await auth.signOut();
+      showModal({ icon: '📨', title: 'تم الإرسال!', message: 'تم إعادة إرسال رابط التفعيل بنجاح. تفقد بريدك الإلكتروني.' });
+    } catch(e) {
+      showModal({ icon: '❌', title: 'خطأ', message: 'تعذّر إرسال رابط التفعيل. حاول مجدداً.' });
+    }
+  };
+
+  // Google Sign In
+  window.googleLogin = async function() {
+    playSound('click');
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      await setDoc(doc(db, 'users', user.uid), {
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        uid: user.uid,
+        lastLogin: serverTimestamp()
+      }, { merge: true });
+
+      fetch(SERVER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'google-login', email: user.email, uid: user.uid })
+      }).catch(() => {});
+
+      laserScan(() => {
+        playSound('success');
+        showModal({
+          icon: '👑',
+          title: 'أهلاً بك!',
+          message: `مرحباً <strong style="color:#FFD700">${user.displayName}</strong>! تم تسجيل دخولك عبر Google بنجاح. ✨`,
+          celebrate: true,
+          redirect: 'dashboard.html',
+          redirectDelay: 3000
+        });
+      });
+    } catch(e) {
+      if (e.code !== 'auth/popup-closed-by-user') {
+        showModal({ icon: '❌', title: 'خطأ', message: 'تعذّر تسجيل الدخول عبر Google.' });
+      }
+    }
+  };
+
+  // Toggle password visibility
+  window.togglePwd = function(id) {
+    playSound('click');
+    const el = document.getElementById(id);
+    el.type = el.type === 'password' ? 'text' : 'password';
+  };
+
+  // Init on DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    initParticles();
+
+    // Add sound to all inputs
+    document.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('focus', () => playSound('hover'));
+      inp.addEventListener('input', () => playSound('type'));
+    });
+
+    // Add hover sounds to buttons
+    document.querySelectorAll('.tab-btn, .btn-social, .submit-btn').forEach(btn => {
+      btn.addEventListener('mouseenter', () => playSound('hover'));
+    });
+  });
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple-dark: #1a0030;
+    --purple-mid: #2d0052;
+    --purple-main: #6a0dad;
+    --purple-light: #9b59b6;
+    --purple-glow: #c084fc;
+    --gold: #FFD700;
+    --gold-dark: #B8860B;
+    --silver: #C0C0C0;
+    --text-white: #f0e6ff;
+    --card-bg: rgba(20, 0, 40, 0.85);
+    --border-glow: rgba(150, 50, 255, 0.5);
+  }
+
+  html, body {
+    min-height: 100vh;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    background: var(--purple-dark);
+    overflow-x: hidden;
+    direction: rtl;
+  }
+
+  /* BG */
+  .bg-scene {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(100, 0, 180, 0.4) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(80, 0, 160, 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(120, 0, 200, 0.3) 0%, transparent 50%),
+      linear-gradient(180deg, #0d0020 0%, #1a0035 30%, #0f0025 60%, #080015 100%);
+    z-index: 0;
+  }
+
+  /* Arch pillars */
+  .arch-left, .arch-right {
+    position: fixed;
+    top: 0;
+    width: 200px;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .arch-left {
+    left: 0;
+    background: linear-gradient(90deg, rgba(40,0,80,0.9) 0%, transparent 100%);
+    border-right: 1px solid rgba(150,50,255,0.15);
+  }
+  .arch-right {
+    right: 0;
+    background: linear-gradient(270deg, rgba(40,0,80,0.9) 0%, transparent 100%);
+    border-left: 1px solid rgba(150,50,255,0.15);
+  }
+
+  #particleCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .page-wrap {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px;
+  }
+
+  /* === HEADER / LOGO === */
+  .site-header {
+    text-align: center;
+    padding: 20px 0 28px;
+    width: 100%;
+  }
+
+  .logo-wrap {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+
+  .logo-crown {
+    font-size: 2rem;
+    display: block;
+    text-align: center;
+    margin-bottom: -4px;
+    filter: drop-shadow(0 0 12px #FFD700);
+    animation: crownFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes crownFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .logo-text {
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 900;
+    letter-spacing: 6px;
+    font-family: 'Tajawal', sans-serif;
+    animation: neonCycle 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px currentColor);
+    display: block;
+    line-height: 1;
+  }
+
+  @keyframes neonCycle {
+    0%   { color: #FFD700; text-shadow: 0 0 20px #FFD700, 0 0 40px #FFD700, 0 0 80px #FFD700; }
+    20%  { color: #c084fc; text-shadow: 0 0 20px #c084fc, 0 0 40px #c084fc, 0 0 80px #9333ea; }
+    40%  { color: #67e8f9; text-shadow: 0 0 20px #67e8f9, 0 0 40px #06b6d4, 0 0 80px #0284c7; }
+    60%  { color: #f0abfc; text-shadow: 0 0 20px #f0abfc, 0 0 40px #e879f9, 0 0 80px #a855f7; }
+    80%  { color: #fde68a; text-shadow: 0 0 20px #fde68a, 0 0 40px #f59e0b, 0 0 80px #b45309; }
+    100% { color: #FFD700; text-shadow: 0 0 20px #FFD700, 0 0 40px #FFD700, 0 0 80px #FFD700; }
+  }
+
+  .logo-sub {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: var(--text-white);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(200, 150, 255, 0.8);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .logo-aqx {
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing: 8px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .logo-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 6px 0;
+    color: var(--gold);
+    font-size: 1.1rem;
+  }
+
+  .logo-divider::before, .logo-divider::after {
+    content: '';
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .logo-tagline {
+    font-size: clamp(0.85rem, 2vw, 1.05rem);
+    color: var(--silver);
+    letter-spacing: 3px;
+    font-weight: 400;
+  }
+
+  /* === MAIN CARD CONTAINER === */
+  .card-area {
+    width: 100%;
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    position: relative;
+  }
+
+  @media (max-width: 768px) {
+    .card-area { grid-template-columns: 1fr; }
+  }
+
+  /* Tab buttons row (mobile) */
+  .tab-row {
+    display: none;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 16px;
+    background: rgba(30,0,60,0.7);
+    border-radius: 50px;
+    padding: 4px;
+    border: 1px solid var(--border-glow);
+  }
+
+  @media (max-width: 768px) {
+    .tab-row { display: flex; }
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50px;
+    background: transparent;
+    color: var(--silver);
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--purple-main), #9333ea);
+    color: white;
+    box-shadow: 0 0 20px rgba(150, 50, 255, 0.5);
+  }
+
+  /* === CARDS === */
+  .auth-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glow);
+    padding: clamp(24px, 4vw, 40px);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+  }
+
+  .auth-card::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(135deg, rgba(150,50,255,0.3), transparent, rgba(255,215,0,0.1));
+    z-index: -1;
+    border-radius: inherit;
+  }
+
+  .card-login {
+    border-radius: 24px 0 0 24px;
+    border-right: none;
+  }
+  .card-register {
+    border-radius: 0 24px 24px 0;
+  }
+
+  @media (max-width: 768px) {
+    .card-login, .card-register {
+      border-radius: 20px;
+      border: 1px solid var(--border-glow);
+      display: none;
+    }
+    .card-login.active, .card-register.active { display: block; }
+  }
+
+  /* Center divider diamond */
+  .divider-gem {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, #2a0050, #1a0035);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(255,215,0,0.4), 0 0 60px rgba(150,50,255,0.3);
+    animation: gemPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes gemPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.4), 0 0 40px rgba(150,50,255,0.3); }
+    50% { box-shadow: 0 0 40px rgba(255,215,0,0.7), 0 0 80px rgba(150,50,255,0.5); }
+  }
+
+  .divider-gem span { font-size: 1.8rem; filter: drop-shadow(0 0 8px #c084fc); }
+
+  @media (max-width: 768px) { .divider-gem { display: none; } }
+
+  /* === CARD HEADER === */
+  .card-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .header-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, rgba(150,50,255,0.3), rgba(100,10,200,0.5));
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 1.8rem;
+    box-shadow: 0 0 20px rgba(255,215,0,0.3);
+    animation: iconGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes iconGlow {
+    0%, 100% { box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+    50% { box-shadow: 0 0 30px rgba(255,215,0,0.6), 0 0 50px rgba(150,50,255,0.4); }
+  }
+
+  .card-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 900;
+    color: var(--text-white);
+    text-shadow: 0 0 20px rgba(200, 150, 255, 0.6);
+    margin-bottom: 4px;
+  }
+
+  .card-divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 8px auto;
+  }
+
+  .card-subtitle {
+    font-size: 0.9rem;
+    color: rgba(200, 170, 255, 0.7);
+    font-weight: 400;
+  }
+
+  /* === FORM === */
+  .form-group {
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-icon {
+    position: absolute;
+    right: 14px;
+    color: var(--purple-glow);
+    font-size: 1rem;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 13px 42px 13px 40px;
+    background: rgba(40, 0, 80, 0.6);
+    border: 1px solid rgba(150, 50, 255, 0.4);
+    border-radius: 12px;
+    color: var(--text-white);
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    text-align: right;
+    transition: all 0.3s;
+    outline: none;
+  }
+
+  .form-input::placeholder { color: rgba(200, 170, 255, 0.4); }
+
+  .form-input:focus {
+    border-color: var(--purple-glow);
+    background: rgba(60, 0, 100, 0.7);
+    box-shadow: 0 0 0 3px rgba(150, 50, 255, 0.2), 0 0 20px rgba(150, 50, 255, 0.15);
+  }
+
+  .toggle-pwd {
+    position: absolute;
+    left: 12px;
+    background: none;
+    border: none;
+    color: var(--purple-glow);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px;
+    z-index: 2;
+    transition: color 0.3s;
+  }
+  .toggle-pwd:hover { color: var(--gold); }
+
+  /* === STRENGTH BAR === */
+  .strength-section { margin-top: 10px; }
+  .strength-track {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  #strengthBar {
+    height: 100%;
+    width: 0;
+    border-radius: 10px;
+    transition: all 0.4s;
+  }
+  #strengthText { font-size: 0.8rem; font-weight: 600; transition: all 0.3s; }
+
+  .rules-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .rule {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: rgba(200, 170, 255, 0.5);
+    transition: all 0.3s;
+  }
+
+  .rule.met {
+    color: #00ff88;
+    text-shadow: 0 0 8px #00ff88;
+  }
+
+  .rule-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .rule.met .rule-dot {
+    background: #00ff88;
+    box-shadow: 0 0 8px #00ff88;
+  }
+
+  /* === REMEMBER / FORGOT === */
+  .row-check {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+  }
+
+  .check-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--silver);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .check-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--purple-main);
+    cursor: pointer;
+  }
+
+  .forgot-link {
+    color: var(--purple-glow);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.3s;
+  }
+  .forgot-link:hover { color: var(--gold); text-shadow: 0 0 8px var(--gold); }
+
+  /* === BUTTONS === */
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #6a0dad, #9333ea, #7c3aed);
+    background-size: 200% 200%;
+    animation: btnGradient 3s ease infinite;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(100, 0, 200, 0.4);
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  @keyframes btnGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,215,0,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(100, 0, 200, 0.6), 0 0 40px rgba(150,50,255,0.3);
+  }
+  .submit-btn:hover::before { opacity: 1; }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .btn-spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* === SOCIAL DIVIDER === */
+  .social-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0 16px;
+    color: rgba(200, 170, 255, 0.4);
+    font-size: 0.8rem;
+  }
+  .social-divider::before, .social-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(150, 50, 255, 0.3);
+  }
+
+  .social-btns {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .btn-social {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    border: 1px solid rgba(150,50,255,0.4);
+    background: rgba(40, 0, 80, 0.5);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    transition: all 0.3s;
+    color: white;
+  }
+  .btn-social:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(255,215,0,0.3);
+    transform: translateY(-2px);
+  }
+
+  /* === TERMS === */
+  .terms-text {
+    text-align: center;
+    font-size: 0.78rem;
+    color: rgba(200, 170, 255, 0.5);
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+  .terms-text a { color: var(--gold); text-decoration: none; }
+  .terms-text a:hover { text-shadow: 0 0 8px var(--gold); }
+
+  /* === FOOTER FEATURES === */
+  .features-row {
+    width: 100%;
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-top: 36px;
+    padding: 0 8px;
+  }
+
+  @media (max-width: 900px) { .features-row { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 580px) { .features-row { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+
+  .feature-item {
+    text-align: center;
+    padding: 16px 8px;
+    background: rgba(30,0,60,0.4);
+    border: 1px solid rgba(150,50,255,0.2);
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s;
+  }
+
+  .feature-item:hover {
+    border-color: var(--gold);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255,215,0,0.15);
+  }
+
+  .feature-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 6px var(--purple-glow));
+  }
+
+  .feature-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-white);
+    margin-bottom: 4px;
+  }
+
+  .feature-desc {
+    font-size: 0.73rem;
+    color: rgba(200, 170, 255, 0.5);
+  }
+
+  /* === FOOTER === */
+  .site-footer {
+    text-align: center;
+    padding: 20px;
+    color: rgba(200, 170, 255, 0.4);
+    font-size: 0.8rem;
+    margin-top: 20px;
+  }
+
+  /* === LASER SCAN === */
+  #laserScan {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    pointer-events: none;
+  }
+  #laserScan.active { display: block; }
+
+  .laser-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #00ff88, #00ffff, #00ff88, transparent);
+    box-shadow: 0 0 20px #00ff88, 0 0 40px #00ffff;
+    animation: laserMove 0.6s ease-in-out infinite alternate;
+    top: 50%;
+  }
+
+  @keyframes laserMove {
+    0% { top: 30%; opacity: 0.8; }
+    100% { top: 70%; opacity: 1; }
+  }
+
+  .laser-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 255, 136, 0.03);
+  }
+
+  .scan-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #00ff88;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-shadow: 0 0 20px #00ff88;
+    animation: scanTextPulse 0.6s ease-in-out infinite alternate;
+  }
+  @keyframes scanTextPulse {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  /* === MODAL === */
+  #modalOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  #modalOverlay.show { display: flex; animation: modalFadeIn 0.4s ease; }
+
+  @keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal-box {
+    background: linear-gradient(145deg, #1a0035, #0d0020, #1f0040);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    border-radius: 24px;
+    padding: clamp(24px, 5vw, 40px);
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    text-align: center;
+    box-shadow:
+      0 0 60px rgba(150,50,255,0.4),
+      0 0 120px rgba(100,0,200,0.2),
+      inset 0 0 60px rgba(50,0,100,0.2);
+    animation: modalSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  }
+
+  .modal-box::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 26px;
+    background: linear-gradient(135deg, #FFD700, #9333ea, #FFD700, #c084fc);
+    background-size: 300% 300%;
+    animation: borderGlow 3s linear infinite;
+    z-index: -1;
+  }
+
+  @keyframes borderGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes modalSlideIn {
+    from { transform: scale(0.5) translateY(-50px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    width: 34px; height: 34px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+  }
+  .modal-close:hover {
+    background: rgba(255,50,50,0.3);
+    border-color: #ff4444;
+    box-shadow: 0 0 15px rgba(255,50,50,0.4);
+  }
+
+  #modalIcon {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 12px;
+    animation: iconBounce 0.5s ease;
+    filter: drop-shadow(0 0 20px rgba(255,215,0,0.8));
+  }
+  @keyframes iconBounce {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  #modalTitle {
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+    margin-bottom: 14px;
+  }
+
+  #modalMsg {
+    font-size: 0.95rem;
+    color: var(--text-white);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  #modalExtra {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .modal-btn {
+    display: block;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #6a0dad, #9333ea);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(100,0,200,0.4);
+  }
+  .modal-btn:hover { box-shadow: 0 6px 25px rgba(100,0,200,0.6); transform: translateY(-2px); }
+
+  .modal-btn-outline {
+    display: block;
+    padding: 11px 24px;
+    background: transparent;
+    color: var(--gold);
+    text-decoration: none;
+    border-radius: 10px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+    border: 1px solid var(--gold);
+    cursor: pointer;
+  }
+  .modal-btn-outline:hover {
+    background: rgba(255,215,0,0.1);
+    box-shadow: 0 0 20px rgba(255,215,0,0.3);
+  }
+
+  /* Confetti */
+  #modalConfetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .confetti-piece {
+    position: absolute;
+    top: -10px;
+    border-radius: 2px;
+    animation: confettiFall 2.5s ease-in forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotateZ(0); opacity: 1; }
+    100% { transform: translateY(500px) rotateZ(720deg); opacity: 0; }
+  }
+
+  /* Animated stars bg in modal */
+  .modal-stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .star-particle {
+    position: absolute;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: starFly 1.5s ease-out forwards;
+  }
+  @keyframes starFly {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(3) translate(var(--tx), var(--ty)); opacity: 0; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--purple-dark); }
+  ::-webkit-scrollbar-thumb { background: var(--purple-main); border-radius: 3px; }
+
+  /* Responsive tweaks */
+  @media (max-width: 768px) {
+    .card-area { gap: 16px; max-width: 480px; }
+    .tab-row { display: flex; }
+  }
+</style>
 </head>
 <body>
 
-    <div id="alqurmani-search" class="alqurmani-search-widget">
-        <button id="q-search-trigger" class="q-search-icon-btn" title="بحث القرمانى إكس">
-            <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-        
-        <div class="q-search-content-area">
-            <span class="q-search-text-msg">جاري التوجه لمحرك بحث القرمانى اكس...</span>
-            <div class="q-progress-track">
-                <div class="q-progress-fill-bar"></div>
-            </div>
+<div class="bg-scene"></div>
+<div class="arch-left"></div>
+<div class="arch-right"></div>
+<canvas id="particleCanvas"></canvas>
+
+<!-- Laser scan -->
+<div id="laserScan">
+  <div class="laser-overlay"></div>
+  <div class="laser-line"></div>
+  <div class="scan-text">🔒 جارٍ التحقق من الأمان...</div>
+</div>
+
+<!-- Modal -->
+<div id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div id="modalConfetti"></div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <span id="modalIcon">✨</span>
+    <div id="modalTitle"></div>
+    <div id="modalMsg"></div>
+    <div id="modalExtra"></div>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="logo-wrap">
+      <span class="logo-crown">👑</span>
+      <span class="logo-text">AQX</span>
+      <span class="logo-sub">القرماني اكس</span>
+      <span class="logo-aqx">A Q X</span>
+      <div class="logo-divider">✦ تجربة استثنائية... لعالم بلا حدود ✦</div>
+    </div>
+  </header>
+
+  <!-- Mobile tabs -->
+  <div class="tab-row">
+    <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">تسجيل الدخول</button>
+    <button class="tab-btn" id="tab-register" onclick="switchTab('register')">الإشتراك</button>
+  </div>
+
+  <!-- Cards -->
+  <div class="card-area">
+
+    <!-- LOGIN -->
+    <div class="auth-card card-login tab-panel active" id="panel-login">
+      <div class="card-header">
+        <div class="header-icon">👤</div>
+        <h2 class="card-title">تسجيل الدخول</h2>
+        <div class="card-divider"></div>
+        <p class="card-subtitle">مرحباً بعودتك</p>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrap">
+          <span class="input-icon">✉️</span>
+          <input id="login-email" class="form-input" type="email" placeholder="البريد الإلكتروني"
+            onkeydown="if(event.key==='Enter')doLogin()">
         </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input id="login-pwd" class="form-input" type="password" placeholder="كلمة المرور"
+            onkeydown="if(event.key==='Enter')doLogin()">
+          <button class="toggle-pwd" onclick="togglePwd('login-pwd')" type="button" title="إظهار/إخفاء">👁</button>
+        </div>
+      </div>
+
+      <div class="row-check">
+        <label class="check-label">
+          <input type="checkbox" id="remember">
+          تذكرني
+        </label>
+        <a href="#" class="forgot-link" onclick="forgotPassword();return false;">🔑 نسيت كلمة المرور؟</a>
+      </div>
+
+      <button id="login-btn" class="submit-btn" onclick="doLogin()">تسجيل الدخول</button>
+
+      <div class="social-divider">أو تسجيل الدخول عبر</div>
+      <div class="social-btns">
+        <button class="btn-social" onclick="googleLogin()" title="Google">🇬</button>
+        <button class="btn-social" onclick="playSound('click');showModal({icon:'🍎',title:'قريباً',message:'تسجيل الدخول عبر Apple قريباً!'})" title="Apple">🍎</button>
+        <button class="btn-social" onclick="playSound('click');showModal({icon:'🪟',title:'قريباً',message:'تسجيل الدخول عبر Microsoft قريباً!'})" title="Microsoft">🪟</button>
+      </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchWidget = document.getElementById('alqurmani-search');
-            const searchBtn = document.getElementById('q-search-trigger');
-            
-            const targetSearchURL = '#'; 
+    <!-- Divider gem -->
+    <div class="divider-gem" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20">
+      <span>💎</span>
+    </div>
 
-            searchBtn.addEventListener('click', () => {
-                if (!searchWidget.classList.contains('active')) {
-                    searchWidget.classList.add('active');
-                    
-                    setTimeout(() => {
-                        window.location.href = targetSearchURL;
-                    }, 5000);
-                }
-            });
-        });
-    </script>
+    <!-- REGISTER -->
+    <div class="auth-card card-register tab-panel" id="panel-register">
+      <div class="card-header">
+        <div class="header-icon">👤✨</div>
+        <h2 class="card-title">الإشتراك</h2>
+        <div class="card-divider"></div>
+        <p class="card-subtitle">إنشاء حساب جديد</p>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrap">
+          <span class="input-icon">👤</span>
+          <input id="reg-name" class="form-input" type="text" placeholder="الإسم الكامل">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrap">
+          <span class="input-icon">✉️</span>
+          <input id="reg-email" class="form-input" type="email" placeholder="البريد الإلكتروني">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input id="reg-pwd" class="form-input" type="password" placeholder="كلمة المرور"
+            oninput="checkPasswordStrength(this.value)">
+          <button class="toggle-pwd" onclick="togglePwd('reg-pwd')" type="button">👁</button>
+        </div>
+        <div class="strength-section">
+          <div class="strength-track"><div id="strengthBar"></div></div>
+          <div id="strengthText"></div>
+          <div class="rules-list">
+            <div class="rule" id="r1"><div class="rule-dot"></div>8 أحرف على الأقل</div>
+            <div class="rule" id="r2"><div class="rule-dot"></div>حرف كبير A-Z</div>
+            <div class="rule" id="r3"><div class="rule-dot"></div>حرف صغير a-z</div>
+            <div class="rule" id="r4"><div class="rule-dot"></div>رقم 0-9</div>
+            <div class="rule" id="r5"><div class="rule-dot"></div>رمز خاص !@#</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input id="reg-pwd2" class="form-input" type="password" placeholder="تأكيد كلمة المرور"
+            onkeydown="if(event.key==='Enter')doRegister()">
+          <button class="toggle-pwd" onclick="togglePwd('reg-pwd2')" type="button">👁</button>
+        </div>
+      </div>
+
+      <button id="reg-btn" class="submit-btn" onclick="doRegister()">إنشاء حساب</button>
+
+      <p class="terms-text">
+        بإنشاء حساب، فأنت توافق على<br>
+        <a href="#">الشروط والإحكام</a> من <a href="#">سياسة الخصوصية</a>
+      </p>
+    </div>
+
+  </div><!-- /card-area -->
+
+  <!-- Features -->
+  <div class="features-row">
+    <div class="feature-item" onmouseenter="playSound('hover')">
+      <div class="feature-icon">🛡️</div>
+      <div class="feature-title">أمان وخصوصية عالية</div>
+      <div class="feature-desc">حماية متقدمة لبياناتك</div>
+    </div>
+    <div class="feature-item" onmouseenter="playSound('hover')">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">سرعة وأداء استثنائي</div>
+      <div class="feature-desc">تقنية متطورة الأفضل تجربة</div>
+    </div>
+    <div class="feature-item" onmouseenter="playSound('hover')">
+      <div class="feature-icon">👑</div>
+      <div class="feature-title">جودة بلا حدود</div>
+      <div class="feature-desc">نرتقي بمعايير التميز</div>
+    </div>
+    <div class="feature-item" onmouseenter="playSound('hover')">
+      <div class="feature-icon">💎</div>
+      <div class="feature-title">مميزات حصرية</div>
+      <div class="feature-desc">تجربة فريدة لا مثيل لها</div>
+    </div>
+    <div class="feature-item" onmouseenter="playSound('hover')">
+      <div class="feature-icon">🏆</div>
+      <div class="feature-title">دعم فني احترافي</div>
+      <div class="feature-desc">نحن هنا لخدمتكم دائماً</div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    جميع الحقوق محفوظة - AQX © 2024 &nbsp;|&nbsp; القرماني اكس
+  </footer>
+
+</div><!-- /page-wrap -->
+
+<!-- Mobile: ensure correct panels shown on desktop -->
+<script>
+  // On desktop, always show both panels
+  function handleResize() {
+    if (window.innerWidth > 768) {
+      document.querySelectorAll('.tab-panel').forEach(p => {
+        p.style.display = 'block';
+      });
+    } else {
+      document.querySelectorAll('.tab-panel').forEach(p => {
+        p.style.display = p.classList.contains('active') ? 'block' : 'none';
+      });
+    }
+  }
+
+  // Override switchTab for mobile
+  const originalSwitch = window.switchTab;
+  window.switchTab = function(tab) {
+    if (window.playSound) window.playSound('tab');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.classList.remove('active');
+      if (window.innerWidth <= 768) p.style.display = 'none';
+    });
+    document.getElementById('tab-' + tab).classList.add('active');
+    const panel = document.getElementById('panel-' + tab);
+    panel.classList.add('active');
+    if (window.innerWidth <= 768) panel.style.display = 'block';
+    const btn = document.querySelector(`[onclick="switchTab('${tab}')"]`);
+    if (btn) btn.classList.add('active');
+  };
+
+  window.addEventListener('resize', handleResize);
+  window.addEventListener('load', handleResize);
+</script>
 
 </body>
 </html>

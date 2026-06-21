@@ -8,7 +8,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Cairo',sans-serif;min-height:100vh;overflow-x:hidden;direction:rtl;background:#062d2d;}
+/* حظر التحديد للماوس لزيادة الحماية */
+body{font-family:'Cairo',sans-serif;min-height:100vh;overflow-x:hidden;direction:rtl;background:#062d2d;user-select:none;-webkit-user-select:none;}
+/* السماح بتحديد النصوص داخل الحقول فقط */
+input{user-select:auto;-webkit-user-select:auto;}
 
 /* ═══════════ BACKGROUND LUXURY MEDIUM TURQUOISE ═══════════ */
 .bg-main{
@@ -140,7 +143,7 @@ header{text-align:center;padding:15px 0 25px;width:100%;cursor:default;}
 .tab-btn{flex:1;padding:12px 24px;border:none;border-radius:55px;
   background:transparent;color:rgba(180,255,248,0.5);
   font-family:'Cairo',sans-serif;font-size:1rem;font-weight:700;
-  cursor:pointer;transition:.3s;white-space:nowrap;}
+  cursor:pointer;transition:.3s;white-space:nowrap; outline:none;}
 .tab-btn.active{
   background:linear-gradient(135deg,#0a8077,#00bdae,#00dfd0);
   color:#fff;box-shadow:0 0 25px rgba(0,229,208,0.6), 0 4px 12px rgba(0,0,0,0.3);}
@@ -208,7 +211,7 @@ header{text-align:center;padding:15px 0 25px;width:100%;cursor:default;}
   background:linear-gradient(135deg,#0a8077,#00cfc0,#00f5e0);
   border:none;border-radius:14px;color:#fff;font-family:'Cairo',sans-serif;
   font-size:1.05rem;font-weight:900;cursor:pointer;position:relative;overflow:hidden;
-  box-shadow:0 6px 20px rgba(0,229,208,0.4), inset 0 1px 0 rgba(255,255,255,0.2);transition:.3s;}
+  box-shadow:0 6px 20px rgba(0,229,208,0.4), inset 0 1px 0 rgba(255,255,255,0.2);transition:.3s;outline:none;}
 .btn-main:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,229,208,0.6);}
 .btn-main:disabled{background:#1a4d49;color:rgba(255,255,255,0.4);cursor:not-allowed;box-shadow:none;transform:none;}
 
@@ -240,7 +243,7 @@ header{text-align:center;padding:15px 0 25px;width:100%;cursor:default;}
 #btt{position:fixed;bottom:22px;right:22px;z-index:90;width:42px;height:42px;
   background:rgba(4,40,38,0.85);border:1px solid rgba(0,229,208,0.4);border-radius:50%;
   color:#FFD700;font-size:1.1rem;cursor:pointer;display:none;align-items:center;justify-content:center;
-  box-shadow:0 4px 15px rgba(0,0,0,0.4);transition:.3s;}
+  box-shadow:0 4px 15px rgba(0,0,0,0.4);transition:.3s; outline:none;}
 #btt:hover{background:#00e5d0;color:#000;box-shadow:0 0 20px #00e5d0;transform:translateY(-3px);}
 </style>
 </head>
@@ -299,7 +302,7 @@ header{text-align:center;padding:15px 0 25px;width:100%;cursor:default;}
   </div>
 </div>
 
-<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'});">▲</button>
+<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'});snd('click');">▲</button>
 
 <div class="page">
   <header>
@@ -408,6 +411,19 @@ header{text-align:center;padding:15px 0 25px;width:100%;cursor:default;}
   </div>
 </div>
 
+<script>
+// الحماية ضد النقرات واختصارات لوحة المفاتيح للمطورين
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (e.keyCode === 123 || // F12
+     (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || // Ctrl+Shift+I/J/C
+     (e.ctrlKey && e.keyCode === 85)) { // Ctrl+U
+    e.preventDefault();
+    return false;
+  }
+});
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
@@ -446,10 +462,12 @@ function ping(data) {
   }).catch(() => {});
 }
 
-/* ── Audio Synthesizer (Chic & Elegant) ── */
+/* ── Crash-Proof Audio Synthesizer ── */
 window.snd = function(type) {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);
@@ -472,14 +490,16 @@ window.snd = function(type) {
       osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
       osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2);
       gain.gain.setValueAtTime(0.12, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-      osc.start(); osc.stop(ctx.currentTime + 0.4);
+      osc.start(); osc.stop(ctx.currentTime + 0.4); // تم إغلاقها بإحكام لمنع الأعطال
     } else if (type === 'er') {
       osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, ctx.currentTime);
       osc.frequency.setValueAtTime(100, ctx.currentTime + 0.15);
       gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
       osc.start(); osc.stop(ctx.currentTime + 0.3);
     }
-  } catch (_) {}
+  } catch (e) {
+    // تجاهل أي خطأ صوتي بصمت لضمان استمرار عمل باقي الأكواد
+  }
 };
 
 // Bind Sounds to Elements
@@ -487,12 +507,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('input').forEach(i => i.addEventListener('input', () => window.snd('type')));
   document.querySelectorAll('button, .lnk, .tab-btn').forEach(b => {
     b.addEventListener('mouseenter', () => window.snd('hover'));
-    b.addEventListener('click', () => window.snd('click'));
   });
 });
 
 /* ── UI Controls ── */
 window.showTab = function(t) {
+  window.snd('click');
   const tl = document.getElementById('tLogin'), tr = document.getElementById('tReg');
   const pl = document.getElementById('pLogin'), pr = document.getElementById('pReg');
   if (t === 'login') {
@@ -505,6 +525,7 @@ window.showTab = function(t) {
 };
 
 window.tgPwd = function(id) {
+  window.snd('click');
   const i = document.getElementById(id); i.type = i.type === 'password' ? 'text' : 'password';
 };
 
@@ -518,6 +539,7 @@ window.showModal = function(o) {
 };
 
 window.closeModal = function() {
+  window.snd('click');
   const ov = document.getElementById('mOv'); ov.style.display = 'none'; ov.classList.remove('show');
   document.getElementById('mConf').innerHTML = '';
 };
@@ -545,6 +567,7 @@ window.resendVerif = async function(e, p) {
 
 /* ── LOGIN LOGIC (Lightning Fast & Fixed) ── */
 window.doLogin = async function() {
+  window.snd('click');
   const em = (document.getElementById('lEmail').value || '').trim();
   const pw = document.getElementById('lPwd').value || '';
   
@@ -562,6 +585,8 @@ window.doLogin = async function() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spin"></span> جارٍ التحقق...';
   
+  const resetBtn = () => { btn.disabled = false; btn.innerHTML = origTxt; };
+  
   try {
     const cred = await signInWithEmailAndPassword(auth, em, pw);
     
@@ -572,7 +597,6 @@ window.doLogin = async function() {
     if (!freshUser.emailVerified) {
       ping({ type: 'login_failed_unverified', email: em, uid: freshUser.uid, ts: new Date().toISOString() });
       await signOut(auth);
-      btn.disabled = false; btn.innerHTML = origTxt; // Reset Button
       window.snd('er');
       // Pass credentials safely to resend function
       const sPw = pw.replace(/'/g, "\\'").replace(/"/g, '\\"');
@@ -594,12 +618,10 @@ window.doLogin = async function() {
     window.snd('su');
     
     setTimeout(() => {
-      btn.disabled = false; btn.innerHTML = origTxt;
       window.location.href = NEXT;
     }, 1500);
     
   } catch (e) {
-    btn.disabled = false; btn.innerHTML = origTxt; // Strict Reset on Error
     window.snd('er');
     let m = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
     if (e.code === 'auth/network-request-failed') m = 'خطأ في الاتصال بالسيرفر. تحقق من الإنترنت.';
@@ -608,11 +630,15 @@ window.doLogin = async function() {
       icon: '❌', title: 'فشل الدخول', msg: m,
       xtra: `<button class="mbtn-o" onclick="closeModal()">إعادة المحاولة</button>`
     });
+  } finally {
+    // التنفيذ الإجباري لمنع تعليق الزر
+    resetBtn();
   }
 };
 
 /* ── REGISTER LOGIC (Lightning Fast & Fixed) ── */
 window.doRegister = async function() {
+  window.snd('click');
   const em = (document.getElementById('rEmail').value || '').trim();
   const pw = document.getElementById('rPwd').value || '';
   const pw2 = document.getElementById('rPwd2').value || '';
@@ -639,21 +665,26 @@ window.doRegister = async function() {
   const origTxt = 'إنشاء الحساب الآن';
   btn.disabled = true;
   btn.innerHTML = '<span class="spin"></span> جارٍ الإنشاء...';
+
+  const resetBtn = () => { btn.disabled = false; btn.innerHTML = origTxt; };
   
   try {
     const cred = await createUserWithEmailAndPassword(auth, em, pw);
     await sendEmailVerification(cred.user);
     
-    await setDoc(doc(db, "users", cred.user.uid), {
-      email: em, createdAt: new Date().toISOString(), emailVerified: false
-    });
+    // وضعناها في حاول/تجاهل لتجنب تعطيل التسجيل لو قواعد الأمان صارمة
+    try {
+      await setDoc(doc(db, "users", cred.user.uid), {
+        email: em, createdAt: new Date().toISOString(), emailVerified: false
+      });
+    } catch(fsError) {
+      console.warn("تم إنشاء الحساب بنجاح رغم تقييد قاعدة البيانات.");
+    }
     
     ping({ type: 'register_new_account', email: em, uid: cred.user.uid, ts: new Date().toISOString() });
-    
     await signOut(auth);
-    btn.disabled = false; btn.innerHTML = origTxt; // Reset Button instantly
-    window.snd('su');
     
+    window.snd('su');
     window.showModal({
       icon: '🎉', title: 'تم تسجيل الحساب بنجاح', conf: true,
       msg: `أرسلنا رسالة تفعيل هامة إلى بريدك:<br><b style="color:#00e5d0">${em}</b>.<br>يرجى فتح بريدك والضغط على رابط التفعيل أولاً ثم تسجيل الدخول.`,
@@ -666,7 +697,6 @@ window.doRegister = async function() {
     chkStr('');
     
   } catch (e) {
-    btn.disabled = false; btn.innerHTML = origTxt; // Strict Reset on Error
     window.snd('er');
     let m = 'حدث خطأ غير متوقع أثناء معالجة طلبك.';
     let ic = '❌';
@@ -683,11 +713,15 @@ window.doRegister = async function() {
       icon: ic, title: 'فشل إنشاء الحساب', msg: m,
       xtra: `<button class="mbtn-o" onclick="closeModal()">حسناً</button>`
     });
+  } finally {
+    // إجبار الزر على التوقف عن الدوران تحت أي ظرف!
+    resetBtn();
   }
 };
 
 /* ── Password Reset Logic ── */
 window.forgotPwd = function() {
+  window.snd('click');
   const em = (document.getElementById('lEmail').value || '').trim();
   if (!em) {
     window.snd('er');
@@ -750,7 +784,7 @@ function chkStr(p) {
 /* ── Golden Premium Confetti ── */
 function startConfetti(){
   const box = document.getElementById('mConf'); box.innerHTML='';
-  const cls = ['#FFD700','#DAA520','#F8E231','#FFFACD','#B8860B']; // Golden variants
+  const cls = ['#FFD700','#DAA520','#F8E231','#FFFACD','#B8860B']; 
   for(let i=0; i<50; i++){
     const d = document.createElement('div'); d.className='cp';
     d.style.backgroundColor = cls[Math.floor(Math.random()*cls.length)];
@@ -787,7 +821,7 @@ if(cv){
       y: Math.random() * window.innerHeight, 
       r: Math.random() * 2 + 0.8, 
       sX: Math.random() * 0.5 - 0.25, 
-      sY: Math.random() * -0.5 - 0.2, // Move upwards naturally
+      sY: Math.random() * -0.5 - 0.2, 
       o: Math.random() * 0.6 + 0.2,
       c: goldColors[Math.floor(Math.random() * goldColors.length)]
     });
@@ -808,7 +842,6 @@ if(cv){
       p.x += p.sX; 
       p.y += p.sY;
       
-      // Reset at bottom if they fly out top
       if(p.x < 0 || p.x > cv.width) p.sX *= -1;
       if(p.y < -10) {
         p.y = cv.height + 10;

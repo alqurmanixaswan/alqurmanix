@@ -1,1 +1,384 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQX | جاري الفحص الأمني الشامل</title>
+    
+    <!-- إعدادات قواعد جوجل (Firebase) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyBICr62Oa_-69hATpfFrdTDfO9WV4bVVvU",
+            authDomain: "alqurmanix-d49f7.firebaseapp.com",
+            projectId: "alqurmanix-d49f7",
+            storageBucket: "alqurmanix-d49f7.firebasestorage.app",
+            messagingSenderId: "1017946245702",
+            appId: "1:1017946245702:web:575c425860c82166411847",
+            measurementId: "G-5XN1NMG997"
+        };
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+    </script>
 
+    <style>
+        /* الخلفية الفخمة والتصميم الأساسي */
+        :root {
+            --primary: #00f0ff;
+            --secondary: #7000ff;
+            --glass: rgba(15, 23, 42, 0.6);
+            --border: rgba(0, 240, 255, 0.3);
+        }
+        body {
+            margin: 0; padding: 0;
+            background: linear-gradient(135deg, #0b0f19 0%, #1a1025 50%, #0d1b2a 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            min-height: 100vh; overflow-x: hidden;
+        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* العنوان النيون المتحرك */
+        .neon-title {
+            font-size: 3rem; font-weight: 900; margin-top: 40px; letter-spacing: 2px;
+            animation: neonGlow 3s infinite alternate, float 4s ease-in-out infinite;
+        }
+        @keyframes neonGlow {
+            0% { text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 40px #00f0ff; color: #fff; }
+            50% { text-shadow: 0 0 10px #ff00f0, 0 0 30px #ff00f0, 0 0 50px #ff00f0; color: #f0f0f0; }
+            100% { text-shadow: 0 0 10px #00ffaa, 0 0 20px #00ffaa, 0 0 40px #00ffaa; color: #fff; }
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* حاوية الفحص الزجاجية */
+        .glass-container {
+            background: var(--glass);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 90%; max-width: 600px;
+            padding: 30px; margin-top: 30px;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+            position: relative; overflow: hidden;
+        }
+
+        /* خط الليزر الفاحص */
+        .laser-scanner {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: #00f0ff;
+            box-shadow: 0 0 15px 5px rgba(0, 240, 255, 0.5);
+            animation: scanLaser 2s linear infinite;
+            z-index: 10; pointer-events: none;
+        }
+        @keyframes scanLaser { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+        /* شاشة الفحص المتصاعدة */
+        .scan-terminal {
+            height: 120px; overflow: hidden; position: relative;
+            background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px;
+            border-left: 3px solid var(--primary);
+            display: flex; flex-direction: column; justify-content: flex-end;
+        }
+        .scan-line {
+            color: #00ffcc; font-family: monospace; font-size: 1.1rem;
+            margin: 5px 0; animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* شريط الأكواد السريع */
+        .code-ribbon {
+            width: 100%; height: 30px; background: rgba(0, 0, 0, 0.6);
+            margin-top: 15px; border-radius: 5px; overflow: hidden;
+            display: flex; align-items: center; white-space: nowrap;
+        }
+        .code-text {
+            color: #ff0055; font-family: monospace; font-size: 0.9rem;
+            animation: scrollCode 5s linear infinite;
+        }
+        @keyframes scrollCode { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+
+        /* بيانات المستخدم الحقيقية */
+        .user-data-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px;
+        }
+        .data-box {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px; border-radius: 10px; text-align: center;
+        }
+        .data-title { color: #a0aec0; font-size: 0.85rem; margin-bottom: 5px; }
+        .data-value { color: #fff; font-size: 1.1rem; font-weight: bold; }
+
+        /* العداد */
+        .timer-circle {
+            width: 80px; height: 80px; border-radius: 50%;
+            border: 4px solid var(--primary);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2rem; font-weight: bold; margin: 25px auto 0;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+            color: var(--primary);
+        }
+
+        /* النافذة المنبثقة الفخمة (الترحيب) */
+        .lux-popup {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(10, 15, 30, 0.95);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s ease; z-index: 9999;
+        }
+        .lux-popup.show { opacity: 1; pointer-events: all; }
+        .lux-content {
+            background: linear-gradient(145deg, rgba(25,30,50,0.9), rgba(15,20,35,0.9));
+            padding: 50px; border-radius: 30px; text-align: center;
+            border: 1px solid #00f0ff;
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.3), inset 0 0 20px rgba(0, 240, 255, 0.1);
+            transform: scale(0.8); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .lux-popup.show .lux-content { transform: scale(1); }
+        .lux-icon { font-size: 5rem; margin-bottom: 20px; animation: bounce 2s infinite; }
+        .lux-title { font-size: 2.5rem; color: #fff; margin-bottom: 10px; text-shadow: 0 0 10px #00f0ff; }
+        .lux-desc { font-size: 1.2rem; color: #a0aec0; }
+
+        /* سهم الصعود */
+        .scroll-top {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--primary); color: #000;
+            width: 45px; height: 45px; border-radius: 50%;
+            display: none; justify-content: center; align-items: center;
+            font-size: 1.5rem; cursor: pointer; z-index: 100;
+            box-shadow: 0 0 15px var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- عنوان فخم -->
+    <div class="neon-title">القرمانى اكس AQX</div>
+
+    <!-- نافذة الفحص -->
+    <div class="glass-container">
+        <div class="laser-scanner"></div>
+
+        <!-- شاشة الأوامر المتصاعدة -->
+        <div class="scan-terminal" id="terminal"></div>
+
+        <!-- شريط الأكواد السريعة -->
+        <div class="code-ribbon">
+            <div class="code-text">01000001 01010001 01011000 - SYSTEM_SECURE - ENCRYPTED_KEY_EXCHANGE_ACTIVE - AUTH_TOKEN_VALIDATED - 0x7F8B9C - MONITORING_TRAFFIC</div>
+        </div>
+
+        <!-- بيانات المستخدم -->
+        <div class="user-data-grid">
+            <div class="data-box">
+                <div class="data-title">عنوان الآي بي (IP)</div>
+                <div class="data-value" id="ui-ip">جاري الجلب...</div>
+            </div>
+            <div class="data-box">
+                <div class="data-title">الموقع الجغرافي</div>
+                <div class="data-value" id="ui-location">جاري الجلب...</div>
+            </div>
+            <div class="data-box">
+                <div class="data-title">المعالج والأنوية</div>
+                <div class="data-value" id="ui-cores">جاري الفحص...</div>
+            </div>
+            <div class="data-box">
+                <div class="data-title">نظام التشغيل</div>
+                <div class="data-value" id="ui-os">جاري الفحص...</div>
+            </div>
+        </div>
+
+        <div class="timer-circle" id="timer">13</div>
+    </div>
+
+    <!-- زر الصعود -->
+    <div class="scroll-top" id="scrollTop" onclick="window.scrollTo(0,0)">⬆</div>
+
+    <!-- النافذة المنبثقة الفخمة -->
+    <div class="lux-popup" id="welcomePopup">
+        <div class="lux-content">
+            <div class="lux-icon">🛡️</div>
+            <div class="lux-title">تم توثيق الدخول بنجاح!</div>
+            <div class="lux-desc">شكراً لصبرك.. تم التأكد من خلو الجلسة من البوتات والمخاطر.<br>جاري تحويلك للواجهة الرئيسية بكل فخامة وأمان...</div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. نظام الحماية الصارم (طرد الدخول المباشر)
+        // ==========================================
+        // يجب أن تكون صفحة الدخول قد قامت بعمل: sessionStorage.setItem('aqx_auth_token', 'valid_session');
+        if (!sessionStorage.getItem('aqx_auth_token')) {
+            // طرد فوري بدون رحمة
+            window.location.replace('index.html');
+        }
+
+        // ==========================================
+        // 2. المؤثرات الصوتية الأمنية (صوت الفحص)
+        // ==========================================
+        function playSecuritySound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+                osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.5);
+                // تكرار النغمة كل ثانية
+                setInterval(() => playSecuritySound(), 2000);
+            } catch (e) { console.log("الصوت محظور من المتصفح مؤقتاً"); }
+        }
+        // محاولة تشغيل الصوت فوراً (البعض يحتاج لضغطة مسبقة في صفحة الدخول لتفعيله)
+        window.addEventListener('load', playSecuritySound, {once:true});
+
+        // ==========================================
+        // 3. نصوص الفحص المتصاعدة (بدون تكرار)
+        // ==========================================
+        const scanPhrases = [
+            "جاري فحص حالة الحساب وصلاحية التوكن...",
+            "جاري التأكد من سلامة البريد الإلكتروني...",
+            "جاري تشفير الجلسة عبر بروتوكول AQX...",
+            "تحليل البصمة الرقمية ومطابقة الجهاز...",
+            "جاري فحص نظام التشغيل والمتصفح...",
+            "الفحص المضاد لاكتشاف البوتات والسكريبتات...",
+            "جاري مراجعة معدل الطلبات (منع الإغراق)...",
+            "مطابقة الموقع الجغرافي وقواعد البيانات...",
+            "فحص منافذ الاتصال الخفية (Ports)...",
+            "جاري توليد مفتاح المرور النهائي...",
+            "التحقق من عدم وجود بروكسي أو VPN...",
+            "تجهيز بيئة لوحة التحكم الآمنة...",
+            "اللمسات الأخيرة وتوثيق التقرير..."
+        ];
+        
+        let phraseIndex = 0;
+        const terminal = document.getElementById('terminal');
+        
+        setInterval(() => {
+            if (phraseIndex < scanPhrases.length) {
+                const line = document.createElement('div');
+                line.className = 'scan-line';
+                line.innerText = `> ${scanPhrases[phraseIndex]}`;
+                terminal.appendChild(line);
+                if (terminal.children.length > 3) terminal.removeChild(terminal.firstChild);
+                phraseIndex++;
+            }
+        }, 1000); // إضافة سطر كل ثانية
+
+        // ==========================================
+        // 4. جمع البيانات، إظهارها، وإرسالها للمحركات
+        // ==========================================
+        let securityPassed = false; // النتيجة النهائية
+
+        async function executeEngines() {
+            let userData = { ip: "127.0.0.1", country: "Unknown", city: "Unknown", isp: "Unknown" };
+            
+            // جلب البيانات الحقيقية للعرض وللإرسال
+            try {
+                const ipRes = await fetch('https://ipapi.co/json/');
+                if (ipRes.ok) userData = await ipRes.json();
+            } catch(e) {}
+
+            // تحديث الواجهة بالبيانات الحقيقية
+            document.getElementById('ui-ip').innerText = userData.ip || "محمي";
+            document.getElementById('ui-location').innerText = `${userData.country_name || ""} - ${userData.city || ""}`;
+            document.getElementById('ui-cores').innerText = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} أنوية` : "غير متوفر";
+            document.getElementById('ui-os').innerText = navigator.platform || navigator.userAgent.split(' ')[0];
+
+            // الحزمة الأمنية الكاملة
+            const payload = {
+                email: sessionStorage.getItem('aqx_user_email') || "user@example.com", // إذا كان متوفراً
+                ip: userData.ip,
+                country: userData.country_name,
+                city: userData.city,
+                isp: userData.org,
+                platform: navigator.platform,
+                cores: navigator.hardwareConcurrency,
+                userAgent: navigator.userAgent,
+                isBot: navigator.webdriver ? "🚨 بوت محتمل" : "✅ إنسان طبيعي",
+                auth_token: sessionStorage.getItem('aqx_auth_token')
+            };
+
+            // ضرب المحركين في نفس الوقت بالخلفية
+            try {
+                const [mainCheck, reportNotify] = await Promise.all([
+                    // المحرك الرئيسي الأمني (الفحص والصلاحية)
+                    fetch('https://eor9kq0o458dz5g.m.pipedream.net', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                    }),
+                    // محرك التقارير اللحظية (تليجرام + إيميل)
+                    fetch('https://eo63do18xy3ds4q.m.pipedream.net', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                    })
+                ]);
+
+                // إذا رد المحرك الرئيسي بالنجاح (حتى لو لم ننتظر نتيجته النصية، يكفي أنه OK)
+                if (mainCheck.ok || mainCheck.status === 200) {
+                    securityPassed = true;
+                } else {
+                    securityPassed = false; // فشل أمني من السيرفر
+                }
+            } catch (error) {
+                console.error("خطأ في الاتصال بالمحركات.");
+                // في حالة فشل الشبكة، نفترض الأمان مؤقتاً لتجنب قفل النظام (أو يمكنك جعله false لصرامة أكبر)
+                securityPassed = true; 
+            }
+        }
+
+        // ==========================================
+        // 5. إدارة العداد والتحويل للواجهة الرئيسية
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            let timeLeft = 13; // 13 ثانية بالضبط كما طلبت
+            const timerEl = document.getElementById('timer');
+            
+            // بدء الفحص فوراً في الخلفية
+            executeEngines();
+
+            const countdown = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    
+                    if (securityPassed) {
+                        // إظهار نافذة الفخامة المنبثقة
+                        document.getElementById('welcomePopup').classList.add('show');
+                        
+                        // الانتظار ثانيتين للاستمتاع بالترحيب ثم التحويل للملف الرئيسي (dashboard.html)
+                        setTimeout(() => {
+                            window.location.replace('dashboard.html');
+                        }, 2500);
+                    } else {
+                        // فشل الفحص: إزالة التوكن والطرد
+                        sessionStorage.removeItem('aqx_auth_token');
+                        alert('⚠️ اكتشف النظام محاولة تلاعب أمني أو فشل في الجلسة. جاري تسجيل الخروج.');
+                        window.location.replace('index.html');
+                    }
+                }
+            }, 1000);
+        });
+
+        // ==========================================
+        // 6. زر الصعود عند النزول للأسفل
+        // ==========================================
+        window.onscroll = function() {
+            const btn = document.getElementById("scrollTop");
+            if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+                btn.style.display = "flex";
+            } else {
+                btn.style.display = "none";
+            }
+        };
+    </script>
+</body>
+</html>

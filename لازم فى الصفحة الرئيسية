@@ -1,0 +1,1 @@
+sessionStorage.setItem('aqx_auth_token', 'valid_session');

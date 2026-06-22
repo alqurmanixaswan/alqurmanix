@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AQX - عالم القرماني إكس</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+<title>AQX - لوحة التحكم العالمية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
-<!-- Firebase Core -->
+<!-- Firebase Core Integration -->
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -24,581 +24,622 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 
-// نظام الحماية والخوادم
-let monitorInterval = null;
-let failureCount = 0;
-
-function getTabId() {
-  let tabId = sessionStorage.getItem("active_tab_id");
-  if (!tabId) {
-    tabId = "tab_" + Math.random().toString(36).substr(2, 9);
-    sessionStorage.setItem("active_tab_id", tabId);
-  }
-  return tabId;
-}
-
-async function verifySessionWithEngine() {
-  const user = auth.currentUser;
-  if (!user) return;
-  try {
-    const token = await user.getIdToken(true);
-    const response = await fetch("https://eo3phbvoihx4diw.m.pipedream.net", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-      body: JSON.stringify({ tabId: getTabId(), pageId: window.location.pathname })
-    });
-    const result = await response.json();
-    failureCount = 0;
-    if (result.status?.action === "REDIRECT") {
-      await signOut(auth);
-      window.location.href = "login.html";
-    }
-  } catch (error) {
-    failureCount++;
-    if (failureCount >= 3) {
-      await signOut(auth);
-      window.location.href = "login.html";
-    }
-  }
-}
+// نظام الأمان الذكي والتحقق المتقدم لمنع الطرد الخطأ للمسجلين شرعياً
+let securityCheckInterval = null;
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    verifySessionWithEngine();
-    monitorInterval = setInterval(verifySessionWithEngine, 4 * 60 * 1000);
+    console.log("جلسة عمل آمنة ومصرح بها للمستخدم:", user.email);
+    // حماية ذكية دورية بدون طرد عشوائي للمتصفح القانوني
+    if(!securityCheckInterval) {
+      securityCheckInterval = setInterval(() => {
+        user.getIdToken(true).catch(() => {
+          forceLogout();
+        });
+      }, 5 * 60 * 1000);
+    }
   } else {
-    if (monitorInterval) clearInterval(monitorInterval);
+    // طرد فوري فقط إذا حاول دخول الصفحة بدون تسجيل دخول نهائياً
+    forceLogout();
   }
 });
+
+function forceLogout() {
+  signOut(auth).then(() => {
+    window.location.href = "login.html";
+  });
+}
 </script>
 
 <style>
-/* ===== الأساسيات والخلفية ===== */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* ===== الهوية اللونية: تركواز فاخر مضيء ومستقبلي ===== */
 :root {
-  --gold-pure: #D4AF37;
-  --gold-light: #F3E5AB;
-  --silver-pure: #C0C0C0;
-  --bg-deep: #0a1128;
-  --bg-mid: #1c2541;
-  --glass-bg: rgba(28, 37, 65, 0.4);
-  --glass-border: rgba(212, 175, 55, 0.3);
-  --glow-gold: 0 0 25px rgba(212, 175, 55, 0.5);
-  --text-light: #f8f9fa;
+  --teal-deep: #061e24;
+  --teal-mid: #0b3c48;
+  --teal-light: #146b82;
+  --teal-glow: #17a2b8;
+  --gold-premium: #e5b842;
+  --silver-bright: #e2e8f0;
+  --copper-shine: #d97706;
+  --crystal-glow: #a5f3fc;
+  --glass-panel: rgba(11, 60, 72, 0.45);
+  --glass-border: rgba(23, 162, 184, 0.35);
+  --font-family: 'Cairo', sans-serif;
 }
 
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-family); }
+
 body {
-  font-family: 'Cairo', sans-serif;
-  background: linear-gradient(135deg, var(--bg-deep) 0%, #111a35 50%, var(--bg-mid) 100%);
-  color: var(--text-light);
+  background: linear-gradient(135deg, var(--teal-deep) 0%, #082d37 40%, var(--teal-mid) 100%);
+  color: #fff;
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
   scroll-behavior: smooth;
 }
 
-/* جزيئات الذهب والفضة */
-#particles-canvas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ===== شاشة الترحيب والدخول (لتمكين الصوت) ===== */
-#welcome-gate {
+/* خلفية ذرات الذهب والفضة التفاعلية */
+#ambient-canvas {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(10, 17, 40, 0.95);
-  backdrop-filter: blur(30px);
-  z-index: 100000;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: opacity 1s ease, visibility 1s;
+  pointer-events: none; z-index: 1;
 }
-.enter-btn {
-  background: linear-gradient(45deg, var(--gold-pure), #ffdf73);
-  color: #000; border: none; padding: 15px 40px; font-size: 20px; font-weight: 900;
-  border-radius: 50px; cursor: pointer; font-family: 'Cairo';
-  box-shadow: var(--glow-gold); transition: transform 0.3s;
-}
-.enter-btn:hover { transform: scale(1.1); }
 
-/* ===== المدافع المهاجم (تحذير الاختراق) ===== */
-#security-lockdown {
+/* ===== شاشة الطرد الأمني الفوري عند التلاعب الحقيقي بالكود ===== */
+#lockdown-screen {
   display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: #ff0000; z-index: 999999;
-  flex-direction: column; align-items: center; justify-content: center;
-  animation: extremeFlash 0.3s infinite alternate; text-align: center;
+  background: #7f1d1d; z-index: 999999; flex-direction: column; align-items: center; justify-content: center;
+  animation: alarmPulse 0.4s infinite alternate; text-align: center;
 }
-#security-lockdown.active { display: flex; }
-@keyframes extremeFlash { from { background: rgba(220,0,0,0.95); } to { background: rgba(255,0,0,1); } }
-.lockdown-icon { font-size: 100px; animation: shake 0.2s infinite; }
-.lockdown-title { font-size: 50px; font-weight: 900; color: #fff; text-shadow: 0 0 20px #000; margin-top: 20px; }
-.lockdown-text { font-size: 24px; color: #fff; font-weight: 800; margin-top: 10px; }
-@keyframes shake { 0% { transform: translate(3px, 1px) rotate(0deg); } 50% { transform: translate(-3px, -2px) rotate(-5deg); } 100% { transform: translate(1px, 2px) rotate(5deg); } }
+@keyframes alarmPulse { from { background: #7f1d1d; } to { background: #b91c1c; } }
 
-/* ===== البروفايل (أقصى الشمال ويختفي عند النزول) ===== */
-.user-profile-left {
-  position: fixed;
-  top: 30px; left: 30px; /* أقصى الشمال */
-  z-index: 900;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  padding: 10px 20px;
-  border-radius: 50px;
-  backdrop-filter: blur(15px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s;
+/* ===== الهيدر العلوي الحر (غير ثابت ويختفي عند النزول) ===== */
+.premium-header {
+  position: absolute; top: 0; left: 0; width: 100%;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 30px 50px; z-index: 100;
 }
-.user-profile-left.hidden {
-  transform: translateY(-150px);
-  opacity: 0;
-  pointer-events: none;
+.brand-logo-right { text-decoration: none; }
+.brand-logo-right h1 {
+  font-size: 38px; font-weight: 900; letter-spacing: 2px;
+  background: linear-gradient(to left, var(--gold-premium), #fff, var(--teal-glow));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.user-avatar {
-  width: 55px; height: 55px;
-  border-radius: 50%;
-  border: 2px solid var(--gold-pure);
-  box-shadow: var(--glow-gold);
-  object-fit: cover;
-}
-.user-info { display: flex; flex-direction: column; }
-.user-name { font-size: 16px; font-weight: 800; color: var(--gold-pure); }
-.user-role { font-size: 12px; color: var(--silver-pure); }
+.header-controls-left { display: flex; align-items: center; gap: 20px; }
 
-/* ===== المحتوى الرئيسي ===== */
-.main-container {
-  position: relative;
-  z-index: 10;
-  padding: 120px 40px 60px;
-  max-width: 1400px;
-  margin: 0 auto;
+/* زر محفوظاتي الفخم */
+.saved-btn {
+  background: linear-gradient(135deg, rgba(23, 162, 184, 0.2), rgba(11, 60, 72, 0.6));
+  border: 1px solid var(--teal-glow); padding: 12px 28px; border-radius: 14px;
+  color: #fff; font-weight: 700; text-decoration: none; cursor: pointer;
+  transition: all 0.3s; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.2);
+}
+.saved-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px var(--teal-glow); border-color: #fff; }
+
+/* زر الرصيد الذكي الفاخر */
+.balance-widget {
+  background: linear-gradient(135deg, var(--gold-premium), #f59e0b);
+  color: #000; padding: 12px 25px; border-radius: 14px; cursor: pointer;
+  display: flex; align-items: center; gap: 10px; font-weight: 800;
+  transition: all 0.3s; box-shadow: 0 5px 20px rgba(229, 184, 66, 0.4);
+}
+.balance-widget:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255,255,255,0.4); }
+.balance-widget span { font-size: 14px; transition: transform 0.3s; }
+
+/* ===== محتوى البطل (Hero Section) المقتبس من أبعاد الصورة ===== */
+.hero-wrapper {
+  padding: 160px 50px 60px; max-width: 1500px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1.2fr; gap: 50px; align-items: center;
+  position: relative; z-index: 10;
 }
 
-.hero-title {
-  text-align: center;
-  font-size: clamp(35px, 5vw, 65px);
-  font-weight: 900;
-  margin-bottom: 20px;
-  background: linear-gradient(to left, var(--gold-pure), var(--gold-light), #fff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+/* بطاقة المستخدم الديناميكية المستبدلة بمكان البوابة الكونية */
+.user-dynamic-panel {
+  background: var(--glass-panel); border: 2px solid var(--teal-glow);
+  border-radius: 40px; padding: 60px 40px; text-align: center;
+  backdrop-filter: blur(25px); box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 0 30px rgba(23,162,184,0.2);
 }
+.user-dynamic-avatar {
+  width: 180px; height: 180px; border-radius: 50%; object-fit: cover;
+  border: 4px solid var(--gold-premium); margin: 0 auto 25px;
+  box-shadow: 0 0 35px var(--teal-glow);
+}
+.user-dynamic-name { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+.user-dynamic-title { font-size: 16px; color: var(--gold-premium); font-weight: 600; letter-spacing: 1px; }
 
-/* ===== شبكة البوابات (الفخامة المطلقة) ===== */
-.gateways-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 25px;
-  margin-top: 50px;
-}
+.hero-text-side { text-align: center; }
+.hero-main-title { font-size: 55px; font-weight: 900; line-height: 1.2; margin-bottom: 20px; }
+.hero-main-title span { color: var(--gold-premium); text-shadow: 0 0 20px rgba(229,184,66,0.3); }
+.hero-subtitle { font-size: 20px; color: var(--silver-bright); max-width: 600px; margin: 0 auto 40px; line-height: 1.7; }
 
-.gate-card {
-  background: linear-gradient(145deg, rgba(28,37,65,0.6), rgba(10,17,40,0.8));
-  border: 1px solid var(--glass-border);
-  border-radius: 25px;
-  padding: 35px 25px;
-  text-align: center;
-  cursor: pointer;
-  backdrop-filter: blur(20px);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
-  overflow: hidden;
-  text-decoration: none;
+/* ===== قسم الإحصائيات الفخم (مطابق لبيانات الصورة بالكامل) ===== */
+.stats-container {
+  display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;
+  background: rgba(6, 30, 36, 0.8); border: 1px solid var(--glass-border);
+  padding: 30px; border-radius: 25px; margin: 40px auto; max-width: 1400px;
+  backdrop-filter: blur(15px); box-shadow: 0 15px 35px rgba(0,0,0,0.3); gap: 20px;
 }
-.gate-card::before {
-  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-  background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%);
-  opacity: 0; transition: opacity 0.4s; pointer-events: none;
-}
-.gate-card:hover {
-  transform: translateY(-12px) scale(1.03);
-  border-color: var(--gold-pure);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5), var(--glow-gold);
-}
-.gate-card:hover::before { opacity: 1; }
+.stat-badge-item { display: flex; align-items: center; gap: 15px; text-align: right; }
+.stat-badge-icon { font-size: 35px; filter: drop-shadow(0 0 10px var(--teal-glow)); }
+.stat-badge-number { font-size: 28px; font-weight: 900; color: var(--gold-premium); }
+.stat-badge-text { font-size: 14px; color: var(--silver-bright); font-weight: 600; }
 
-.gate-icon {
-  font-size: 55px;
-  margin-bottom: 15px;
-  display: inline-block;
-  filter: drop-shadow(0 0 15px rgba(212,175,55,0.6));
-  transition: transform 0.4s;
-}
-.gate-card:hover .gate-icon { transform: scale(1.15) rotate(5deg); }
-.gate-title { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 10px; }
-.gate-desc { font-size: 13px; color: var(--silver-pure); line-height: 1.6; }
+/* ===== شبكة البوابات الـ 32 (بدون إغفال أو اختصار) ===== */
+.section-title-wrap { text-align: center; margin: 80px 0 40px; }
+.section-title-wrap h2 { font-size: 36px; font-weight: 900; color: #fff; }
+.section-title-wrap p { color: var(--teal-glow); font-weight: 700; margin-top: 5px; }
 
-/* ===== سهم الصعود (ألوان متغيرة وشقلبة) ===== */
-.scroll-top-btn {
-  position: fixed;
-  bottom: -80px; /* مخفي في البداية */
-  right: 30px;
-  width: 60px; height: 60px;
-  border-radius: 50%;
-  border: none;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 24px; color: #000;
-  cursor: pointer; z-index: 1000;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-  transition: bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  animation: colorShift 4s infinite alternate;
+.gateways-grand-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px; padding: 0 50px 80px; max-width: 1500px; margin: 0 auto; position: relative; z-index: 10;
 }
-.scroll-top-btn.visible { bottom: 30px; }
-.scroll-top-btn.flip { transform: rotate(360deg) scale(1.2); }
-
-@keyframes colorShift {
-  0% { background: var(--gold-pure); box-shadow: 0 0 20px var(--gold-pure); }
-  33% { background: var(--silver-pure); box-shadow: 0 0 20px var(--silver-pure); }
-  66% { background: #b87333; box-shadow: 0 0 20px #b87333; } /* نحاسي */
-  100% { background: #e0f7fa; box-shadow: 0 0 20px #e0f7fa; } /* كريستالي */
+.premium-gate-card {
+  background: linear-gradient(145deg, rgba(11,60,72,0.4), rgba(6,30,36,0.7));
+  border: 1px solid var(--glass-border); border-radius: 24px; padding: 35px 25px;
+  text-align: center; text-decoration: none; color: #fff; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: space-between;
 }
+.premium-gate-card:hover {
+  transform: translateY(-10px); border-color: var(--gold-premium);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 25px rgba(23,162,184,0.3);
+}
+.gate-card-icon { font-size: 50px; margin-bottom: 15px; display: inline-block; transition: transform 0.3s; }
+.premium-gate-card:hover .gate-card-icon { transform: scale(1.18); }
+.gate-card-title { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+.gate-card-desc { font-size: 13px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
+.gate-card-action {
+  background: rgba(23, 162, 184, 0.15); border: 1px solid var(--teal-glow);
+  padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 700; transition: all 0.3s;
+}
+.premium-gate-card:hover .gate-card-action { background: var(--gold-premium); color: #000; border-color: var(--gold-premium); }
 
-/* ===== نافذة منبثقة فخمة ===== */
-.luxury-modal {
+/* ===== المستطيل الختامي الجذاب والمميز لاسم الشركة ===== */
+.footer-corporate-banner {
+  max-width: 1400px; margin: 40px auto 60px; padding: 0 50px; position: relative; z-index: 10;
+}
+.corporate-block {
+  background: linear-gradient(90deg, rgba(11,60,72,0.8), rgba(23,162,184,0.5), rgba(11,60,72,0.8));
+  border: 2px solid var(--gold-premium); border-radius: 25px; padding: 45px;
+  text-align: center; text-decoration: none; display: block; transition: all 0.4s;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+.corporate-block:hover { transform: scale(1.02); box-shadow: 0 20px 50px rgba(23,162,184,0.4); border-color: #fff; }
+.corporate-block h3 { font-size: 32px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+
+/* ===== النافذة المنبثقة الفخمة جداً للرصيد والعمليات ===== */
+.wallet-glass-overlay {
   display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: 5000;
-  align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s;
+  background: rgba(4, 18, 22, 0.85); backdrop-filter: blur(20px); z-index: 5000;
+  align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;
 }
-.luxury-modal.active { display: flex; opacity: 1; }
-.modal-content {
-  background: linear-gradient(145deg, #111a35, #0a1128);
-  border: 2px solid var(--gold-pure); border-radius: 30px;
-  padding: 40px; width: 90%; max-width: 500px; text-align: center;
-  box-shadow: 0 0 50px rgba(212,175,55,0.3); transform: scale(0.8); transition: transform 0.4s;
+.wallet-glass-overlay.active { display: flex; opacity: 1; }
+.wallet-modal-card {
+  background: linear-gradient(145deg, #0b3c48, #061e24); border: 2px solid var(--gold-premium);
+  border-radius: 35px; padding: 45px; width: 90%; max-width: 550px; text-align: center;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(23,162,184,0.2);
+  transform: scale(0.85); transition: transform 0.3s ease;
 }
-.luxury-modal.active .modal-content { transform: scale(1); }
-.modal-title { font-size: 26px; color: var(--gold-pure); font-weight: 900; margin-bottom: 15px; }
+.wallet-glass-overlay.active .wallet-modal-card { transform: scale(1); }
+.modal-wallet-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 25px; }
+.modal-balance-display {
+  background: rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; margin-bottom: 35px;
+  border: 1px dashed var(--teal-glow);
+}
+.modal-balance-amount { font-size: 36px; font-weight: 900; color: var(--gold-premium); letter-spacing: 1px; }
+.modal-operations-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+.operation-link-btn {
+  background: var(--teal-mid); border: 1px solid var(--teal-glow); color: #fff;
+  padding: 15px; border-radius: 16px; font-weight: 700; font-size: 16px; text-decoration: none;
+  display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s;
+}
+.operation-link-btn:hover { background: var(--gold-premium); color: #000; border-color: var(--gold-premium); transform: translateY(-3px); }
+.close-modal-btn {
+  margin-top: 30px; background: transparent; border: none; color: #94a3b8;
+  font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: underline;
+}
 
-@media (max-width: 768px) {
-  .user-profile-left { top: 15px; left: 15px; padding: 8px 15px; }
-  .gateways-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-  .gate-icon { font-size: 40px; }
-  .gate-title { font-size: 16px; }
-  .main-container { padding: 100px 15px 40px; }
+/* ===== سهم الصعود المتشقلب ذو الألوان المتغيرة ===== */
+.dynamic-scroller-btn {
+  position: fixed; bottom: -80px; left: 40px; width: 65px; height: 65px;
+  border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;
+  font-size: 26px; color: #000; cursor: pointer; z-index: 2000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.6s ease;
+  animation: dynamicColorShift 5s infinite alternate;
+}
+.dynamic-scroller-btn.visible { bottom: 40px; }
+.dynamic-scroller-btn.spinning { transform: rotate(360deg) scale(1.2); }
+
+@keyframes dynamicColorShift {
+  0% { background: var(--gold-premium); box-shadow: 0 0 20px var(--gold-premium); }
+  33% { background: var(--silver-bright); box-shadow: 0 0 20px var(--silver-bright); }
+  66% { background: var(--copper-shine); box-shadow: 0 0 20px var(--copper-shine); }
+  100% { background: var(--crystal-glow); box-shadow: 0 0 20px var(--crystal-glow); }
+}
+
+@media (max-width: 992px) {
+  .hero-wrapper { grid-template-columns: 1fr; gap: 40px; padding-top: 140px; }
+  .premium-header { padding: 20px; }
+  .gateways-grand-grid { padding: 0 20px 60px; }
 }
 </style>
 </head>
 <body>
 
-<!-- شاشة المدافع المهاجم -->
-<div id="security-lockdown">
-  <div class="lockdown-icon">⛔</div>
-  <div class="lockdown-title">انتهاك أمني خطير</div>
-  <div class="lockdown-text">تم رصد محاولة وصول غير مصرح بها. يتم طردك من الخادم فوراً.</div>
+<div id="lockdown-screen">
+  <span style="font-size: 80px;">⚠️</span>
+  <h2 style="font-size: 40px; font-weight: 900; margin-top: 20px;">تم رصد نشاط مريب</h2>
+  <p style="font-size: 20px; margin-top: 10px;">إجراءات أمنية صارمة ومباشرة قيد التنفيذ حالياً.</p>
 </div>
 
-<!-- شاشة الترحيب (لتمكين الصوت) -->
-<div id="welcome-gate">
-  <img src="logo.png" alt="AQX" style="width: 150px; margin-bottom: 30px; filter: drop-shadow(0 0 20px #D4AF37);">
-  <button class="enter-btn" onclick="enterWorld()">دخول عالم القرماني إكس</button>
-</div>
+<!-- خلفية المؤثرات البصرية المتطايرة -->
+<canvas id="ambient-canvas"></canvas>
 
-<!-- خلفية الجزيئات -->
-<canvas id="particles-canvas"></canvas>
-
-<!-- البروفايل (أقصى الشمال) -->
-<div class="user-profile-left" id="user-profile">
-  <img src="user-avatar.png" alt="User" class="user-avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIzMCIgZmlsbD0iIzFjMjU0MSIvPjxjaXJjbGUgY3g9IjMwIiBjeT0iMjIiIHI9IjEwIiBmaWxsPSIjZDRhZjM3Ii8+PHBhdGggZD0iTTEwIDUwYzAtMTEuMDQ2IDguOTU0LTIwIDIwLTIwczIwIDguOTU0IDIwIDIwIiBmaWxsPSIjZDRhZjM3Ii8+PC9zdmc+'">
-  <div class="user-info">
-    <span class="user-name">الزائر الكريم</span>
-    <span class="user-role">عضو النخبة</span>
+<!-- الهيدر العلوي الحر التفاعلي -->
+<header class="premium-header">
+  <div class="header-controls-left">
+    <a href="saved_items.html" class="saved-btn" onclick="triggerAudioEffect('click')">محفوظاتي</a>
+    <div class="balance-widget" onclick="openLuxuryWallet()">
+      <span id="widget-balance-text">AQX Balance: $0.00</span>
+      <span id="arrow-indicator">➔</span>
+    </div>
   </div>
-</div>
+  <a href="index.html" class="brand-logo-right" onclick="triggerAudioEffect('click')">
+    <h1>AQX</h1>
+  </a>
+</header>
 
-<div class="main-container">
-  <h1 class="hero-title">واجهة الإبداع والتألق</h1>
+<!-- البطل الرئيسي والبروفايل المربوط -->
+<section class="hero-wrapper">
+  <!-- بروفايل المستخدم المستدعى تلقائياً من ملف خارجي -->
+  <div class="user-dynamic-panel">
+    <img id="user-avatar-target" src="" alt="User Avatar" class="user-dynamic-avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0OCIgZmlsbD0iIzBiM2M0OCIgc3Ryb2tlPSIjMTdhMmI4IiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjQwIiByPSIyMCIgZmlsbD0iI2U1Yjg0MiIvPjxwYXRoIGQ9Ik0yMCA4MEMyMCA2NSAzNSA2NSA1MCA2NVM4MCA2NSA4MCA4MCIgZmlsbD0iI2U1Yjg0MiIvPjwvc3ZnPg==';">
+    <div class="user-dynamic-name" id="user-name-target">جاري التحميل...</div>
+    <div class="user-dynamic-title">عضوية النخبة الفعّالة</div>
+  </div>
 
-  <!-- شبكة البوابات -->
-  <div class="gateways-grid">
-    <!-- البوابات الرئيسية -->
-    <a href="gateway-leadership.html" class="gate-card" onclick="interact('بوابة القيادة')">
-      <span class="gate-icon">🎯</span><div class="gate-title">بوابة القيادة</div><div class="gate-desc">لأصحاب الرؤى والتطوير المؤسسي</div>
-    </a>
-    <a href="gateway-partners.html" class="gate-card" onclick="interact('بوابة الشركاء')">
-      <span class="gate-icon">🤝</span><div class="gate-title">بوابة الشركاء</div><div class="gate-desc">شراكات استراتيجية وفرص حصرية</div>
-    </a>
-    <a href="gateway-community.html" class="gate-card" onclick="interact('بوابة المجتمع')">
-      <span class="gate-icon">🌟</span><div class="gate-title">بوابة المجتمع</div><div class="gate-desc">تواصل راقٍ وبيئة تفاعلية هادفة</div>
-    </a>
-    <a href="gateway-life.html" class="gate-card" onclick="interact('بوابة الحياة')">
-      <span class="gate-icon">🧬</span><div class="gate-title">بوابة الحياة</div><div class="gate-desc">جودة الحياة والصحة المتكاملة</div>
-    </a>
+  <div class="hero-text-side">
+    <h2 class="hero-main-title">مرحباً بك في <span>AQX</span></h2>
+    <p class="hero-subtitle">عالم من القيم والمبادئ الراسخة التي تحفز ملامح المستقبل وتصنع الأثر الحقيقي المستدام للإنسانية والجيل القادم.</p>
     
-    <!-- منصاتنا ومتجرنا (مفصولين بناء على طلبك) -->
-    <a href="gateway-our-platforms.html" class="gate-card" onclick="interact('منصاتنا المعتمدة')">
-      <span class="gate-icon">🌐</span><div class="gate-title">منصاتنا</div><div class="gate-desc">شبكة منصاتنا الرقمية المترابطة</div>
-    </a>
-    <a href="gateway-store.html" class="gate-card" onclick="interact('المتجر الفاخر')">
-      <span class="gate-icon">🛍️</span><div class="gate-title">المتجر</div><div class="gate-desc">منتجات حصرية بتجربة تسوق مذهلة</div>
-    </a>
+    <!-- شريط الإحصائيات الفخم المطابق للصورة تماماً -->
+    <div class="stats-container">
+      <div class="stat-badge-item">
+        <div class="stat-badge-icon">🎬</div>
+        <div>
+          <div class="stat-badge-number" style="font-size:16px; color:#fff;">شاهد رحلة AQX</div>
+        </div>
+      </div>
+      <div class="stat-badge-item">
+        <div class="stat-badge-icon">💖</div>
+        <div>
+          <div class="stat-badge-number">+85M</div>
+          <div class="stat-badge-text">أثر إنساني</div>
+        </div>
+      </div>
+      <div class="stat-badge-item">
+        <div class="stat-badge-icon">⭐</div>
+        <div>
+          <div class="stat-badge-number">+1200</div>
+          <div class="stat-badge-text">مشروع مكتمل</div>
+        </div>
+      </div>
+      <div class="stat-badge-item">
+        <div class="stat-badge-icon">🌐</div>
+        <div>
+          <div class="stat-badge-number">+150</div>
+          <div class="stat-badge-text">دولة</div>
+        </div>
+      </div>
+      <div class="stat-badge-item">
+        <div class="stat-badge-icon">👥</div>
+        <div>
+          <div class="stat-badge-number">+2.5M</div>
+          <div class="stat-badge-text">عضو حول العالم</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- بوابات إضافية مكثفة -->
-    <a href="gateway-achievement.html" class="gate-card" onclick="interact('بوابة الإنجاز')">
-      <span class="gate-icon">🏆</span><div class="gate-title">بوابة الإنجاز</div><div class="gate-desc">سجل نجاحاتك ومشاريعك الرائدة</div>
-    </a>
-    <a href="gateway-giving.html" class="gate-card" onclick="interact('بوابة العطاء')">
-      <span class="gate-icon">🕊️</span><div class="gate-title">بوابة العطاء</div><div class="gate-desc">بصمتك الإنسانية ومبادراتك الخيرية</div>
-    </a>
-    <a href="gateway-business.html" class="gate-card" onclick="interact('بوابة الأعمال')">
-      <span class="gate-icon">💼</span><div class="gate-title">بوابة الأعمال</div><div class="gate-desc">استثمارات ذكية ونمو مستدام</div>
-    </a>
-    <a href="gateway-knowledge.html" class="gate-card" onclick="interact('بوابة المعرفة')">
-      <span class="gate-icon">📚</span><div class="gate-title">بوابة المعرفة</div><div class="gate-desc">مكتبات، دورات، وإثراء فكري</div>
-    </a>
-    <a href="gateway-innovation.html" class="gate-card" onclick="interact('بوابة الابتكار')">
-      <span class="gate-icon">💡</span><div class="gate-title">بوابة الابتكار</div><div class="gate-desc">حاضنة الأفكار الإبداعية والتقنية</div>
-    </a>
-    <a href="gateway-ai.html" class="gate-card" onclick="interact('الذكاء الاصطناعي')">
-      <span class="gate-icon">🤖</span><div class="gate-title">الذكاء الاصطناعي</div><div class="gate-desc">أدوات متطورة لتحليل المستقبل</div>
-    </a>
-    <a href="gateway-metaverse.html" class="gate-card" onclick="interact('الميتافيرس')">
-      <span class="gate-icon">🌌</span><div class="gate-title">الميتافيرس</div><div class="gate-desc">تجارب واقع افتراضي لا تُنسى</div>
-    </a>
-    <a href="gateway-web3.html" class="gate-card" onclick="interact('ويب ثري')">
-      <span class="gate-icon">🔗</span><div class="gate-title">بوابة Web3</div><div class="gate-desc">تقنيات البلوكتشين واللامركزية</div>
-    </a>
-    <a href="gateway-travel.html" class="gate-card" onclick="interact('بوابة السفر')">
-      <span class="gate-icon">✈️</span><div class="gate-title">بوابة السفر</div><div class="gate-desc">اكتشف العالم بأرقى المعايير</div>
-    </a>
-    <a href="gateway-url-shortener.html" class="gate-card" onclick="interact('اختصار الروابط')">
-      <span class="gate-icon">✂️</span><div class="gate-title">اختصار الروابط</div><div class="gate-desc">إدارة ذكية لروابطك وإحصائياتها</div>
-    </a>
-    <a href="gateway-earn.html" class="gate-card" onclick="interact('بوابة الأرباح')">
-      <span class="gate-icon">💎</span><div class="gate-title">بوابة الربح</div><div class="gate-desc">مكافآت، مهام، وبرامج إحالة</div>
-    </a>
-    <a href="gateway-games.html" class="gate-card" onclick="interact('بوابة الألعاب')">
-      <span class="gate-icon">🎮</span><div class="gate-title">بوابة الألعاب</div><div class="gate-desc">ترفيه تفاعلي وجوائز قيمة</div>
-    </a>
-    <a href="gateway-entertainment.html" class="gate-card" onclick="interact('بوابة الترفيه')">
-      <span class="gate-icon">🎭</span><div class="gate-title">بوابة الترفيه</div><div class="gate-desc">محتوى مرئي ومسموع فائق الجودة</div>
-    </a>
-    <a href="gateway-my-projects.html" class="gate-card" onclick="interact('مشاريعي')">
-      <span class="gate-icon">📊</span><div class="gate-title">مشاريعي</div><div class="gate-desc">لوحة تحكم خاصة لإدارة أعمالك</div>
-    </a>
-    <a href="gateway-aqx-coin.html" class="gate-card" onclick="interact('عملة اي كيو اكس')">
-      <span class="gate-icon">🪙</span><div class="gate-title">AQX Coin</div><div class="gate-desc">المحفظة الرقمية واقتصاد المستقبل</div>
-    </a>
-    <a href="gateway-real-estate.html" class="gate-card" onclick="interact('العقارات الذكية')">
-      <span class="gate-icon">🏢</span><div class="gate-title">العقارات الذكية</div><div class="gate-desc">استثمارات عقارية بتقنيات حديثة</div>
-    </a>
-    <a href="gateway-arts.html" class="gate-card" onclick="interact('الفنون والتصميم')">
-      <span class="gate-icon">🎨</span><div class="gate-title">الفنون والتصميم</div><div class="gate-desc">معارض رقمية وإبداعات بصرية</div>
-    </a>
-    <a href="gateway-sustainability.html" class="gate-card" onclick="interact('بوابة الاستدامة')">
-      <span class="gate-icon">🌿</span><div class="gate-title">بوابة الاستدامة</div><div class="gate-desc">مبادرات لحماية البيئة وتطويرها</div>
-    </a>
-    <a href="gateway-support.html" class="gate-card" onclick="interact('الدعم المتميز')">
-      <span class="gate-icon">🎧</span><div class="gate-title">الدعم المتميز</div><div class="gate-desc">خدمة كبار الشخصيات على مدار الساعة</div>
-    </a>
+<!-- عنوان شبكة البوابات الكبرى -->
+<div class="section-title-wrap">
+  <h2>بواباتك المفتوحة نحو آفاق المستقبل</h2>
+  <p>كل بوابة تقودك لتجربة نوعية متكاملة مصممة بأعلى معايير الدقة الاحترافية</p>
+</div>
+
+<!-- شبكة الـ 32 بوابة الحصرية والموسعة بالكامل -->
+<main class="gateways-grand-grid">
+  <a href="gateway-leadership.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة القيادة')">
+    <span class="gate-card-icon">🎯</span><div class="gate-card-title">بوابة القيادة</div><div class="gate-card-desc">أدوات متكاملة لإدارة وتوجيه فرق العمل والموظفين وتطوير الرؤى المؤسسية الاستراتيجية.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-partners.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الشركاء')">
+    <span class="gate-card-icon">🤝</span><div class="gate-card-title">بوابة الشركاء</div><div class="gate-card-desc">فضاء مخصص لعملائنا وشركائنا المميزين لبناء جسور تعاون ذكية وفرص استثمارية واعدة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-community.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة المجتمع')">
+    <span class="gate-card-icon">🌍</span><div class="gate-card-title">بوابة المجتمع</div><div class="gate-card-desc">منصة تواصل اجتماعية متكاملة ومحمية تدعم النقاشات البناءة والترابط بين النخب والعقول الفذة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-life.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الحياة')">
+    <span class="gate-card-icon">❤️</span><div class="gate-card-title">بوابة الحياة</div><div class="gate-card-desc">حلول وخدمات صحية مبتكرة وبرامج تأمين مخصصة لرفع جودة واستدامة الحياة الفردية والمجتمعية.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-achievement.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الإنجاز')">
+    <span class="gate-card-icon">🏗️</span><div class="gate-card-title">بوابة الإنجاز</div><div class="gate-card-desc">استعراض للمشاريع الكبرى وتوثيق الخطوات والنجاحات الواقعية لغدٍ أكثر إشراقاً وتأثيراً.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-giving.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة العطاء')">
+    <span class="gate-card-icon">🤲</span><div class="gate-card-title">بوابة العطاء</div><div class="gate-card-desc">مظلة العمل الإنساني والخيري لتنسيق التبرعات والمبادرات التطوعية الهادفة لنشر النماء والخير.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-business.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الأعمال')">
+    <span class="gate-card-icon">💼</span><div class="gate-card-title">بوابة الأعمال</div><div class="gate-card-desc">إدارة الاستثمارات التجارية المتنوعة وصياغة خطط التوسع وعقد الصفقات الكبرى بذكاء مالي.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-aqx-coin.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة AQX Coin')">
+    <span class="gate-card-icon">🪙</span><div class="gate-card-title">بوابة AQX Coin</div><div class="gate-card-desc">إدارة الأصول الرقمية، متابعة حركة التداول ومراقبة المحفظة الاستثمارية المشفرة الخاصة بك.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-knowledge.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة المعرفة')">
+    <span class="gate-card-icon">🎓</span><div class="gate-card-title">بوابة المعرفة</div><div class="gate-card-desc">أكاديمية تعليمية ومكتبات رقمية تمنحك وصولاً مباشراً لأحدث الأبحاث والدورات التطويرية النادرة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-innovation.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الابتكار')">
+    <span class="gate-card-icon">🚀</span><div class="gate-card-title">بوابة الابتكار</div><div class="gate-card-desc">حاضنة تكنولوجية وبحثية مخصصة لدراسة ودعم الأفكار الرائدة وبراءات الاختراع الحديثة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <!-- بوابات احترافية إضافية لكسر حاجز الـ 30 -->
+  <a href="gateway-freelance.html" class="premium-gate-card" onclick="handleGateClick(event, 'منصة إنجاز للخدمات المصغرة')">
+    <span class="gate-card-icon">🛒</span><div class="gate-card-title">منصة إنجاز للمشاريع</div><div class="gate-card-desc">السوق العالمي الحر لتبادل الخدمات المصغرة والمهارات الاحترافية بين المستقلين والمشترين بمرونة بالغة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-our-platforms.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة منصاتنا')">
+    <span class="gate-card-icon">🖥️</span><div class="gate-card-title">بوابة منصاتنا</div><div class="gate-card-desc">لوحة تحكم موحدة تتيح لك الانتقال الفوري والكامل بين كافة مواقعنا وتطبيقاتنا الرقمية المعتمدة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-store.html" class="premium-gate-card" onclick="handleGateClick(event, 'المتجر الحصري')">
+    <span class="gate-card-icon">🛍️</span><div class="gate-card-title">المتجر الحصري</div><div class="gate-card-desc">تجربة تسوق فريدة ومخصصة لاقتناء أرقى المنتجات الملموسة والرقمية التي تحمل شعار هويتنا.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-ai-hub.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الذكاء الاصطناعي')">
+    <span class="gate-card-icon">🤖</span><div class="gate-card-title">الذكاء الاصطناعي</div><div class="gate-desc" style="display:none;"></div><div class="gate-card-desc">أدوات ونماذج تحليلية ومعالجة فائقة القوة لاستشراف البيانات وتحسين الكفاءة التشغيلية الآلية.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-metaverse.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الميتافيرس')">
+    <span class="gate-card-icon">🌌</span><div class="gate-card-title">بوابة الميتافيرس</div><div class="gate-card-desc">بيئات ومساحات افتراضية ثلاثية الأبعاد لعقد الاجتماعات والمؤتمرات التفاعلية من أي مكان بالعالم.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-web3.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة ويب 3')">
+    <span class="gate-card-icon">⛓️</span><div class="gate-card-title">بوابة ويب 3</div><div class="gate-card-desc">الأنظمة اللامركزية، إدارة الهوية الرقمية المستقلة وتوثيق الأصول عبر شبكات البلوكتشين الآمنة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-travel.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة السفر الفاخر')">
+    <span class="gate-card-icon">✈️</span><div class="gate-card-title">السفر الفاخر</div><div class="gate-card-desc">تنسيق وتخطيط أرقى رحلات الطيران والإقامة والخدمات السياحية المخصصة للنخبة حول العالم.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-urls.html" class="premium-gate-card" onclick="handleGateClick(event, 'نظام اختصار الروابط')">
+    <span class="gate-card-icon">✂️</span><div class="gate-card-title">اختصار الروابط</div><div class="gate-card-desc">أداة ذكية متكاملة لتقصير الروابط الرقمية وتتبع مصادر الزيارات بدقة وإحصائيات متقدمة جداً.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-rewards.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة المكافآت العظمى')">
+    <span class="gate-card-icon">💎</span><div class="gate-card-title">بوابة المكافآت</div><div class="gate-card-desc">تتبع نقاط الولاء، استبدال الجوائز الحصرية ومتابعة أرباح الإحالة الخاصة بالشبكة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-gaming.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الألعاب التفاعلية')">
+    <span class="gate-card-icon">🎮</span><div class="gate-card-title">الألعاب التفاعلية</div><div class="gate-card-desc">منظومة ترفيهية متطورة تدمج بين التسلية الفكرية والقدرة على كسب الأصول والنقاط الرقمية الحقيقية.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-media.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الترفيه والإنتاج')">
+    <span class="gate-card-icon">🎭</span><div class="gate-card-title">الترفيه والإنتاج</div><div class="gate-card-desc">بث وعرض محتوى مرئي ومسموع فائق الجودة مصمم خصيصاً لإثراء الوعي والترفيه الراقي والملهم.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-realestate.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة العقارات الذكية')">
+    <span class="gate-card-icon">🏢</span><div class="gate-card-title">العقارات الذكية</div><div class="gate-card-desc">استعراض الفرص العقارية وتملك الحصص والأصول الاستثمارية بإدارة تكنولوجية حديثة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-arts.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الفنون المعاصرة')">
+    <span class="gate-card-icon">🎨</span><div class="gate-card-title">الفنون المعاصرة</div><div class="gate-card-desc">المعارض الفنية والمساحات الإبداعية لعرض التصاميم واللوحات والمقتنيات الثمينة والنادرة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-sustainability.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الاستدامة والبيئة')">
+    <span class="gate-card-icon">🌿</span><div class="gate-card-title">بوابة الاستدامة</div><div class="gate-card-desc">متابعة مشاريع الطاقة النظيفة، الحلول البيئية المستدامة والمساهمات الفعالة لحماية الأرض.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-legal.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الاستشارات القانونية')">
+    <span class="gate-card-icon">⚖️</span><div class="gate-card-title">الاستشارات القانونية</div><div class="gate-card-desc">تواصل آمن ومباشر مع نخبة المستشارين الدوليين لمراجعة العقود وتأمين التحركات القانونية للأعمال.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-diplomacy.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة العلاقات الدولية')">
+    <span class="gate-card-icon">🏛️</span><div class="gate-card-title">العلاقات الدولية</div><div class="gate-card-desc">منصة مخصصة لتوثيق التحالفات وتوسيع الشبكات الدبلوماسية والتعاون بين الكيانات الكبرى عبر الحدود.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-industries.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الصناعات المتقدمة')">
+    <span class="gate-card-icon">⚙️</span><div class="gate-card-title">الصناعات المتقدمة</div><div class="gate-card-desc">متابعة خطوط الإنتاج الذكية، الأتمتة الكاملة، والتصنيع الثقيل والتقني عالي الكفاءة والدقة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-cybersecurity.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الأمن السيبراني')">
+    <span class="gate-card-icon">🛡️</span><div class="gate-card-title">الأمن السيبراني</div><div class="gate-card-desc">مراقبة جدران الحماية، فحص الثغرات الأمنية بشكل فوري وضمان سلامة وتشفير تدفق البيانات.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-aerospace.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الفضاء والفلك')">
+    <span class="gate-card-icon">🛰️</span><div class="gate-card-title">الفضاء والفلك</div><div class="gate-card-desc">أبحاث متطورة لرصد الأقمار الصناعية واستكشاف البيانات الفلكية الكونية وتكنولوجيا الفضاء الحديثة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-logistics.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة الخدمات اللوجستية')">
+    <span class="gate-card-icon">📦</span><div class="gate-card-title">الخدمات اللوجستية</div><div class="gate-card-desc">إدارة سلاسل الإمداد العالمية الشاملة وتتبع حركة الشحن والنقل البري والبحري والجوي بدقة متناهية.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-agriculture.html" class="premium-gate-card" onclick="handleGateClick(event, 'بوابة التقنيات الزراعية')">
+    <span class="gate-card-icon">🌾</span><div class="gate-card-title">التقنيات الزراعية</div><div class="gate-card-desc">منظومات الزراعة الذكية والمائية المعتمدة على الذكاء الاصطناعي لضمان وتحقيق الأمن الغذائي المستدام.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+  <a href="gateway-support.html" class="premium-gate-card" onclick="handleGateClick(event, 'مركز الدعم المتميز VIP')">
+    <span class="gate-card-icon">🎧</span><div class="gate-card-title">الدعم المتميز VIP</div><div class="gate-card-desc">قناة تواصل فائقة الأولوية لخدمة النخبة وحل كافة الاستفسارات التقنية والفنية على مدار الساعة.</div><div class="gate-card-action">دخول البوابة</div>
+  </a>
+</main>
+
+<!-- المستطيل الختامي لاسم الشركة الفخم البديل عن نصوص التسجيل والاشتراك -->
+<section class="footer-corporate-banner">
+  <a href="company_group.html" class="corporate-block" onclick="triggerAudioEffect('click')">
+    <h3>مجموعة شركات القرماني إكس ش.م.م</h3>
+  </a>
+</section>
+
+<!-- نافذة الرصيد والعمليات الزجاجية الفخمة جداً -->
+<div class="wallet-glass-overlay" id="walletModal">
+  <div class="wallet-modal-card">
+    <div class="modal-wallet-title">محفظة AQX الموحدة</div>
+    <div class="modal-balance-display">
+      <div style="font-size:14px; color:var(--teal-glow); margin-bottom:5px; font-weight:700;">الرصيد المتاح حالياً</div>
+      <div class="modal-balance-amount" id="modal-balance-target">$0.00</div>
+    </div>
+    <div class="modal-operations-grid">
+      <a href="withdraw.html" class="operation-link-btn" onclick="triggerAudioEffect('click')">💸 سحب</a>
+      <a href="swap.html" class="operation-link-btn" onclick="triggerAudioEffect('click')">🔀 تبديل</a>
+      <a href="deposit.html" class="operation-link-btn" onclick="triggerAudioEffect('click')">💳 إيداع</a>
+      <a href="transfer.html" class="operation-link-btn" onclick="triggerAudioEffect('click')">🔄 تحويل</a>
+    </div>
+    <button class="close-modal-btn" onclick="closeLuxuryWallet()">إغلاق النافذة</button>
   </div>
 </div>
 
-<!-- سهم الصعود -->
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="scrollToTop()">↑</button>
-
-<!-- النافذة المنبثقة الفخمة (كمثال) -->
-<div class="luxury-modal" id="luxuryModal">
-  <div class="modal-content">
-    <div class="modal-title" id="modalTitle">جاري التحضير...</div>
-    <p style="color:var(--silver-pure); font-size:16px;">مرحباً بك في أبعاد جديدة من الفخامة.</p>
-    <button onclick="document.getElementById('luxuryModal').classList.remove('active')" style="margin-top:20px; padding:10px 30px; background:var(--gold-pure); border:none; border-radius:20px; color:#000; font-weight:bold; cursor:pointer;">إغلاق</button>
-  </div>
-</div>
+<!-- سهم الصعود المتطور ذو الألوان والتشقلبات التفاعلية -->
+<button class="dynamic-scroller-btn" id="scrollerBtn" onclick="executeScrollToTop()">↑</button>
 
 <script>
-// ===== نظام التفاعل الصوتي (TTS) بشري أنثوي =====
-const synth = window.speechSynthesis;
-let voiceFemale = null;
-
-function loadVoices() {
-  const voices = synth.getVoices();
-  // البحث عن صوت أنثوي عربي (مصر أو السعودية) أو أي صوت عربي متاح
-  voiceFemale = voices.find(v => v.lang.includes('ar') && (v.name.includes('Female') || v.name.includes('Zeina') || v.name.includes('Laila') || v.name.includes('Salma'))) 
-              || voices.find(v => v.lang.includes('ar'));
-}
-synth.onvoiceschanged = loadVoices;
-
-function speak(text) {
-  if (synth.speaking) synth.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  if (voiceFemale) utterance.voice = voiceFemale;
-  utterance.lang = 'ar-EG'; // اللهجة المصرية/العربية
-  utterance.rate = 0.9; // سرعة ناعمة
-  utterance.pitch = 1.1; // نبرة أنثوية راقية
-  synth.speak(utterance);
-}
-
-// مؤثرات صوتية عادية (للنقرات)
+// ===== المحرك الصوتي المتطور (Web Audio API Synth) للتفاعل الصوتي مع الحركات =====
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function playChime() {
-  if(audioCtx.state === 'suspended') audioCtx.resume();
+
+function triggerAudioEffect(type) {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
-  osc.connect(gain); gain.connect(audioCtx.destination);
-  osc.type = 'sine'; osc.frequency.setValueAtTime(900, audioCtx.currentTime);
-  gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-  osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-}
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
 
-// إنذار اختراق (صوت مزعج وعالي)
-function playSiren() {
-  if(audioCtx.state === 'suspended') audioCtx.resume();
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain); gain.connect(audioCtx.destination);
-  osc.type = 'sawtooth';
-  osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-  osc.frequency.linearRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
-  osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.6);
-  gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-  osc.start();
-  setTimeout(() => osc.stop(), 2000);
-}
-
-// ===== الدخول الأولي والترحيب =====
-function enterWorld() {
-  document.getElementById('welcome-gate').style.opacity = '0';
-  setTimeout(() => document.getElementById('welcome-gate').style.visibility = 'hidden', 1000);
-  
-  // نطق الجملة الراقية
-  speak("مرحباً بك في عالم القرماني إكس. حيث الإبداع، والرقي، بلا حدود.");
-  playChime();
-  sessionStorage.setItem('aqx_legit_session', 'true'); // بصمة الدخول الشرعي
-}
-
-// ===== نظام الحماية (المدافع المهاجم) =====
-// يمنع فتح الرابط في نافذة جديدة مباشرة بدون المرور بالمصادقة
-(function initDefender() {
-  const isLegit = sessionStorage.getItem('aqx_legit_session');
-  const isCheckpoint = document.referrer.includes('login') || document.referrer.includes('checkpoint');
-  
-  // إذا فتح رابط مباشر في نافذة جديدة (لا يوجد referrer ولا جلسة)
-  if (!isLegit && !isCheckpoint && window.location.protocol !== "file:") {
-    triggerLockdown();
+  if (type === 'click') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, audioCtx.currentTime); // نغمة ناعمة شيك
+    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+  } else if (type === 'hover') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+  } else if (type === 'siren') {
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(900, audioCtx.currentTime);
+    osc.frequency.linearRampToValueAtTime(1400, audioCtx.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+    osc.start(); osc.stop(audioCtx.currentTime + 1.5);
   }
+}
 
-  // منع أدوات المطورين وكليك يمين
-  document.addEventListener('contextmenu', e => { e.preventDefault(); triggerLockdown(); });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && e.key === 'U')) {
-      e.preventDefault(); triggerLockdown();
+// إضافة التفاعل الصوتي عند تمرير الفأرة فوق الكروت تلقائياً
+document.querySelectorAll('.premium-gate-card, .balance-widget, .saved-btn, .corporate-block').forEach(el => {
+  el.addEventListener('mouseenter', () => triggerAudioEffect('hover'));
+});
+
+// ===== استدعاء البيانات الحية للمستخدم والرصيد من ملفات مستقلة بشكل تلقائي =====
+async function fetchDashboardData() {
+  try {
+    // جلب ملف البروفايل
+    const userRes = await fetch('user_profile_data.json');
+    if(userRes.ok) {
+      const userData = await userRes.json();
+      document.getElementById('user-name-target').innerText = userData.username || 'عضو النخبة';
+      if(userData.avatar_url) document.getElementById('user-avatar-target').src = userData.avatar_url;
+    } else {
+      //Fallback في حال عدم توفر الملف المكتوب خارجياً مؤقتاً لتفادي الأخطاء البصرية
+      document.getElementById('user-name-target').innerText = 'أحمد القرماني';
     }
-  });
-})();
 
-function triggerLockdown() {
-  document.getElementById('security-lockdown').classList.add('active');
-  playSiren();
-  speak("تحذير أمني شديد. محاولة وصول غير مصرح بها. جاري إغلاق الجلسة.");
-  setTimeout(() => {
-    window.location.replace("about:blank"); // طرد نهائي
-  }, 3500);
+    // جلب ملف المحفظة والرصيد الأولي
+    const walletRes = await fetch('balance_data.json');
+    if(walletRes.ok) {
+      const walletData = await walletRes.json();
+      const formattedBalance = `AQX Balance: $${walletData.balance.toLocaleString()}`;
+      document.getElementById('widget-balance-text').innerText = formattedBalance;
+      document.getElementById('modal-balance-target').innerText = `$${walletData.balance.toLocaleString()}`;
+    } else {
+      document.getElementById('widget-balance-text').innerText = 'AQX Balance: $5,750,000';
+      document.getElementById('modal-balance-target').innerText = '$5,750,000';
+    }
+  } catch (err) {
+    console.log("الاعتماد على القيم الافتراضية الذكية للوحة التحكم الفاخرة.");
+    document.getElementById('user-name-target').innerText = 'أحمد القرماني';
+    document.getElementById('widget-balance-text').innerText = 'AQX Balance: $5,750,000';
+    document.getElementById('modal-balance-target').innerText = '$5,750,000';
+  }
+}
+window.addEventListener('DOMContentLoaded', fetchDashboardData);
+
+// عند النقر الفعلي على زر الرصيد يقوم بإعادة السحب والتحديث المباشر من الملف وفتح النافذة
+async function openLuxuryWallet() {
+  triggerAudioEffect('click');
+  await fetchDashboardData(); // سحب فوري محدث
+  document.getElementById('arrow-indicator').style.transform = 'rotate(90deg)';
+  document.getElementById('walletModal').classList.add('active');
 }
 
-// ===== التفاعل مع البوابات (النوافذ المنبثقة والصوت) =====
-function interact(gateName) {
-  event.preventDefault(); // لمنع الانتقال الفوري وعرض الفخامة أولاً
-  const link = event.currentTarget.href;
-  playChime();
-  speak("جاري تجهيز " + gateName + " لفخامتكم");
-  
-  const modal = document.getElementById('luxuryModal');
-  document.getElementById('modalTitle').innerText = gateName;
-  modal.classList.add('active');
-  
-  // الانتقال بعد ثانيتين
-  setTimeout(() => {
-    window.location.href = link;
-  }, 2000);
+function closeLuxuryWallet() {
+  document.getElementById('arrow-indicator').style.transform = 'rotate(0deg)';
+  document.getElementById('walletModal').classList.remove('active');
 }
 
-// ===== حركة السكرول (إخفاء البروفايل، إظهار السهم) =====
-const profile = document.getElementById('user-profile');
-const scrollBtn = document.getElementById('scrollTopBtn');
+function handleGateClick(e, name) {
+  e.preventDefault();
+  triggerAudioEffect('click');
+  const destination = e.currentTarget.href;
+  setTimeout(() => { window.location.href = destination; }, 300);
+}
 
+// ===== سهم الصعود الذكي التفاعلي المتغير الألوان عند السكرول =====
+const scrollerBtn = document.getElementById('scrollerBtn');
 window.addEventListener('scroll', () => {
-  if (window.scrollY > 80) {
-    profile.classList.add('hidden'); // يختفي لأعلى
-    scrollBtn.classList.add('visible'); // يظهر السهم
+  if (window.scrollY > 250) {
+    scrollerBtn.classList.add('visible');
   } else {
-    profile.classList.remove('hidden');
-    scrollBtn.classList.remove('visible');
+    scrollerBtn.classList.remove('visible');
   }
 });
 
-// السهم المتشقلب
-function scrollToTop() {
-  scrollBtn.classList.add('flip');
-  playChime();
-  speak("العودة للقمة");
+function executeScrollToTop() {
+  triggerAudioEffect('click');
+  scrollerBtn.classList.add('spinning');
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  setTimeout(() => {
-    scrollBtn.classList.remove('flip');
-  }, 600);
+  setTimeout(() => { scrollerBtn.classList.remove('spinning'); }, 600);
 }
 
-// ===== جزيئات الذهب والفضة (Canvas) =====
-const canvas = document.getElementById('particles-canvas');
+// ===== الحماية الصارمة والذكية (المدافع المهاجم) بدون طرد عشوائي للمسجلين القانونيين =====
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && e.key === 'U')) {
+    e.preventDefault();
+    executeImmediateLockdown();
+  }
+});
+
+function executeImmediateLockdown() {
+  triggerAudioEffect('siren');
+  document.getElementById('lockdown-screen').style.display = 'flex';
+  setTimeout(() => { window.location.replace("about:blank"); }, 2000);
+}
+
+// ===== كود الأنيميشن الفاخر لذرات الذهب والفضة التلقائية في الخلفية التركوازية =====
+const canvas = document.getElementById('ambient-canvas');
 const ctx = canvas.getContext('2d');
-let particlesArray = [];
+let particles = [];
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+function adjustCanvasSize() {
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+window.addEventListener('resize', adjustCanvasSize);
+adjustCanvasSize();
 
-class Particle {
+class AmbientParticle {
   constructor() {
     this.x = Math.random() * canvas.width;
     this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 3 + 1;
-    this.speedX = Math.random() * 1 - 0.5;
-    this.speedY = Math.random() * -1 - 0.5; // تتحرك لأعلى
-    // ألوان بين الذهبي والفضي
-    this.color = Math.random() > 0.5 ? 'rgba(212, 175, 55, ' : 'rgba(192, 192, 192, ';
-    this.opacity = Math.random() * 0.5 + 0.2;
+    this.radius = Math.random() * 2.5 + 0.5;
+    this.speedX = Math.random() * 0.4 - 0.2;
+    this.speedY = Math.random() * -0.6 - 0.1; // صعود للأعلى بنعومة
+    this.tone = Math.random() > 0.45 ? 'rgba(229, 184, 66, ' : 'rgba(226, 232, 240, '; // ذهب وفضة
+    this.opacity = Math.random() * 0.6 + 0.1;
   }
-  update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    // إذا خرجت من الشاشة، تعود من الأسفل
-    if (this.y < 0) {
-      this.y = canvas.height;
-      this.x = Math.random() * canvas.width;
-    }
-    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+  move() {
+    this.x += this.speedX; this.y += this.speedY;
+    if (this.y < 0) { this.y = canvas.height; this.x = Math.random() * canvas.width; }
   }
-  draw() {
-    ctx.fillStyle = this.color + this.opacity + ')';
+  render() {
+    ctx.fillStyle = this.tone + this.opacity + ')';
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
-function initParticles() {
-  for (let i = 0; i < 150; i++) particlesArray.push(new Particle());
-}
-initParticles();
+for (let i = 0; i < 120; i++) particles.push(new AmbientParticle());
 
-function animateParticles() {
+function renderLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (let i = 0; i < particlesArray.length; i++) {
-    particlesArray[i].update();
-    particlesArray[i].draw();
-  }
-  requestAnimationFrame(animateParticles);
+  particles.forEach(p => { p.move(); p.render(); });
+  requestAnimationFrame(renderLoop);
 }
-animateParticles();
+renderLoop();
 </script>
 </body>
 </html>

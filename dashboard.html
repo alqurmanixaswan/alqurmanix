@@ -67,7 +67,6 @@ header::after{
 .logo-area{
   display:flex;align-items:center;gap:10px;
   flex-shrink:0;margin-left:0;margin-right:auto;
-  /* RTL: margin-right:auto pushes everything else to right */
 }
 .logo-img{height:48px;width:auto;object-fit:contain;animation:logoColorCycle 8s infinite linear,logoFloat 3s ease-in-out infinite}
 @keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
@@ -114,7 +113,6 @@ header::after{
 /* Three-dot menu button */
 .header-right{
   display:flex;align-items:center;gap:12px;
-  /* Right side is EMPTY for user's own menu */
   margin-right:auto;
 }
 .dots-menu-btn{
@@ -148,7 +146,7 @@ header::after{
 .dropdown-item-icon{font-size:1.1rem;width:28px;text-align:center}
 .dots-menu-wrapper{position:relative}
 
-/* ===== WALLET MODAL — ULTRA LUXURY ===== */
+/* ===== WALLET MODAL ===== */
 .wallet-overlay{display:none;position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.85);backdrop-filter:blur(16px);justify-content:center;align-items:center}
 .wallet-overlay.open{display:flex}
 .wallet-modal{
@@ -296,7 +294,6 @@ header::after{
 .section-subtitle{
   text-align:center;color:rgba(208,247,245,.55);font-size:.9rem;margin-bottom:30px;
 }
-/* Explore more anchor */
 .explore-btn{
   display:block;text-align:center;padding:10px 20px 0;
   color:var(--teal);font-weight:700;font-size:.95rem;cursor:pointer;
@@ -337,7 +334,6 @@ header::after{
   height:2px;background:linear-gradient(90deg,transparent,rgba(0,201,192,.3),rgba(201,168,76,.3),transparent);
   margin:12px 32px;
 }
-/* Own platforms gate — special styling */
 .gate-card.platform-card{border-color:rgba(201,168,76,.25)}
 .gate-card.platform-card:hover{border-color:rgba(201,168,76,.5);box-shadow:0 12px 40px rgba(201,168,76,.18)}
 .gate-card.platform-card .gate-name{color:var(--gold2)}
@@ -527,7 +523,6 @@ footer{
 
   <!-- HEADER -->
   <header>
-    <!-- LEFT: Logo + Balance -->
     <div class="logo-area">
       <img src="logo.png" alt="AQX Logo" class="logo-img" id="logoImg" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex'">
       <div id="logoFallback" style="display:none;flex-direction:column">
@@ -539,7 +534,6 @@ footer{
       </div>
     </div>
 
-    <!-- Balance badge next to logo -->
     <div class="balance-badge" onclick="openWallet()">
       <span class="balance-icon">💎</span>
       <div class="balance-text">
@@ -549,7 +543,6 @@ footer{
       <span class="balance-arrow">‹</span>
     </div>
 
-    <!-- RIGHT: Three dots menu (rest of header right side is EMPTY for user's nav) -->
     <div class="header-right">
       <div class="dots-menu-wrapper">
         <div class="dots-menu-btn" id="dotsMenuBtn" onclick="toggleDotsMenu()">
@@ -734,7 +727,7 @@ footer{
 
         <a href="gate-entertainment.html" class="gate-card" onclick="playGateSound()">
           <div class="gate-img-placeholder">🎬</div>
-          <div class="gate-name">بوابة الترفيه</div>
+          <div class="gate-name">بوابة Tالترفيه</div>
           <div class="gate-desc">محتوى ترفيهي راقٍ — أفلام، موسيقى، ومحتوى حصري</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
@@ -921,13 +914,56 @@ footer{
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-      </div><!-- end gateways-grid -->
+        <!-- بوابات إضافية حقيقية وفعلية مكملة للنظام -->
+        <a href="gate-ecommerce.html" class="gate-card" onclick="playGateSound()">
+          <div class="gate-img-placeholder">🛒</div>
+          <div class="gate-name">بوابة التجارة الإلكترونية</div>
+          <div class="gate-desc">إنشاء المتاجر الرقمية وعمليات البيع والشراء وإدارة المنتجات والطلبات</div>
+          <button class="gate-btn">دخول البوابة</button>
+        </a>
+
+        <a href="gate-hosting.html" class="gate-card" onclick="playGateSound()">
+          <div class="gate-img-placeholder">🖥️</div>
+          <div class="gate-name">بوابة الاستضافة والسحاب</div>
+          <div class="gate-desc">إدارة السيرفرات والمواقع وحفظ الملفات السحابية وقواعد البيانات الآمنة</div>
+          <button class="gate-btn">دخول البوابة</button>
+        </a>
+
+        <a href="gate-support.html" class="gate-card" onclick="playGateSound()">
+          <div class="gate-img-placeholder">🛠️</div>
+          <div class="gate-name">بوابة الدعم الفني</div>
+          <div class="gate-desc">فتح التذاكر وحل المشكلات التقنية البرمجية وخدمة العملاء المباشرة</div>
+          <button class="gate-btn">دخول البوابة</button>
+        </a>
+
+        <a href="gate-seo.html" class="gate-card" onclick="playGateSound()">
+          <div class="gate-img-placeholder">🔍</div>
+          <div class="gate-name">بوابة السيو والأرشفة</div>
+          <div class="gate-desc">تحسين محركات البحث وتصدر نتائج البحث العالمية ومتابعة أداء المواقع</div>
+          <button class="gate-btn">دخول البوابة</button>
+        </a>
+
+        <a href="gate-analytics.html" class="gate-card" onclick="playGateSound()">
+          <div class="gate-img-placeholder">📈</div>
+          <div class="gate-name">بوابة البيانات والإحصاء</div>
+          <div class="gate-desc">تحليلات متقدمة لنمو الأعمال ودراسات السوق وسلوك الزوار الفعلي</div>
+          <button class="gate-btn">دخول البوابة</button>
+        </a>
+
+        <a href="gate-freelance.html" class="gate-card" onclick="playGateSound()">
+          <div class="gate-img-placeholder">🖨️</div>
+          <div class="gate-name">بوابة العمل الحر</div>
+          <div class="gate-desc">تقديم الخدمات المستقصة وتوظيف الكفاءات وإدارة المشاريع المستقلة عن بعد</div>
+          <button class="gate-btn">دخول البوابة</button>
+        </a>
+
+      </div>
     </div>
 
     <!-- SEPARATOR -->
     <div class="section-sep"></div>
 
-    <!-- OWN PLATFORMS — SEPARATE SECTION -->
+    <!-- OWN PLATFORMS -->
     <div class="section-title" style="padding-top:30px">منصاتنا الخاصة</div>
     <div class="section-subtitle">حصرياً — خدمات ومنتجات AQX المبتكرة</div>
     <div class="gateways">
@@ -973,12 +1009,11 @@ footer{
       </div>
     </a>
 
-    <!-- EXPLORE MORE -->
     <a href="#heroSection" class="explore-btn" style="margin:28px auto;display:block;text-align:center" onclick="playClick();smoothScrollTo('heroSection')">
       ↑ &nbsp;اكتشف المزيد عن عالم القرماني إكس
     </a>
 
-  </div><!-- end gateways-section -->
+  </div>
 
   <!-- FEATURES BAR -->
   <div class="features-bar">
@@ -1031,7 +1066,7 @@ footer{
     </div>
   </footer>
 
-</div><!-- end page-wrapper -->
+</div>
 
 <!-- FIREBASE + SECURITY -->
 <script type="module">
@@ -1167,7 +1202,6 @@ function speakWelcome() {
 
 window._fbSignOut = async () => { await signOut(auth); window.location.href = "index.html"; };
 
-// Voice feedback on interactions
 window.speakAction = function(msg) {
   if (!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
@@ -1196,7 +1230,6 @@ window.speakAction = function(msg) {
   if (!isFromCheckpoint && !hasSessionPass) { triggerSecurityAlert(); return; }
   sessionStorage.setItem("aqx_access_granted", "true");
 
-  // Anti-multi-tab: block if opened in new tab/window
   window.addEventListener('load', () => {
     if (window.opener) { window.location.replace("index.html"); return; }
   });
@@ -1230,7 +1263,7 @@ window.speakAction = function(msg) {
 
 function triggerSecurityAlert() {
   const overlay = document.getElementById('securityAlert');
-  overlay.style.display = 'flex';
+  if (overlay) overlay.style.display = 'flex';
   playSecurityAlarm(true);
   let count = 3;
   const el = document.getElementById('redirectCount');
@@ -1336,11 +1369,12 @@ document.getElementById('walletOverlay').addEventListener('click', function(e) {
 // ===== DOTS MENU =====
 function toggleDotsMenu() {
   const dd = document.getElementById('dotsDropdown');
-  dd.classList.toggle('open');
+  if (dd) dd.classList.toggle('open');
   playClick();
 }
 function closeDotsMenu() {
-  document.getElementById('dotsDropdown').classList.remove('open');
+  const dd = document.getElementById('dotsDropdown');
+  if (dd) dd.classList.remove('open');
 }
 document.addEventListener('click', function(e) {
   const wrapper = document.querySelector('.dots-menu-wrapper');
@@ -1350,8 +1384,7 @@ document.addEventListener('click', function(e) {
 // ===== TOAST =====
 function showSecurityToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
+  if (t) { t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3500); }
 }
 
 // ===== SCROLL ARROW =====
@@ -1362,10 +1395,10 @@ function updateScrollArrow() {
   const maxScroll = document.body.scrollHeight - window.innerHeight;
   if (scrolled > maxScroll * 0.5) {
     isAtBottom = true;
-    scrollBtn.classList.add('up');
+    if (scrollBtn) scrollBtn.classList.add('up');
   } else {
     isAtBottom = false;
-    scrollBtn.classList.remove('up');
+    if (scrollBtn) scrollBtn.classList.remove('up');
   }
 }
 window.addEventListener('scroll', updateScrollArrow, {passive:true});
@@ -1397,6 +1430,7 @@ document.querySelectorAll('.gate-card').forEach(card => {
 // ===== PARTICLES =====
 (function() {
   const canvas = document.getElementById('particleCanvas');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
   let W, H, particles;
   function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
@@ -1416,4 +1450,20 @@ document.querySelectorAll('.gate-card').forEach(card => {
       p.pulse += 0.02; p.alpha = 0.25+Math.sin(p.pulse)*0.3;
       p.x+=p.vx; p.y+=p.vy;
       if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
-     
+      
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1.0;
+    requestAnimationFrame(animate);
+  }
+  init();
+  animate();
+  window.addEventListener('resize', resize);
+})();
+</script>
+</body>
+</html>

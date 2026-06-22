@@ -42,7 +42,7 @@ html,body{height:100%;font-family:'Cairo',sans-serif;background:var(--bg);color:
 /* ===== HEADER ===== */
 header{
   position:sticky;top:0;z-index:1000;
-  display:flex;align-items:center;justify-content:flex-start;
+  display:flex;align-items:center;justify-content:space-between; /* Adjusted for center logo */
   padding:0 28px;height:68px;
   background:linear-gradient(90deg,rgba(8,35,35,0.97) 0%,rgba(10,42,42,0.97) 100%);
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
@@ -63,10 +63,13 @@ header::after{
 }
 @keyframes headerLine{0%{background-position:0% 0%}100%{background-position:200% 0%}}
 
-/* Logo on far LEFT */
+/* Centered Logo */
 .logo-area{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
   display:flex;align-items:center;gap:10px;
-  flex-shrink:0;margin-left:0;margin-right:auto;
 }
 .logo-img{height:48px;width:auto;object-fit:contain;animation:logoColorCycle 8s infinite linear,logoFloat 3s ease-in-out infinite}
 @keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
@@ -93,14 +96,14 @@ header::after{
 }
 .logo-text .sub{font-size:.6rem;color:var(--teal);letter-spacing:3px;font-weight:600}
 
-/* Balance icon right next to logo */
+/* Balance icon on the right */
 .balance-badge{
   display:flex;align-items:center;gap:8px;
   background:linear-gradient(135deg,rgba(0,201,192,0.12),rgba(0,201,192,0.04));
   border:1px solid rgba(0,201,192,0.35);
   border-radius:50px;padding:8px 16px;
   cursor:pointer;transition:all .3s;position:relative;
-  margin-right:16px;
+  margin:0; /* Adjusted */
 }
 .balance-badge:hover{background:linear-gradient(135deg,rgba(0,201,192,0.22),rgba(0,201,192,0.08));transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,201,192,0.3)}
 .balance-icon{font-size:1.2rem}
@@ -110,10 +113,10 @@ header::after{
 .balance-arrow{color:var(--teal);font-size:1rem;margin-right:4px;transition:transform .3s}
 .balance-badge:hover .balance-arrow{transform:translateX(-3px)}
 
-/* Three-dot menu button */
+/* Three-dot menu button on the left */
 .header-right{
   display:flex;align-items:center;gap:12px;
-  margin-right:auto;
+  margin:0; /* Adjusted */
 }
 .dots-menu-btn{
   width:36px;height:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
@@ -232,7 +235,7 @@ header::after{
 }
 .hero-cta:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(0,201,192,.7);filter:brightness(1.1)}
 
-/* ===== SCROLL ARROW ===== */
+/* ===== SCROLL ARROW (معدل) ===== */
 .scroll-arrow-btn{
   position:fixed;bottom:36px;right:36px;z-index:900;
   width:56px;height:56px;border-radius:50%;
@@ -241,13 +244,25 @@ header::after{
   display:flex;align-items:center;justify-content:center;
   box-shadow:0 4px 24px rgba(0,201,192,0.5),0 0 0 0 rgba(0,201,192,0.4);
   animation:arrowPulse 2s ease-in-out infinite;
-  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  
+  /* مخفي افتراضياً */
+  opacity: 0;
+  transform: translateY(40px);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+.scroll-arrow-btn.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.scroll-arrow-btn.flip {
+  transform: translateY(0) rotate(360deg) scale(1.15); /* حركة الشقلبة */
 }
 .scroll-arrow-btn svg{
   width:24px;height:24px;stroke:#fff;stroke-width:2.5;fill:none;
-  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  transform: rotate(180deg); /* دائماً يشير للأعلى */
 }
-.scroll-arrow-btn.up svg{transform:rotate(180deg)}
 .scroll-arrow-btn:hover{box-shadow:0 6px 32px rgba(0,201,192,0.7)}
 @keyframes arrowPulse{
   0%,100%{box-shadow:0 4px 24px rgba(0,201,192,0.5),0 0 0 0 rgba(0,201,192,0.4)}
@@ -458,10 +473,8 @@ footer{
 </head>
 <body>
 
-<!-- CANVAS PARTICLES -->
 <canvas id="particleCanvas"></canvas>
 
-<!-- SECURITY ALERT OVERLAY -->
 <div id="securityAlert">
   <div class="alert-icon">🔴</div>
   <h1>⚠ اختراق أمني غير مصرح بالدخول ⚠</h1>
@@ -469,7 +482,6 @@ footer{
   <div class="redirect-count" id="redirectCount">جارٍ التحويل خلال 3 ثوانٍ...</div>
 </div>
 
-<!-- WALLET MODAL -->
 <div class="wallet-overlay" id="walletOverlay">
   <div class="wallet-modal">
     <button class="wallet-close" onclick="closeWallet()">✕</button>
@@ -484,19 +496,19 @@ footer{
         <div class="wallet-balance-currency">AQX Coin</div>
       </div>
       <div class="wallet-actions">
-        <a href="wallet-transfer.html" class="wallet-action-btn" onclick="playClick()">
+        <a href="wallet-transfer.html" class="wallet-action-btn">
           <div class="wallet-action-icon">🔄</div>
           <span class="wallet-action-label">تبديل</span>
         </a>
-        <a href="wallet-withdraw.html" class="wallet-action-btn" onclick="playClick()">
+        <a href="wallet-withdraw.html" class="wallet-action-btn">
           <div class="wallet-action-icon">📤</div>
           <span class="wallet-action-label">سحب</span>
         </a>
-        <a href="wallet-deposit.html" class="wallet-action-btn" onclick="playClick()">
+        <a href="wallet-deposit.html" class="wallet-action-btn">
           <div class="wallet-action-icon">📥</div>
           <span class="wallet-action-label">إيداع</span>
         </a>
-        <a href="wallet-history.html" class="wallet-action-btn" onclick="playClick()">
+        <a href="wallet-history.html" class="wallet-action-btn">
           <div class="wallet-action-icon">📊</div>
           <span class="wallet-action-label">السجل</span>
         </a>
@@ -505,24 +517,50 @@ footer{
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- VOICE INDICATOR -->
 <div class="voice-indicator" id="voiceIndicator">
   <div class="voice-dot"></div>
   <span id="voiceText">مرحباً بك في عالم القرماني إكس</span>
 </div>
 
-<!-- SCROLL ARROW -->
-<button class="scroll-arrow-btn" id="scrollArrowBtn" onclick="handleScrollArrow()" title="تنقل">
+<button class="scroll-arrow-btn" id="scrollArrowBtn" onclick="handleScrollArrow()" title="العودة للأعلى">
   <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
 </button>
 
 <div class="page-wrapper">
 
-  <!-- HEADER -->
   <header>
+    <div class="header-right">
+      <div class="dots-menu-wrapper">
+        <div class="dots-menu-btn" id="dotsMenuBtn" onclick="toggleDotsMenu()">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="dots-dropdown" id="dotsDropdown">
+          <div class="dropdown-header">
+            <img src="user-profile.png" alt="صورة المستخدم" class="dropdown-avatar" id="dropdownAvatarImg" onerror="this.style.display='none';document.getElementById('dropdownAvatarFallback').style.display='flex'">
+            <div class="dropdown-avatar-placeholder" id="dropdownAvatarFallback" style="display:none">👤</div>
+            <div>
+              <div class="dropdown-username" id="dropdownUserName">مستخدم</div>
+            </div>
+            <button class="dropdown-close" onclick="closeDotsMenu()">✕</button>
+          </div>
+          <a href="settings.html" class="dropdown-item">
+            <span class="dropdown-item-icon">⚙️</span>الإعدادات
+          </a>
+          <a href="profile.html" class="dropdown-item">
+            <span class="dropdown-item-icon">👤</span>الملف الشخصي
+          </a>
+          <a href="notifications.html" class="dropdown-item">
+            <span class="dropdown-item-icon">🔔</span>الإشعارات
+          </a>
+          <a href="#" class="dropdown-item" data-no-delay="true" onclick="window._fbSignOut && window._fbSignOut();playClick()">
+            <span class="dropdown-item-icon">🚪</span>تسجيل الخروج
+          </a>
+        </div>
+      </div>
+    </div>
+
     <div class="logo-area">
       <img src="logo.png" alt="AQX Logo" class="logo-img" id="logoImg" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex'">
       <div id="logoFallback" style="display:none;flex-direction:column">
@@ -542,39 +580,8 @@ footer{
       </div>
       <span class="balance-arrow">‹</span>
     </div>
-
-    <div class="header-right">
-      <div class="dots-menu-wrapper">
-        <div class="dots-menu-btn" id="dotsMenuBtn" onclick="toggleDotsMenu()">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="dots-dropdown" id="dotsDropdown">
-          <div class="dropdown-header">
-            <img src="user-profile.png" alt="صورة المستخدم" class="dropdown-avatar" id="dropdownAvatarImg" onerror="this.style.display='none';document.getElementById('dropdownAvatarFallback').style.display='flex'">
-            <div class="dropdown-avatar-placeholder" id="dropdownAvatarFallback" style="display:none">👤</div>
-            <div>
-              <div class="dropdown-username" id="dropdownUserName">مستخدم</div>
-            </div>
-            <button class="dropdown-close" onclick="closeDotsMenu()">✕</button>
-          </div>
-          <a href="settings.html" class="dropdown-item" onclick="playClick();closeDotsMenu()">
-            <span class="dropdown-item-icon">⚙️</span>الإعدادات
-          </a>
-          <a href="profile.html" class="dropdown-item" onclick="playClick();closeDotsMenu()">
-            <span class="dropdown-item-icon">👤</span>الملف الشخصي
-          </a>
-          <a href="notifications.html" class="dropdown-item" onclick="playClick();closeDotsMenu()">
-            <span class="dropdown-item-icon">🔔</span>الإشعارات
-          </a>
-          <a href="#" class="dropdown-item" onclick="window._fbSignOut && window._fbSignOut();playClick()">
-            <span class="dropdown-item-icon">🚪</span>تسجيل الخروج
-          </a>
-        </div>
-      </div>
-    </div>
   </header>
 
-  <!-- HERO -->
   <section class="hero" id="heroSection">
     <div class="hero-bg">
       <img src="hero-bg.jpg" alt="AQX Hero" class="hero-bg-img" onerror="this.style.display='none'">
@@ -592,32 +599,30 @@ footer{
     </div>
   </section>
 
-  <!-- STATS BAR -->
   <div class="stats-bar">
-    <div class="stat-item" onclick="playClick()">
+    <div class="stat-item">
       <span class="stat-icon">👥</span>
       <div class="stat-info"><span class="stat-num">+2.5M</span><span class="stat-label">عضو حول العالم</span></div>
     </div>
-    <div class="stat-item" onclick="playClick()">
+    <div class="stat-item">
       <span class="stat-icon">🌍</span>
       <div class="stat-info"><span class="stat-num">+150</span><span class="stat-label">دولة</span></div>
     </div>
-    <div class="stat-item" onclick="playClick()">
+    <div class="stat-item">
       <span class="stat-icon">⭐</span>
       <div class="stat-info"><span class="stat-num">+1200</span><span class="stat-label">مشروع مكتمل</span></div>
     </div>
-    <div class="stat-item" onclick="playClick()">
+    <div class="stat-item">
       <span class="stat-icon">💜</span>
       <div class="stat-info"><span class="stat-num">+85M</span><span class="stat-label">أثر إنساني</span></div>
     </div>
-    <a href="aqx-journey.html" class="stat-watch" onclick="playClick()">
+    <a href="aqx-journey.html" class="stat-watch">
       <div class="stat-watch-icon">▶</div>
       <span>شاهد رحلة AQX</span>
     </a>
   </div>
 
-  <!-- SAVED BAR -->
-  <a href="saved-pages.html" class="saved-bar" onclick="playClick()">
+  <a href="saved-pages.html" class="saved-bar">
     <span class="saved-bar-icon">🔖</span>
     <div class="saved-bar-text">
       <div class="saved-bar-title">محفوظاتي</div>
@@ -626,7 +631,6 @@ footer{
     <span class="saved-bar-arrow">‹</span>
   </a>
 
-  <!-- GATEWAYS SECTION -->
   <div id="gateways-section">
     <div class="section-title">بواباتك نحو المستقبل</div>
     <div class="section-subtitle">اختر بوابتك وانطلق — كل باب يفتح عالماً جديداً</div>
@@ -634,323 +638,322 @@ footer{
     <div class="gateways">
       <div class="gateways-grid">
 
-        <a href="gate-leadership.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-leadership.html" class="gate-card">
           <div class="gate-img-placeholder">👔</div>
           <div class="gate-name">بوابة القيادة</div>
           <div class="gate-desc">للموظفين وأصحاب الرؤية — إدارة، تطوير، وتمكين بلا حدود</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-partners.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-partners.html" class="gate-card">
           <div class="gate-img-placeholder">🤝</div>
           <div class="gate-name">بوابة الشركاء</div>
           <div class="gate-desc">لعملائنا وشركائنا المميزين — شراكات استراتيجية، فرص لا تنتهي</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-community.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-community.html" class="gate-card">
           <div class="gate-img-placeholder">🌐</div>
           <div class="gate-name">بوابة المجتمع</div>
           <div class="gate-desc">منصة تواصل اجتماعي هادفة — شارك، تفاعل، وكن جزءاً من الأثر</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-life.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-life.html" class="gate-card">
           <div class="gate-img-placeholder">❤️</div>
           <div class="gate-name">بوابة الحياة</div>
           <div class="gate-desc">خدمات صحية متكاملة لصحة أفضل وحياة أجمل</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-achievement.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-achievement.html" class="gate-card">
           <div class="gate-img-placeholder">🏆</div>
           <div class="gate-name">بوابة الإنجاز</div>
           <div class="gate-desc">مشاريعنا المبتكرة حول العالم — نحن نبني المستقبل اليوم</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-giving.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-giving.html" class="gate-card">
           <div class="gate-img-placeholder">🫶</div>
           <div class="gate-name">بوابة العطاء</div>
           <div class="gate-desc">منصة الأعمال الخيرية والتطوعية — معاً نصنع فرقاً حقيقياً</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-business.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-business.html" class="gate-card">
           <div class="gate-img-placeholder">💼</div>
           <div class="gate-name">بوابة الأعمال</div>
           <div class="gate-desc">فرص استثمارية ومشاريع واعدة — ابدأ مشروعك معنا</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-aqxcoin.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-aqxcoin.html" class="gate-card">
           <div class="gate-img-placeholder">🪙</div>
           <div class="gate-name">AQX Coin</div>
           <div class="gate-desc">العملة الرقمية للمستقبل — استثمر، اتداول، وحقق قيمة</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-knowledge.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-knowledge.html" class="gate-card">
           <div class="gate-img-placeholder">🎓</div>
           <div class="gate-name">بوابة المعرفة</div>
           <div class="gate-desc">منصة تعليمية متكاملة — تعلم، تطور، وارتقِ</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-innovation.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-innovation.html" class="gate-card">
           <div class="gate-img-placeholder">🚀</div>
           <div class="gate-name">بوابة الابتكار</div>
           <div class="gate-desc">الحاضنة الذكية لأفكارك الريادية — حوِّل أفكارك إلى واقع</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-shortlinks.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-shortlinks.html" class="gate-card">
           <div class="gate-img-placeholder">🔗</div>
           <div class="gate-name">اختصار روابط</div>
           <div class="gate-desc">اختصر روابطك وتتبعها بذكاء — سهولة ودقة في كل نقرة</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-earn.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-earn.html" class="gate-card">
           <div class="gate-img-placeholder">💰</div>
           <div class="gate-name">بوابة الربح</div>
           <div class="gate-desc">اكسب من مشاركتك ونشاطك — مكافآت حقيقية في كل خطوة</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-games.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-games.html" class="gate-card">
           <div class="gate-img-placeholder">🎮</div>
           <div class="gate-name">بوابة الألعاب</div>
           <div class="gate-desc">عوالم لعب ذكية تجمع المتعة والمكافآت الحقيقية</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-entertainment.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-entertainment.html" class="gate-card">
           <div class="gate-img-placeholder">🎬</div>
-          <div class="gate-name">بوابة Tالترفيه</div>
+          <div class="gate-name">بوابة الترفيه</div>
           <div class="gate-desc">محتوى ترفيهي راقٍ — أفلام، موسيقى، ومحتوى حصري</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-projects.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-projects.html" class="gate-card">
           <div class="gate-img-placeholder">🏗️</div>
           <div class="gate-name">مشاريعي</div>
           <div class="gate-desc">تابع مشاريعك الخاصة وأفكارك المنتظرة التنفيذ</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-ai.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-ai.html" class="gate-card">
           <div class="gate-img-placeholder">🤖</div>
           <div class="gate-name">بوابة الذكاء الاصطناعي</div>
           <div class="gate-desc">أدوات AI متطورة للمستقبل — مساعدك الذكي دائماً معك</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-metaverse.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-metaverse.html" class="gate-card">
           <div class="gate-img-placeholder">🌌</div>
           <div class="gate-name">بوابة الميتافيرس</div>
           <div class="gate-desc">عالمك الافتراضي الموازي — تجارب لم تختبرها من قبل</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-nft.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-nft.html" class="gate-card">
           <div class="gate-img-placeholder">🖼️</div>
           <div class="gate-name">بوابة NFT</div>
           <div class="gate-desc">اقتنِ الفن الرقمي وأصول المستقبل الفريدة</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-health.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-health.html" class="gate-card">
           <div class="gate-img-placeholder">🏥</div>
           <div class="gate-name">بوابة الصحة والعافية</div>
           <div class="gate-desc">رعاية صحية شاملة وبرامج عافية متكاملة لحياة أفضل</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-finance.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-finance.html" class="gate-card">
           <div class="gate-img-placeholder">📊</div>
           <div class="gate-name">بوابة المالية</div>
           <div class="gate-desc">تحليلات مالية وإدارة أصول احترافية — مستقبلك المالي بيدك</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-realestate.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-realestate.html" class="gate-card">
           <div class="gate-img-placeholder">🏢</div>
           <div class="gate-name">بوابة العقارات</div>
           <div class="gate-desc">استثمر في العقار الرقمي والمادي — ملكية حقيقية للمستقبل</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-travel.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-travel.html" class="gate-card">
           <div class="gate-img-placeholder">✈️</div>
           <div class="gate-name">بوابة السفر</div>
           <div class="gate-desc">خطط لرحلتك بذكاء — حجوزات، منتجعات، وتجارب لا تُنسى</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-food.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-food.html" class="gate-card">
           <div class="gate-img-placeholder">🍽️</div>
           <div class="gate-name">بوابة الطعام</div>
           <div class="gate-desc">اكتشف مطاعم مميزة، وصفات حصرية، وتجارب ذواقة فريدة</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-fashion.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-fashion.html" class="gate-card">
           <div class="gate-img-placeholder">👗</div>
           <div class="gate-name">بوابة الأزياء</div>
           <div class="gate-desc">أحدث صيحات الموضة — ستايل فريد لشخصية استثنائية</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-sports.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-sports.html" class="gate-card">
           <div class="gate-img-placeholder">⚽</div>
           <div class="gate-name">بوابة الرياضة</div>
           <div class="gate-desc">متابعة رياضية شاملة، برامج تدريبية، وبطولات حصرية</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-media.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-media.html" class="gate-card">
           <div class="gate-img-placeholder">📺</div>
           <div class="gate-name">بوابة الإعلام</div>
           <div class="gate-desc">أخبار موثوقة ومحتوى إعلامي راقٍ — كن على اطلاع دائم</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-art.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-art.html" class="gate-card">
           <div class="gate-img-placeholder">🎨</div>
           <div class="gate-name">بوابة الفنون</div>
           <div class="gate-desc">إبداع بلا حدود — فنون بصرية، موسيقى، مسرح، وأكثر</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-science.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-science.html" class="gate-card">
           <div class="gate-img-placeholder">🔬</div>
           <div class="gate-name">بوابة العلوم</div>
           <div class="gate-desc">استكشف آفاق العلم والبحث — تقنيات الغد تبدأ هنا</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-green.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-green.html" class="gate-card">
           <div class="gate-img-placeholder">🌱</div>
           <div class="gate-name">بوابة البيئة</div>
           <div class="gate-desc">نحو كوكب أخضر — حلول بيئية مستدامة للأجيال القادمة</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-legal.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-legal.html" class="gate-card">
           <div class="gate-img-placeholder">⚖️</div>
           <div class="gate-name">بوابة القانون</div>
           <div class="gate-desc">استشارات قانونية، حماية حقوق، وخدمات تعاقدية رقمية</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-kids.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-kids.html" class="gate-card">
           <div class="gate-img-placeholder">🧒</div>
           <div class="gate-name">بوابة الأطفال</div>
           <div class="gate-desc">محتوى تعليمي ترفيهي آمن — نبني جيل الغد بثقة</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-security.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-security.html" class="gate-card">
           <div class="gate-img-placeholder">🛡️</div>
           <div class="gate-name">بوابة الأمن الرقمي</div>
           <div class="gate-desc">حماية بياناتك وهويتك الرقمية — أمان شامل في كل وقت</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-logistics.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-logistics.html" class="gate-card">
           <div class="gate-img-placeholder">📦</div>
           <div class="gate-name">بوابة اللوجستيات</div>
           <div class="gate-desc">شحن ذكي وتوصيل سريع — سلسلة توريد متكاملة لعملك</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-events.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-events.html" class="gate-card">
           <div class="gate-img-placeholder">🎪</div>
           <div class="gate-name">بوابة الفعاليات</div>
           <div class="gate-desc">فعاليات حية، مؤتمرات، ومهرجانات — كن حاضراً دائماً</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-hr.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-hr.html" class="gate-card">
           <div class="gate-img-placeholder">🧑‍💼</div>
           <div class="gate-name">بوابة الموارد البشرية</div>
           <div class="gate-desc">توظيف ذكي، تطوير مهني، وبناء فرق استثنائية</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-marketing.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-marketing.html" class="gate-card">
           <div class="gate-img-placeholder">📣</div>
           <div class="gate-name">بوابة التسويق</div>
           <div class="gate-desc">حملات تسويقية ذكية — وصل رسالتك للعالم بأثر حقيقي</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-agriculture.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-agriculture.html" class="gate-card">
           <div class="gate-img-placeholder">🌾</div>
           <div class="gate-name">بوابة الزراعة الذكية</div>
           <div class="gate-desc">ثورة زراعية رقمية — تقنيات حديثة لغذاء أفضل</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-energy.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-energy.html" class="gate-card">
           <div class="gate-img-placeholder">⚡</div>
           <div class="gate-name">بوابة الطاقة</div>
           <div class="gate-desc">طاقة نظيفة ومستدامة — استثمر في مستقبل الكوكب</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-space.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-space.html" class="gate-card">
           <div class="gate-img-placeholder">🌠</div>
           <div class="gate-name">بوابة الفضاء</div>
           <div class="gate-desc">تقنيات وأبحاث فضائية — استكشف ما هو أبعد من الحدود</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-social.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-social.html" class="gate-card">
           <div class="gate-img-placeholder">💬</div>
           <div class="gate-name">بوابة التواصل</div>
           <div class="gate-desc">تواصل مباشر وفوري — مجتمعات حية ومجموعات مخصصة</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <!-- بوابات إضافية حقيقية وفعلية مكملة للنظام -->
-        <a href="gate-ecommerce.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-ecommerce.html" class="gate-card">
           <div class="gate-img-placeholder">🛒</div>
           <div class="gate-name">بوابة التجارة الإلكترونية</div>
           <div class="gate-desc">إنشاء المتاجر الرقمية وعمليات البيع والشراء وإدارة المنتجات والطلبات</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-hosting.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-hosting.html" class="gate-card">
           <div class="gate-img-placeholder">🖥️</div>
           <div class="gate-name">بوابة الاستضافة والسحاب</div>
           <div class="gate-desc">إدارة السيرفرات والمواقع وحفظ الملفات السحابية وقواعد البيانات الآمنة</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-support.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-support.html" class="gate-card">
           <div class="gate-img-placeholder">🛠️</div>
           <div class="gate-name">بوابة الدعم الفني</div>
           <div class="gate-desc">فتح التذاكر وحل المشكلات التقنية البرمجية وخدمة العملاء المباشرة</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-seo.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-seo.html" class="gate-card">
           <div class="gate-img-placeholder">🔍</div>
           <div class="gate-name">بوابة السيو والأرشفة</div>
           <div class="gate-desc">تحسين محركات البحث وتصدر نتائج البحث العالمية ومتابعة أداء المواقع</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-analytics.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-analytics.html" class="gate-card">
           <div class="gate-img-placeholder">📈</div>
           <div class="gate-name">بوابة البيانات والإحصاء</div>
           <div class="gate-desc">تحليلات متقدمة لنمو الأعمال ودراسات السوق وسلوك الزوار الفعلي</div>
           <button class="gate-btn">دخول البوابة</button>
         </a>
 
-        <a href="gate-freelance.html" class="gate-card" onclick="playGateSound()">
+        <a href="gate-freelance.html" class="gate-card">
           <div class="gate-img-placeholder">🖨️</div>
           <div class="gate-name">بوابة العمل الحر</div>
           <div class="gate-desc">تقديم الخدمات المستقصة وتوظيف الكفاءات وإدارة المشاريع المستقلة عن بعد</div>
@@ -960,39 +963,37 @@ footer{
       </div>
     </div>
 
-    <!-- SEPARATOR -->
     <div class="section-sep"></div>
 
-    <!-- OWN PLATFORMS -->
     <div class="section-title" style="padding-top:30px">منصاتنا الخاصة</div>
     <div class="section-subtitle">حصرياً — خدمات ومنتجات AQX المبتكرة</div>
     <div class="gateways">
       <div class="gateways-grid">
-        <a href="gate-aqxplatform.html" class="gate-card platform-card" onclick="playGateSound()">
+        <a href="gate-aqxplatform.html" class="gate-card platform-card">
           <div class="gate-img-placeholder">🛸</div>
           <div class="gate-name">منصة AQX الرئيسية</div>
           <div class="gate-desc">المنصة الأم لكل خدمات ومنتجات القرماني إكس</div>
           <button class="gate-btn">الدخول</button>
         </a>
-        <a href="gate-store.html" class="gate-card platform-card" onclick="playGateSound()">
+        <a href="gate-store.html" class="gate-card platform-card">
           <div class="gate-img-placeholder">🛍️</div>
           <div class="gate-name">متجر AQX</div>
           <div class="gate-desc">منتجات وخدمات AQX المتكاملة في مكان واحد</div>
           <button class="gate-btn">الدخول</button>
         </a>
-        <a href="gate-aqxacademy.html" class="gate-card platform-card" onclick="playGateSound()">
+        <a href="gate-aqxacademy.html" class="gate-card platform-card">
           <div class="gate-img-placeholder">🎓</div>
           <div class="gate-name">أكاديمية AQX</div>
           <div class="gate-desc">برامج تعليمية احترافية — شهادات معتمدة دولياً</div>
           <button class="gate-btn">الدخول</button>
         </a>
-        <a href="gate-aqxstudio.html" class="gate-card platform-card" onclick="playGateSound()">
+        <a href="gate-aqxstudio.html" class="gate-card platform-card">
           <div class="gate-img-placeholder">🎬</div>
           <div class="gate-name">AQX Studio</div>
           <div class="gate-desc">إنتاج إعلامي احترافي — محتوى يصنع الفارق</div>
           <button class="gate-btn">الدخول</button>
         </a>
-        <a href="gate-aqxpay.html" class="gate-card platform-card" onclick="playGateSound()">
+        <a href="gate-aqxpay.html" class="gate-card platform-card">
           <div class="gate-img-placeholder">💳</div>
           <div class="gate-name">AQX Pay</div>
           <div class="gate-desc">بوابة دفع ذكية — معاملاتك المالية آمنة وفورية</div>
@@ -1001,8 +1002,7 @@ footer{
       </div>
     </div>
 
-    <!-- COMPANY BANNER -->
-    <a href="company.html" class="company-banner" onclick="playClick()">
+    <a href="company.html" class="company-banner">
       <div class="company-banner-inner">
         <div class="company-banner-name">مجموعة شركات القرماني إكس القابضة</div>
         <div class="company-banner-sub">ALQARMANI X HOLDING GROUP &nbsp;•&nbsp; X.M.M</div>
@@ -1015,31 +1015,29 @@ footer{
 
   </div>
 
-  <!-- FEATURES BAR -->
   <div class="features-bar">
-    <div class="feature-item" onclick="playClick()">
+    <div class="feature-item">
       <span class="feature-icon">⚙️</span>
       <div class="feature-text"><span class="feature-title">تقنية متقدمة</span><span class="feature-sub">حلول ذكية وآمنة</span></div>
     </div>
-    <div class="feature-item" onclick="playClick()">
+    <div class="feature-item">
       <span class="feature-icon">🛡️</span>
       <div class="feature-text"><span class="feature-title">أمان وخصوصية</span><span class="feature-sub">حماية بياناتك أولويتنا</span></div>
     </div>
-    <div class="feature-item" onclick="playClick()">
+    <div class="feature-item">
       <span class="feature-icon">📈</span>
       <div class="feature-text"><span class="feature-title">نمو مستدام</span><span class="feature-sub">تصنع قيمة طويلة الأمد</span></div>
     </div>
-    <div class="feature-item" onclick="playClick()">
+    <div class="feature-item">
       <span class="feature-icon">🌐</span>
       <div class="feature-text"><span class="feature-title">دعم عالمي</span><span class="feature-sub">قريب منك على مدار الساعة</span></div>
     </div>
-    <div class="feature-item" onclick="playClick()">
+    <div class="feature-item">
       <span class="feature-icon">💜</span>
       <div class="feature-text"><span class="feature-title">رؤية ملهمة</span><span class="feature-sub">نحو عالم أفضل للجميع</span></div>
     </div>
   </div>
 
-  <!-- FOOTER -->
   <footer>
     <div class="footer-top">
       <div class="footer-logo">
@@ -1068,7 +1066,6 @@ footer{
 
 </div>
 
-<!-- FIREBASE + SECURITY -->
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -1202,6 +1199,7 @@ function speakWelcome() {
 
 window._fbSignOut = async () => { await signOut(auth); window.location.href = "index.html"; };
 
+// ===== نظام التفاعل الصوتي المُطور (التعطيل لحين الانتهاء) =====
 window.speakAction = function(msg) {
   if (!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
@@ -1219,9 +1217,102 @@ window.speakAction = function(msg) {
   utter.onend = () => vi.classList.remove('show');
   window.speechSynthesis.speak(utter);
 };
+
+window.speakActionWithCallback = function(msg, callback) {
+  if (!('speechSynthesis' in window)) {
+    if(callback) callback();
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(msg);
+  utter.lang = "ar-SA";
+  utter.rate = 1.0;
+  utter.pitch = 1.1;
+  const voices = window.speechSynthesis.getVoices();
+  const arabicVoice = voices.find(v => v.lang.startsWith('ar'));
+  if (arabicVoice) utter.voice = arabicVoice;
+
+  const vi = document.getElementById('voiceIndicator');
+  const vt = document.getElementById('voiceText');
+  vt.textContent = msg;
+  vi.classList.add('show');
+
+  let cbCalled = false;
+  const finish = () => {
+    if(cbCalled) return;
+    cbCalled = true;
+    vi.classList.remove('show');
+    if(callback) callback();
+  };
+
+  utter.onend = finish;
+  utter.onerror = finish;
+  window.speechSynthesis.speak(utter);
+
+  // حماية احتياطية: لتفادي أي مشكلة في أجهزة لا تدعم الصوت جيداً (الانتظار كحد أقصى 4 ثوانٍ)
+  setTimeout(finish, 4000);
+};
 </script>
 
 <script>
+// ===== الاعتراض الشامل للروابط (تأجيل الانتقال لحين انتهاء الصوت) =====
+document.addEventListener('click', function(e) {
+  const a = e.target.closest('a');
+  if (!a) return;
+
+  const href = a.getAttribute('href');
+  
+  // تجاهل الروابط الوهمية، أو الداخلية كالتمرير، أو التي تستثنى من التأخير
+  if (!href || href.startsWith('#') || href.startsWith('javascript:') || a.hasAttribute('data-no-delay')) {
+    return;
+  }
+
+  // منع الانتقال الفوري
+  e.preventDefault();
+
+  // محاولة معرفة اسم البوابة أو الملف لنطقه
+  let text = "جاري الانتقال";
+  const gateName = a.querySelector('.gate-name');
+  const savedTitle = a.querySelector('.saved-bar-title');
+  const companyName = a.querySelector('.company-banner-name');
+  const walletLabel = a.querySelector('.wallet-action-label');
+  const dropdownText = a.textContent.trim();
+
+  if (gateName) {
+    text = gateName.textContent.trim();
+  } else if (savedTitle) {
+    text = savedTitle.textContent.trim();
+  } else if (companyName) {
+    text = "مجموعة شركات القرماني إكس";
+  } else if (walletLabel) {
+    text = walletLabel.textContent.trim();
+  } else {
+    // تنظيف النص من الإيموجي أو الرموز إذا لم يكن لديه قالب معروف
+    const plainText = dropdownText.replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '').trim();
+    if(plainText) text = "الانتقال إلى " + plainText;
+  }
+
+  // إغلاق القائمة المنسدلة في حال النقر عليها
+  if(a.classList.contains('dropdown-item')) closeDotsMenu();
+
+  // المؤثرات الصوتية للأزرار
+  if (a.classList.contains('gate-card')) {
+    playGateSound();
+  } else {
+    playClick();
+  }
+
+  // نطق اسم البوابة وتأخير الانتقال لحين الانتهاء
+  if (window.speakActionWithCallback) {
+    window.speakActionWithCallback(text, () => {
+      window.location.href = href;
+    });
+  } else {
+    window.location.href = href;
+  }
+});
+
+
 // ===== SECURITY: ACCESS CONTROL =====
 (function() {
   const ref = document.referrer;
@@ -1348,13 +1439,13 @@ function playWelcome() {
     });
   } catch(e){}
 }
-function playArrowSound(goingUp) {
+function playArrowSound() {
   try {
     const ctx = getAudioCtx();
     const osc = ctx.createOscillator(); const gain = ctx.createGain();
     osc.connect(gain); gain.connect(ctx.destination);
-    osc.frequency.setValueAtTime(goingUp ? 440 : 660, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(goingUp ? 880 : 330, ctx.currentTime + 0.2);
+    osc.frequency.setValueAtTime(440, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.2); // Upward sweep
     gain.gain.setValueAtTime(0.15, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
     osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.3);
@@ -1388,28 +1479,33 @@ function showSecurityToast(msg) {
 }
 
 // ===== SCROLL ARROW =====
-let isAtBottom = false;
 const scrollBtn = document.getElementById('scrollArrowBtn');
-function updateScrollArrow() {
-  const scrolled = window.scrollY;
-  const maxScroll = document.body.scrollHeight - window.innerHeight;
-  if (scrolled > maxScroll * 0.5) {
-    isAtBottom = true;
-    if (scrollBtn) scrollBtn.classList.add('up');
+window.addEventListener('scroll', () => {
+  // يظهر الزر إذا نزل الزائر للأسفل
+  if (window.scrollY > 300) {
+    if (scrollBtn) scrollBtn.classList.add('visible');
   } else {
-    isAtBottom = false;
-    if (scrollBtn) scrollBtn.classList.remove('up');
+    // يختفي ويتم تصفير حركة الشقلبة
+    if (scrollBtn) {
+      scrollBtn.classList.remove('visible');
+      scrollBtn.classList.remove('flip');
+    }
   }
-}
-window.addEventListener('scroll', updateScrollArrow, {passive:true});
+}, {passive:true});
+
 function handleScrollArrow() {
-  playArrowSound(isAtBottom);
-  if (isAtBottom) {
-    window.scrollTo({top:0, behavior:'smooth'});
-    if(window.speakAction) speakAction('العودة للأعلى');
+  playArrowSound();
+  
+  // حركة الشقلبة 
+  if (scrollBtn) scrollBtn.classList.add('flip');
+
+  // التفاعل الصوتي + الصعود بعدها
+  if(window.speakActionWithCallback) {
+      window.speakActionWithCallback('العودة للأعلى', () => {
+          window.scrollTo({top:0, behavior:'smooth'});
+      });
   } else {
-    window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'});
-    if(window.speakAction) speakAction('انتقل للأسفل');
+      window.scrollTo({top:0, behavior:'smooth'});
   }
 }
 

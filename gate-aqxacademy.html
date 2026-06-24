@@ -1,1 +1,351 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQX - جاري تجهيز التجربة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+    /* ===== الإعدادات الأساسية ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    /* ===== الخلفية المخملية (ليست سوداء وليست فاتحة) ===== */
+    body, html {
+        width: 100%;
+        height: 100%;
+        font-family: 'Cairo', sans-serif;
+        background: radial-gradient(circle at center, #2C5E5A 0%, #173836 100%);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
+    /* ===== الجزيئات المتطايرة (الكانفاس) ===== */
+    #particleCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    /* ===== الحاوية الزجاجية الفخمة ===== */
+    .loader-container {
+        position: relative;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        border-radius: 30px;
+        padding: 50px 40px;
+        text-align: center;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), inset 0 0 40px rgba(201, 168, 76, 0.05);
+        max-width: 90%;
+        width: 450px;
+        animation: floatContainer 6s ease-in-out infinite;
+    }
+
+    @keyframes floatContainer {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    /* ===== الحلقات الدائرية المبهرة ===== */
+    .rings-wrapper {
+        position: relative;
+        width: 160px;
+        height: 160px;
+        margin: 0 auto 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ring {
+        position: absolute;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-top-color: #C9A84C; /* ذهبي */
+        border-bottom-color: #E0E0E0; /* فضي */
+        animation: spin 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    }
+
+    .ring:nth-child(1) {
+        width: 100%;
+        height: 100%;
+        border-width: 3px;
+        border-left-color: #00C9C0;
+        animation-duration: 3s;
+    }
+
+    .ring:nth-child(2) {
+        width: 80%;
+        height: 80%;
+        border-width: 2px;
+        animation-direction: reverse;
+        animation-duration: 2s;
+    }
+
+    .ring:nth-child(3) {
+        width: 60%;
+        height: 60%;
+        border-top-color: #00E5DC;
+        border-bottom-color: #C9A84C;
+        animation-duration: 1.5s;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* ===== شعار الشركة بالمنتصف ===== */
+    .aqx-logo {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+    }
+
+    .aqx-logo .main-text {
+        font-size: 2.2rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #C9A84C, #F0D060, #FFFFFF, #C9A84C);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: goldShine 4s ease infinite;
+        line-height: 1;
+        letter-spacing: 2px;
+    }
+
+    .aqx-logo .sub-text {
+        font-size: 0.6rem;
+        color: #00E5DC;
+        letter-spacing: 4px;
+        font-weight: 700;
+        margin-top: 4px;
+        text-transform: uppercase;
+    }
+
+    @keyframes goldShine {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* ===== النصوص الفخمة ===== */
+    .wait-title {
+        color: #F0D060;
+        font-size: 1.5rem;
+        font-weight: 900;
+        margin-bottom: 12px;
+        text-shadow: 0 0 20px rgba(201, 168, 76, 0.4);
+    }
+
+    .wait-desc {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        font-weight: 600;
+    }
+
+    /* ===== نبضات الضوء السفلية ===== */
+    .pulse-glow {
+        position: absolute;
+        bottom: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 50px;
+        background: radial-gradient(ellipse, rgba(0, 201, 192, 0.4) 0%, transparent 70%);
+        filter: blur(20px);
+        animation: pulseOpacity 2s infinite alternate;
+        z-index: 0;
+    }
+
+    @keyframes pulseOpacity {
+        0% { opacity: 0.3; transform: translateX(-50%) scale(0.8); }
+        100% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+    }
+
+</style>
+</head>
+<body>
+
+    <!-- خلفية الجزيئات المتطايرة -->
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="pulse-glow"></div>
+
+    <!-- الصندوق الفخم -->
+    <div class="loader-container">
+        <div class="rings-wrapper">
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            
+            <div class="aqx-logo">
+                <span class="main-text">AQX</span>
+                <span class="sub-text">Alqarmani X</span>
+            </div>
+        </div>
+
+        <h1 class="wait-title">نصنع لك الفخامة...</h1>
+        <p class="wait-desc">جاري تهيئة تجربة بصرية ورقمية استثنائية تليق بك. يرجى الانتظار للحظات.</p>
+    </div>
+
+<script>
+    /* =========================================
+       1. نظام الجزيئات الذهبية والفضية المتطايرة
+    ========================================= */
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+
+    // ألوان فخمة: ذهبي وفضي
+    const colors = ['#C9A84C', '#F0D060', '#E0E0E0', '#FFFFFF', '#D4AF37'];
+
+    function resizeCanvas() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.radius = Math.random() * 2 + 0.5; // أحجام متفاوتة
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.speedX = (Math.random() - 0.5) * 1.2; // سرعة أفقية عشوائية
+            this.speedY = (Math.random() - 0.5) * 1.2; // سرعة عمودية عشوائية
+            this.alpha = Math.random() * 0.8 + 0.2;
+            this.alphaChange = (Math.random() * 0.02) - 0.01;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+
+            // تأثير الوميض
+            this.alpha += this.alphaChange;
+            if (this.alpha <= 0.1 || this.alpha >= 1) this.alphaChange *= -1;
+
+            // إرجاع الجزيئات عند خروجها من الشاشة
+            if (this.x < 0) this.x = width;
+            if (this.x > width) this.x = 0;
+            if (this.y < 0) this.y = height;
+            if (this.y > height) this.y = 0;
+        }
+
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.globalAlpha = this.alpha;
+            // إضافة توهج خفيف للجزيئات
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = this.color;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function initParticles() {
+        particles = [];
+        let numberOfParticles = (window.innerWidth * window.innerHeight) / 10000;
+        for (let i = 0; i < numberOfParticles; i++) {
+            particles.push(new Particle());
+        }
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        requestAnimationFrame(animateParticles);
+    }
+
+    window.addEventListener('resize', () => {
+        resizeCanvas();
+        initParticles();
+    });
+
+    resizeCanvas();
+    initParticles();
+    animateParticles();
+
+    /* =========================================
+       2. التفاعل الصوتي الأنثوي الآلي
+    ========================================= */
+    function speakLuxuriousWelcome() {
+        if (!('speechSynthesis' in window)) return;
+        
+        // النص المراد نطقه
+        const textToSpeak = "أهلاً بك في عالم القرماني إكس... جاري تهيئة تجربة استثنائية تليق بك.";
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        
+        utterance.lang = 'ar-SA';
+        utterance.rate = 0.85; // إبطاء بسيط لمزيد من الفخامة والهدوء
+        utterance.pitch = 1.2; // طبقة صوت أعلى قليلاً لإعطاء طابع أنثوي ناعم
+
+        // البحث عن صوت أنثوي عربي
+        function setVoice() {
+            const voices = window.speechSynthesis.getVoices();
+            const arabicFemale = voices.find(voice => 
+                voice.lang.includes('ar') && 
+                (voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('laila') || voice.name.toLowerCase().includes('zira'))
+            );
+            
+            // إذا لم يجد صوت أنثوي صريح، يختار أي صوت عربي متاح
+            const fallbackVoice = voices.find(voice => voice.lang.includes('ar'));
+            
+            utterance.voice = arabicFemale || fallbackVoice;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // معالجة تحميل الأصوات في المتصفح
+        if (speechSynthesis.getVoices().length !== 0) {
+            setVoice();
+        } else {
+            speechSynthesis.onvoiceschanged = setVoice;
+        }
+    }
+
+    // تفعيل الصوت بمجرد دخول المستخدم للصفحة
+    window.onload = () => {
+        // يتم وضع مهلة ثانية واحدة قبل التحدث لضمان استقرار الصفحة
+        setTimeout(speakLuxuriousWelcome, 1000);
+    };
+
+    // كإجراء احتياطي إذا منع المتصفح التشغيل التلقائي للصوت، يتم تشغيله عند أول لمسة
+    document.addEventListener('click', () => {
+        if (!window.speechSynthesis.speaking) speakLuxuriousWelcome();
+    }, { once: true });
+
+
+    /* =========================================
+       3. الرجوع التلقائي بعد 13 ثانية
+    ========================================= */
+    setTimeout(() => {
+        // التحقق مما إذا كان هناك صفحة سابقة في السجل
+        if (window.history.length > 1) {
+            window.history.back(); // العودة للصفحة التي جاء منها
+        } else {
+            // إذا تم فتح الصفحة مباشرة في تبويب جديد (إجراء احتياطي)
+            window.location.href = 'index.html'; 
+        }
+    }, 13000); // 13000 ملي ثانية = 13 ثانية
+
+</script>
+</body>
+</html>

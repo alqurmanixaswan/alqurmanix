@@ -1,611 +1,1763 @@
+cat > /home/claude/aqx-privacy-policy.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>سياسة الخصوصية | منظومة القرماني إكس AQX</title>
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Tajawal:wght@300;400;500;700;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-<style>
-/* ═══════════════════════════════════════
-   TOKENS
-═══════════════════════════════════════ */
-:root{
-  --gold:#C9A84C;--gold-l:#E8C97A;--gold-d:#8A6A1F;
-  --silver:#BEC5D4;--navy:#080C24;--navy-m:#0F1535;--navy-l:#1A2550;
-  --violet:#6B4FA0;
-  --tx:#E8E4DC;--tx-m:#9CA3C0;--tx-d:#6A7090;
-  --border:rgba(201,168,76,.18);
-  --card:rgba(15,21,53,.72);
-  --r-md:16px;--r-lg:28px;
-  --sh-g:0 0 32px rgba(201,168,76,.22);
-  --fn-d:'Cinzel','Amiri',serif;
-  --fn-b:'Tajawal','Arial',sans-serif;
-  --tr:.35s cubic-bezier(.4,0,.2,1);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--fn-b);background:var(--navy);color:var(--tx);min-height:100vh;overflow-x:hidden;line-height:1.8;position:relative}
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
-/* ═══ CANVAS ═══ */
-#pc{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.88}
-
-/* ═══ AURORA ═══ */
-.au-wrap{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.au{position:absolute;border-radius:50%;filter:blur(90px);opacity:.10;animation:auF 20s ease-in-out infinite}
-.au1{width:70vw;height:60vh;background:radial-gradient(ellipse,#C9A84C 0%,transparent 70%);top:-20%;left:-10%;animation-duration:22s}
-.au2{width:55vw;height:65vh;background:radial-gradient(ellipse,#6B4FA0 0%,transparent 70%);top:30%;right:-15%;animation-duration:27s;animation-delay:-9s}
-.au3{width:60vw;height:50vh;background:radial-gradient(ellipse,#2A4A8A 0%,transparent 70%);bottom:-10%;left:20%;animation-duration:24s;animation-delay:-15s}
-@keyframes auF{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(3vw,-4vh) scale(1.08)}66%{transform:translate(-2vw,5vh) scale(.94)}}
-
-/* ═══ VOICE INDICATOR ═══ */
-#vi{
-  position:fixed;bottom:28px;left:50%;
-  transform:translateX(-50%) translateY(120px);
-  background:rgba(10,14,36,.97);border:1px solid var(--gold);
-  border-radius:50px;padding:11px 26px;
-  display:flex;align-items:center;gap:13px;
-  z-index:9999;transition:transform .45s cubic-bezier(.34,1.56,.64,1),opacity .35s;
-  opacity:0;backdrop-filter:blur(14px);box-shadow:var(--sh-g);max-width:90vw;
-}
-#vi.on{transform:translateX(-50%) translateY(0);opacity:1}
-.vw{display:flex;align-items:center;gap:3px;height:22px}
-.vw span{display:block;width:3px;background:var(--gold);border-radius:3px;animation:vW 1.1s ease-in-out infinite}
-.vw span:nth-child(1){height:6px}.vw span:nth-child(2){height:14px;animation-delay:.15s}
-.vw span:nth-child(3){height:20px;animation-delay:.3s}.vw span:nth-child(4){height:14px;animation-delay:.45s}
-.vw span:nth-child(5){height:6px;animation-delay:.6s}
-@keyframes vW{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.9)}}
-#vt{font-size:.85rem;color:var(--gold-l);font-weight:500;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-/* ═══ GATE SCREEN ═══ */
-#gate{
-  position:fixed;inset:0;z-index:8888;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
-  background:var(--navy-m);
-  transition:opacity 1.4s ease,visibility 1.4s;
-  padding:20px;
-}
-#gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.gate-logo{
-  font-family:var(--fn-d);font-size:clamp(3rem,12vw,7rem);font-weight:900;
-  letter-spacing:.08em;line-height:1;margin-bottom:8px;
-  animation:neon 5s ease-in-out infinite;
-}
-@keyframes neon{
-  0%,100%{color:#C9A84C;text-shadow:0 0 20px #C9A84C,0 0 55px #C9A84C55}
-  20%{color:#E8C97A;text-shadow:0 0 22px #E8C97A,0 0 60px #E8C97A44}
-  40%{color:#BEC5D4;text-shadow:0 0 20px #BEC5D4,0 0 55px #7B9AEA33}
-  60%{color:#A78BF0;text-shadow:0 0 22px #A78BF0,0 0 65px #7B5EA733}
-  80%{color:#7AC8EA;text-shadow:0 0 20px #7AC8EA,0 0 55px #2A9AB022}
-}
-.gate-sub{font-family:var(--fn-b);font-size:clamp(.8rem,2.5vw,1.1rem);color:var(--silver);letter-spacing:.18em;text-transform:uppercase;margin-bottom:36px}
-.gate-p{font-family:'Amiri',serif;font-size:clamp(1rem,3vw,1.35rem);color:var(--tx-m);max-width:520px;line-height:1.8;margin-bottom:40px}
-.gate-stars{display:flex;gap:16px;justify-content:center;margin-bottom:40px}
-.gate-stars span{color:var(--gold);font-size:1.4rem;animation:spinS 8s linear infinite}
-.gate-stars span:nth-child(2){animation-delay:-2.5s;animation-duration:11s}
-.gate-stars span:nth-child(3){animation-delay:-5s;animation-duration:9s}
-@keyframes spinS{to{transform:rotate(360deg)}}
-.btn-gate{
-  display:inline-flex;align-items:center;gap:10px;
-  background:linear-gradient(135deg,#C9A84C,#E8C97A,#C9A84C);background-size:200% 100%;
-  color:#0A0E2A;font-family:var(--fn-b);font-weight:700;font-size:clamp(.95rem,2.5vw,1.15rem);
-  padding:16px 48px;border-radius:50px;border:none;cursor:pointer;
-  position:relative;overflow:hidden;transition:var(--tr);
-  animation:gsh 3s ease-in-out infinite,glw 2.5s ease-in-out infinite;
-}
-@keyframes gsh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-@keyframes glw{0%,100%{box-shadow:0 0 20px rgba(201,168,76,.35)}50%{box-shadow:0 0 50px rgba(201,168,76,.7)}}
-.btn-gate:hover{transform:translateY(-3px) scale(1.04)}
-.btn-gate .shim{position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.28) 50%,transparent 60%);background-size:200% 100%;animation:shim 2.6s linear infinite;border-radius:inherit}
-@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* ═══ SECURITY WARNING ═══ */
-#sec-warn{
-  position:fixed;inset:0;z-index:99999;
-  display:none;flex-direction:column;justify-content:center;align-items:center;text-align:center;
-  animation:redBlink .5s infinite;padding:30px;
-}
-@keyframes redBlink{0%{background:#6b0000}50%{background:#cc0000}100%{background:#6b0000}}
-.sec-txt{font-family:var(--fn-b);font-size:clamp(1.5rem,4vw,2.8rem);font-weight:900;color:#fff;text-shadow:0 0 20px #fff,0 0 40px #fff;line-height:1.5}
-.sec-count{font-size:clamp(2.5rem,8vw,5rem);font-family:var(--fn-d);color:#fff;margin-top:20px;font-weight:900;text-shadow:0 0 30px #fff}
-
-/* ═══ HEADER SPACE ═══ */
-.hsp{height:clamp(90px,13vh,140px);position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;padding:24px 0 12px}
-
-/* ═══ PAGE HEADER ═══ */
-.page-hero{position:relative;z-index:1;text-align:center;padding:clamp(40px,8vw,90px) clamp(20px,5vw,80px) clamp(30px,5vw,60px)}
-.page-hero-in{max-width:780px;margin:0 auto}
-.ph-eye{font-size:.76rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
-.ph-title{font-family:'Amiri',serif;font-size:clamp(2rem,6vw,3.8rem);font-weight:700;color:var(--tx);margin-bottom:14px;line-height:1.2}
-.ph-brand{font-family:var(--fn-d);font-size:clamp(1rem,3vw,1.5rem);font-weight:700;animation:neon 6s ease-in-out infinite;margin-bottom:18px;display:block}
-.ph-meta{font-size:.88rem;color:var(--tx-d);display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
-.ph-meta span{display:flex;align-items:center;gap:6px}
-.ph-divider{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:28px auto 0}
-
-/* ═══ TOC ═══ */
-.toc-wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 clamp(20px,5vw,80px) clamp(30px,5vw,50px)}
-.toc{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:clamp(24px,4vw,40px);backdrop-filter:blur(14px)}
-.toc-title{font-family:'Amiri',serif;font-size:1.3rem;font-weight:700;color:var(--gold-l);margin-bottom:20px;display:flex;align-items:center;gap:10px}
-.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:10px}
-.toc-item{
-  display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r-md);
-  border:1px solid rgba(201,168,76,.12);color:var(--tx-m);text-decoration:none;font-size:.88rem;
-  transition:var(--tr);cursor:pointer;background:rgba(201,168,76,.04);
-}
-.toc-item:hover{border-color:var(--gold);color:var(--gold-l);background:rgba(201,168,76,.10);transform:translateX(-4px)}
-.toc-n{font-family:var(--fn-d);font-size:.8rem;color:var(--gold);font-weight:700;min-width:24px}
-
-/* ═══ CONTENT ═══ */
-.content-wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 clamp(20px,5vw,80px) clamp(60px,10vw,120px)}
-.policy-section{margin-bottom:clamp(36px,6vw,64px)}
-.sec-num{font-family:var(--fn-d);font-size:.78rem;color:var(--gold);font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px;display:block}
-.sec-h{font-family:'Amiri',serif;font-size:clamp(1.3rem,3.5vw,1.9rem);font-weight:700;color:var(--tx);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);line-height:1.3}
-.sec-p{font-size:clamp(.92rem,2.2vw,1.05rem);color:var(--tx-m);margin-bottom:16px;line-height:1.9}
-.sec-p a{color:var(--gold-l);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.3);transition:var(--tr)}
-.sec-p a:hover{color:var(--gold);border-bottom-color:var(--gold)}
-.sec-ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
-.sec-ul li{
-  display:flex;align-items:flex-start;gap:12px;font-size:clamp(.9rem,2vw,1.02rem);
-  color:var(--tx-m);padding:12px 16px;border-radius:var(--r-md);
-  background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.08);
-  transition:var(--tr);cursor:default;
-}
-.sec-ul li:hover{background:rgba(201,168,76,.09);border-color:rgba(201,168,76,.22);color:var(--tx);transform:translateX(-3px)}
-.sec-ul li::before{content:"✦";color:var(--gold);font-size:.7rem;margin-top:4px;flex-shrink:0}
-.sec-ul li strong{color:var(--gold-l);font-weight:700}
-
-/* card block */
-.info-card{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
-  padding:clamp(20px,4vw,36px);backdrop-filter:blur(14px);margin-bottom:20px;
-  transition:var(--tr);cursor:default;
-}
-.info-card:hover{border-color:var(--gold);box-shadow:var(--sh-g)}
-.info-card-icon{font-size:2rem;margin-bottom:10px;display:block}
-.info-card h4{font-family:'Amiri',serif;font-size:1.1rem;color:var(--gold-l);margin-bottom:8px;font-weight:700}
-.info-card p{font-size:.92rem;color:var(--tx-m);line-height:1.75}
-
-/* data-grid */
-.data-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:clamp(12px,2.5vw,20px);margin-bottom:20px}
-
-/* highlight box */
-.hl-box{
-  background:linear-gradient(135deg,rgba(201,168,76,.10),rgba(107,79,160,.10));
-  border:1px solid rgba(201,168,76,.28);border-radius:var(--r-lg);
-  padding:clamp(20px,4vw,36px);margin-bottom:20px;
-}
-.hl-box p{font-family:'Amiri',serif;font-size:clamp(1rem,2.5vw,1.3rem);font-weight:700;color:var(--gold-l);text-align:center;line-height:1.7}
-
-/* related links */
-.rel-links{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
-.rel-link{
-  display:inline-flex;align-items:center;gap:7px;color:var(--gold-l);
-  font-size:.88rem;padding:8px 18px;border-radius:50px;border:1px solid rgba(201,168,76,.25);
-  background:rgba(201,168,76,.06);text-decoration:none;transition:var(--tr);
-}
-.rel-link:hover{border-color:var(--gold);background:rgba(201,168,76,.14);transform:translateY(-2px)}
-
-/* closing */
-.closing{
-  text-align:center;padding:clamp(40px,7vw,80px) clamp(20px,5vw,60px);
-  position:relative;z-index:1;max-width:700px;margin:0 auto;
-}
-.closing-icon{color:var(--gold);font-size:2.6rem;display:block;margin-bottom:20px;animation:spinS 10s linear infinite}
-.closing h2{font-family:'Amiri',serif;font-size:clamp(1.5rem,4vw,2.4rem);color:var(--tx);margin-bottom:16px;font-weight:700;line-height:1.3}
-.closing p{font-size:clamp(.95rem,2.5vw,1.15rem);color:var(--gold-l);line-height:1.85;font-family:'Amiri',serif;font-weight:700}
-
-/* back btn */
-.back-btn{
-  display:inline-flex;align-items:center;gap:9px;
-  background:linear-gradient(135deg,#C9A84C,#E8C97A,#C9A84C);background-size:200% 100%;
-  color:#0A0E2A;font-family:var(--fn-b);font-weight:700;font-size:1rem;
-  padding:14px 42px;border-radius:50px;border:none;cursor:pointer;
-  position:relative;overflow:hidden;transition:var(--tr);text-decoration:none;
-  animation:gsh 3s ease-in-out infinite,glw 2.5s ease-in-out infinite;margin-top:32px;display:inline-flex;
-}
-.back-btn:hover{transform:translateY(-3px) scale(1.03)}
-.back-btn .shim{position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.28) 50%,transparent 60%);background-size:200% 100%;animation:shim 2.6s linear infinite;border-radius:inherit}
-
-/* footer */
-footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:clamp(36px,6vw,64px) clamp(20px,6vw,80px) 0;margin-top:10px}
-.fi{max-width:1100px;margin:0 auto;display:flex;gap:clamp(20px,5vw,56px);flex-wrap:wrap;justify-content:space-between;align-items:flex-start;margin-bottom:36px}
-.fl{font-family:var(--fn-d);font-size:1.7rem;font-weight:900;color:var(--gold-l);display:block;margin-bottom:7px}
-.fbr p{font-size:.84rem;color:var(--tx-d);max-width:220px;line-height:1.6}
-.fln{display:flex;flex-direction:column;gap:10px}
-.fln a{color:var(--tx-m);text-decoration:none;font-size:.88rem;transition:color .25s}
-.fln a:hover{color:var(--gold-l)}
-.fb{border-top:1px solid var(--border);padding:18px 0;text-align:center;max-width:1100px;margin:0 auto}
-.fb p{font-size:.76rem;color:var(--tx-d)}
-
-/* ═══ INTERACTIVE CLICK ANIMATION ═══ */
-.itx{cursor:pointer;transition:color .3s}
-.itx:hover{color:var(--gold-l)}
-
-/* ═══ REVEAL ═══ */
-.rv{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1)}
-.rv.vis{opacity:1!important;transform:translateY(0)!important}
-
-/* ═══ RESPONSIVE ═══ */
-@media(max-width:768px){
-  .toc-grid{grid-template-columns:1fr}
-  .data-grid{grid-template-columns:1fr}
-  .fi{flex-direction:column;gap:28px}
-  .rel-links{gap:8px}
-}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
-</style>
-</head>
-<body>
-
-<canvas id="pc"></canvas>
-<div class="au-wrap" aria-hidden="true"><div class="au au1"></div><div class="au au2"></div><div class="au au3"></div></div>
-
-<!-- Voice Indicator -->
-<div id="vi"><div class="vw"><span></span><span></span><span></span><span></span><span></span></div><span id="vt"></span></div>
-
-<!-- Security Warning -->
-<div id="sec-warn" role="alert">
-  <div class="sec-txt">⚠️ تحذير أمني شديد اللهجة ⚠️<br>تم رصد انتهاك أمني<br>جارٍ طردك من المنظومة</div>
-  <div class="sec-count" id="sec-cnt">5</div>
-</div>
-
-<!-- Gate Screen -->
-<div id="gate">
-  <div class="gate-stars"><span>✦</span><span>✦</span><span>✦</span></div>
-  <div class="gate-logo">AQX</div>
-  <div class="gate-sub">القرماني إكس — بوابة العطاء العالمي</div>
-  <p class="gate-p">أهلاً بك في بوابة العبور الآمنة. نحن نصنع المستقبل ونحمي هويتك الرقمية بأعلى معايير الفخامة والأمان.</p>
-  <button class="btn-gate" id="enter-btn">
-    <span>📜</span> قراءة سياسة الخصوصية <span class="shim"></span>
-  </button>
-</div>
-
-<!-- ═══ HEADER SPACE — 5 lines ═══ -->
-<div class="hsp" id="hsp"></div>
-
-<!-- ═══ PAGE HERO ═══ -->
-<header class="page-hero rv" role="banner">
-  <div class="page-hero-in">
-    <div class="ph-eye">وثيقة قانونية رسمية</div>
-    <h1 class="ph-title itx">سياسة الخصوصية</h1>
-    <span class="ph-brand">منظومة القرماني إكس (AQX)</span>
-    <div class="ph-meta">
-      <span>📋 الإصدار: 1.0</span>
-      <span>📅 آخر تحديث: <span id="auto-date"></span></span>
-      <span>⚖️ أسوان — مصر</span>
-    </div>
-    <div class="ph-divider"></div>
-  </div>
-</header>
-
-<!-- ═══ TOC ═══ -->
-<div class="toc-wrap rv">
-  <div class="toc">
-    <div class="toc-title">✦ فهرس المحتويات</div>
-    <div class="toc-grid">
-      <a class="toc-item itx" href="#sec0" onclick="scrollTo_('#sec0')"><span class="toc-n">مق</span>المقدمة</a>
-      <a class="toc-item itx" href="#sec1" onclick="scrollTo_('#sec1')"><span class="toc-n">أول</span>نطاق التطبيق</a>
-      <a class="toc-item itx" href="#sec2" onclick="scrollTo_('#sec2')"><span class="toc-n">ثانٍ</span>التعاريف</a>
-      <a class="toc-item itx" href="#sec3" onclick="scrollTo_('#sec3')"><span class="toc-n">ثالث</span>المبادئ الأساسية</a>
-      <a class="toc-item itx" href="#sec4" onclick="scrollTo_('#sec4')"><span class="toc-n">رابع</span>البيانات التي نجمعها</a>
-      <a class="toc-item itx" href="#sec5" onclick="scrollTo_('#sec5')"><span class="toc-n">خامس</span>السياسات المرتبطة</a>
-      <a class="toc-item itx" href="#sec6" onclick="scrollTo_('#sec6')"><span class="toc-n">سادس</span>أحكام قانونية</a>
-      <a class="toc-item itx" href="#sec7" onclick="scrollTo_('#sec7')"><span class="toc-n">سابع</span>القانون الواجب التطبيق</a>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ CONTENT ═══ -->
-<main class="content-wrap" role="main">
-
-  <!-- المقدمة -->
-  <div class="policy-section rv" id="sec0">
-    <span class="sec-num">المقدمة</span>
-    <h2 class="sec-h itx">مرحباً بك في منظومة القرماني إكس</h2>
-    <p class="sec-p itx">ترحب منظومة القرماني إكس (AQX) بكم، وتلتزم التزامًا كاملاً بحماية خصوصية مستخدميها، وصون بياناتهم الشخصية، والحفاظ على سريتها وأمنها وفقًا لأعلى المعايير التقنية والتنظيمية والقانونية المعمول بها.</p>
-    <p class="sec-p itx">تشكل هذه السياسة وثيقة قانونية ملزمة تنظم كيفية جمع البيانات الشخصية وغير الشخصية، ومعالجتها، واستخدامها، وتخزينها، ومشاركتها، وحمايتها، والاحتفاظ بها، وحذفها عند استخدام أي من خدمات أو منتجات أو تطبيقات أو مواقع أو أنظمة أو منصات تابعة أو مملوكة أو مُدارة من قِبل منظومة AQX.</p>
-    <p class="sec-p itx">تسري هذه السياسة على جميع الخدمات الرقمية والواقعية التي تقدمها المنظومة، سواء تم الوصول إليها عبر مواقع الويب أو تطبيقات الهواتف الذكية أو تطبيقات سطح المكتب أو واجهات برمجة التطبيقات (<a href="سياسة-api.html">API</a>) أو الأنظمة السحابية أو منصات الذكاء الاصطناعي أو الخدمات الإلكترونية أو الخدمات الميدانية أو مراكز الدعم أو أي وسيلة حالية أو مستقبلية.</p>
-    <div class="hl-box">
-      <p itx class="itx">ويُعد استخدام أي من خدمات المنظومة، أو إنشاء حساب، أو الاستمرار في استخدام الخدمات إقرارًا من المستخدم بأنه اطلع على هذه السياسة وفهمها ووافق عليها بالقدر الذي يسمح به القانون.</p>
-    </div>
-  </div>
-
-  <!-- أولاً -->
-  <div class="policy-section rv" id="sec1">
-    <span class="sec-num">أولاً</span>
-    <h2 class="sec-h itx">نطاق التطبيق</h2>
-    <p class="sec-p itx">تنطبق هذه السياسة على جميع الأشخاص الطبيعيين والاعتباريين الذين يتعاملون مع منظومة AQX بأي صفة كانت، بما في ذلك على سبيل المثال لا الحصر:</p>
-    <ul class="sec-ul">
-      <li class="itx">الزوار والمستخدمون المسجلون وأصحاب الحسابات.</li>
-      <li class="itx">المشتركون والعملاء والمطورون.</li>
-      <li class="itx">الشركاء والموردون ومقدمو الخدمات.</li>
-      <li class="itx">المعلنون والمؤسسات والجهات الحكومية عند الاقتضاء.</li>
-      <li class="itx">أي طرف يتعامل مع المنظومة بصورة مباشرة أو غير مباشرة.</li>
-    </ul>
-    <p class="sec-p itx">كما تمتد أحكام هذه السياسة إلى جميع الخدمات الحالية والمستقبلية دون الحاجة إلى إصدار سياسة مستقلة لكل خدمة، ما لم يُنص على خلاف ذلك.</p>
-  </div>
-
-  <!-- ثانياً -->
-  <div class="policy-section rv" id="sec2">
-    <span class="sec-num">ثانياً</span>
-    <h2 class="sec-h itx">التعاريف</h2>
-    <p class="sec-p itx">لأغراض هذه السياسة يكون للكلمات والعبارات التالية المعاني الموضحة قرين كل منها:</p>
-    <ul class="sec-ul">
-      <li class="itx"><strong>AQX:</strong> منظومة القرماني إكس بجميع مكوناتها وخدماتها.</li>
-      <li class="itx"><strong>المنصة:</strong> أي موقع أو تطبيق أو خدمة أو نظام تابع للمنظومة.</li>
-      <li class="itx"><strong>المستخدم:</strong> كل شخص يستخدم إحدى خدمات المنظومة بأي وسيلة.</li>
-      <li class="itx"><strong>الحساب:</strong> الهوية الرقمية الخاصة بالمستخدم داخل المنظومة.</li>
-      <li class="itx"><strong>البيانات الشخصية:</strong> أي معلومات يمكن من خلالها تحديد هوية شخص بصورة مباشرة أو غير مباشرة.</li>
-      <li class="itx"><strong>المعالجة:</strong> أي عملية تُجرى على البيانات مثل الجمع أو التسجيل أو التنظيم أو التخزين أو التعديل أو الاستخدام أو النقل أو الحذف.</li>
-      <li class="itx"><strong>الجهات الخارجية:</strong> أي مزود خدمة أو شريك أو جهة قانونية تتعامل مع المنظومة وفقًا للعقود والأنظمة المعمول بها.</li>
-    </ul>
-  </div>
-
-  <!-- ثالثاً -->
-  <div class="policy-section rv" id="sec3">
-    <span class="sec-num">ثالثاً</span>
-    <h2 class="sec-h itx">المبادئ الأساسية</h2>
-    <p class="sec-p itx">تلتزم منظومة AQX في جميع عملياتها بالمبادئ الراسخة الآتية:</p>
-    <div class="data-grid">
-      <div class="info-card itx">
-        <span class="info-card-icon">🛡️</span>
-        <h4>احترام الخصوصية</h4>
-        <p>خصوصيتك حق مصون لا يُمس، ونتعامل مع بياناتك بأعلى درجات الأمانة والمسؤولية.</p>
-      </div>
-      <div class="info-card itx">
-        <span class="info-card-icon">⚡</span>
-        <h4>الحد الأدنى من البيانات</h4>
-        <p>نجمع فقط ما هو ضروري لتقديم الخدمة، لا أكثر ولا أقل.</p>
-      </div>
-      <div class="info-card itx">
-        <span class="info-card-icon">🔒</span>
-        <h4>الأمان التقني</h4>
-        <p>نطبق ضوابط أمنية وتقنية وإدارية مناسبة لحماية بياناتك من أي اختراق أو تسريب.</p>
-      </div>
-      <div class="info-card itx">
-        <span class="info-card-icon">✅</span>
-        <h4>الاستخدام المشروع</h4>
-        <p>بياناتك تُستخدم للأغراض المشروعة فقط. لا تبيع AQX البيانات الشخصية ولا تتاجر بها.</p>
-      </div>
-      <div class="info-card itx">
-        <span class="info-card-icon">👤</span>
-        <h4>حقوق المستخدم</h4>
-        <p>تمكينك من ممارسة حقوقك القانونية كاملة بما فيها حق الاطلاع والتعديل والحذف.</p>
-      </div>
-      <div class="info-card itx">
-        <span class="info-card-icon">🔄</span>
-        <h4>التحسين المستمر</h4>
-        <p>مراجعة وتحسين إجراءات الخصوصية بصورة مستمرة لمواكبة التطورات التقنية والتنظيمية.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- رابعاً -->
-  <div class="policy-section rv" id="sec4">
-    <span class="sec-num">رابعاً</span>
-    <h2 class="sec-h itx">البيانات التي نجمعها</h2>
-    <p class="sec-p itx">لضمان تقديم تجربة فائقة الجودة والفخامة ووفقاً لمتطلبات الأمان الصارمة، نقوم بجمع الفئات التالية:</p>
-    <ul class="sec-ul">
-      <li class="itx"><strong>بيانات الحساب والهوية:</strong> الاسم، البريد الإلكتروني، رقم الهاتف، وبيانات تسجيل الدخول والمصادقة الثنائية.</li>
-      <li class="itx"><strong>بيانات الجهاز والشبكة:</strong> عناوين بروتوكول الإنترنت (IP)، نوع المتصفح، نظام التشغيل، ومعرفات الأجهزة الفريدة.</li>
-      <li class="itx"><strong>البصمة الرقمية وسجلات النظام:</strong> أوقات الدخول والخروج، سجلات التفاعل مع المحرك الأمني، ونشاطات الواجهة.</li>
-      <li class="itx"><strong>بيانات الموقع الجغرافي:</strong> الموقع التقريبي أو الدقيق متى تطلب الأمر وبناءً على موافقتك الصريحة.</li>
-      <li class="itx"><strong>بيانات الذكاء الاصطناعي وواجهات API:</strong> الأوامر المدخلة، طلبات واجهة البرمجة، والبيانات الناتجة عن التفاعل مع أنظمة الذكاء الاصطناعي.</li>
-      <li class="itx"><strong>ملفات تعريف الارتباط (Cookies):</strong> لتخزين تفضيلات المستخدم، إدارة الجلسات الأمنية، وتحليل أداء المنصة.</li>
-    </ul>
-  </div>
-
-  <!-- خامساً -->
-  <div class="policy-section rv" id="sec5">
-    <span class="sec-num">خامساً</span>
-    <h2 class="sec-h itx">السياسات المرتبطة وأولوية النسخ</h2>
-    <p class="sec-p itx">تُقرأ هذه السياسة وتُفسر جنباً إلى جنب مع الوثائق التالية:</p>
-    <div class="rel-links">
-      <a href="شروط-الاستخدام.html" class="rel-link itx">📄 شروط الاستخدام</a>
-      <a href="سياسة-كوكيز.html" class="rel-link itx">🍪 سياسة الكوكيز</a>
-      <a href="سياسة-ai.html" class="rel-link itx">🤖 سياسة الذكاء الاصطناعي</a>
-      <a href="سياسة-امان.html" class="rel-link itx">🔒 سياسة الأمان</a>
-      <a href="سياسة-بيانات.html" class="rel-link itx">💾 سياسة الاحتفاظ بالبيانات</a>
-      <a href="سياسة-اطفال.html" class="rel-link itx">👶 سياسة الأطفال</a>
-      <a href="سياسة-api.html" class="rel-link itx">⚙️ سياسة المطورين وAPI</a>
-    </div>
-    <div class="hl-box">
-      <p class="itx"><strong>أولوية النسخة:</strong> في حال ترجمة هذه السياسة إلى لغات متعددة، تكون النسخة العربية هي المرجع الرسمي والحاكم، ما لم تُحدد المنظومة خلاف ذلك كتابياً.</p>
-    </div>
-  </div>
-
-  <!-- سادساً -->
-  <div class="policy-section rv" id="sec6">
-    <span class="sec-num">سادساً</span>
-    <h2 class="sec-h itx">أحكام قانونية عامة</h2>
-    <ul class="sec-ul">
-      <li class="itx"><strong>قابلية الفصل (Severability):</strong> إذا قضت محكمة ذات اختصاص ببطلان أو عدم قابلية تطبيق مادة معينة، تبقى بقية البنود سارية المفعول ونافذة الأثر.</li>
-      <li class="itx"><strong>عدم التنازل:</strong> إن عدم ممارسة أو تأخير منظومة AQX في ممارسة أي حق من حقوقها لا يُعد تنازلاً عنها بأي حال من الأحوال.</li>
-      <li class="itx"><strong>التعديلات:</strong> تحتفظ المنظومة بالحق في تحديث هذه السياسة دورياً. ويعتبر التحديث سارياً فور نشره على المنصة وتحديث تاريخ الإصدار.</li>
-    </ul>
-  </div>
-
-  <!-- سابعاً -->
-  <div class="policy-section rv" id="sec7">
-    <span class="sec-num">سابعاً</span>
-    <h2 class="sec-h itx">القانون الواجب التطبيق والاختصاص القضائي</h2>
-    <div class="info-card itx">
-      <span class="info-card-icon">⚖️</span>
-      <h4>الاختصاص القضائي</h4>
-      <p>تخضع هذه السياسة وتُفسَّر وفقًا لقوانين جمهورية مصر العربية، ويكون الاختصاص القضائي الحصري في أي نزاع ينشأ بشأنها أو يرتبط بها لمحاكم محافظة أسوان بجميع درجاتها واختصاصاتها، وذلك ما لم يفرض قانون واجب التطبيق خلاف ذلك.</p>
-    </div>
-  </div>
-
-</main>
-
-<!-- ═══ CLOSING ═══ -->
-<div class="closing rv">
-  <span class="closing-icon" aria-hidden="true">✦</span>
-  <h2>ثقتكم أثمن ما نملك</h2>
-  <p>نؤكد في منظومة القرماني إكس (AQX) أن حماية بياناتكم وخصوصيتكم ليست مجرد التزام قانوني أو تقني، بل هي ميثاق شرف نحمله، لتبقى تجربتكم معنا هي الأرقى والأكثر أماناً وفخامة على الإطلاق.</p>
-  <a href="aqx-landing.html" class="back-btn">
-    <span>🏠</span> العودة للصفحة الرئيسية <span class="shim"></span>
-  </a>
-</div>
-
-<!-- ═══ FOOTER ═══ -->
-<footer role="contentinfo">
-  <div class="fi">
-    <div class="fbr"><span class="fl">AQX</span><p>القرمانى اكس — بوابة العطاء العالمي الشامل</p></div>
-    <nav class="fln" aria-label="وثائق قانونية">
-      <a href="شروط-الاستخدام.html">شروط الاستخدام</a>
-      <a href="سياسة-كوكيز.html">سياسة الكوكيز</a>
-      <a href="سياسة-امان.html">سياسة الأمان</a>
-      <a href="تواصل.html">تواصل معنا</a>
-    </nav>
-    <nav class="fln" aria-label="روابط سريعة">
-      <a href="aqx-landing.html">الصفحة الرئيسية</a>
-      <a href="donate.html">تبرّع الآن</a>
-      <a href="volunteer.html">تطوع</a>
-      <a href="من-نحن.html">من نحن</a>
-    </nav>
-  </div>
-  <div class="fb"><p>© ٢٠٢٥ AQX القرمانى اكس — جميع الحقوق محفوظة · محافظة أسوان، جمهورية مصر العربية</p></div>
-</footer>
-
-<!-- ═══════════════════════════════
-     PARTICLES
-═══════════════════════════════ -->
-<script>
-(function(){
-  var c=document.getElementById('pc'),x=c.getContext('2d'),W,H,pts=[],N=100;
-  var CL=['rgba(201,168,76,','rgba(232,201,122,','rgba(190,197,212,','rgba(232,234,246,','rgba(167,139,240,','rgba(255,215,100,'];
-  function rnd(a,b){return a+Math.random()*(b-a)}
-  function mk(){var col=CL[Math.floor(Math.random()*CL.length)];return{x:rnd(0,W),y:rnd(0,H),r:rnd(.9,3),col:col,a:rnd(.2,.8),vx:rnd(-.25,.25),vy:rnd(-.4,-.07),ph:rnd(0,Math.PI*2),ps:rnd(.009,.025),tw:Math.random()>.55,sh:Math.random()>.72?'d':'c'}}
-  function rs(){W=c.width=innerWidth;H=c.height=innerHeight}
-  function dp(p){p.ph+=p.ps;var tf=p.tw?(.5+.5*Math.sin(p.ph)):1,a=p.a*tf;x.save();x.globalAlpha=a;if(p.sh==='d'){var s=p.r*2.2;x.beginPath();x.moveTo(p.x,p.y-s);x.lineTo(p.x+s*.55,p.y);x.lineTo(p.x,p.y+s);x.lineTo(p.x-s*.55,p.y);x.closePath();x.fillStyle=p.col+(a*.75)+')';x.fill();}else{var g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*3.8);g.addColorStop(0,p.col+a+')');g.addColorStop(.45,p.col+(a*.45)+')');g.addColorStop(1,p.col+'0)');x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle=p.col+a+')';x.fill();x.beginPath();x.arc(p.x,p.y,p.r*3.8,0,Math.PI*2);x.fillStyle=g;x.fill();}x.restore();}
-  function up(p){p.x+=p.vx;p.y+=p.vy;p.vx+=rnd(-.005,.005);p.vx=Math.max(-.35,Math.min(.35,p.vx));if(p.y<-20){p.y=H+10;p.x=rnd(0,W);}if(p.x<-20)p.x=W+10;if(p.x>W+20)p.x=-10;}
-  function loop(){x.clearRect(0,0,W,H);pts.forEach(function(p){dp(p);up(p);});requestAnimationFrame(loop);}
-  function init(){rs();pts=[];for(var i=0;i<N;i++)pts.push(mk());loop();}
-  window.addEventListener('resize',rs);
-  window.addEventListener('click',function(e){for(var i=0;i<12;i++){var ang=(Math.PI*2/12)*i,sp=rnd(.8,3),p=mk();p.x=e.clientX;p.y=e.clientY;p.vx=Math.cos(ang)*sp;p.vy=Math.sin(ang)*sp-1;p.r=rnd(1.5,4);p.a=.9;pts.push(p);}if(pts.length>N+15)pts.splice(0,15);});
-  init();
-})();
-</script>
-
-<!-- ═══════════════════════════════
-     FIREBASE + SECURITY + VOICE
-═══════════════════════════════ -->
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const firebaseConfig={apiKey:"AIzaSyBICr62Oa_-69hATpfFrdTDfO9WV4bVVvU",authDomain:"alqurmanix-d49f7.firebaseapp.com",projectId:"alqurmanix-d49f7",storageBucket:"alqurmanix-d49f7.firebasestorage.app",messagingSenderId:"1017946245702",appId:"1:1017946245702:web:575c425860c82166411847",measurementId:"G-5XN1NMG997"};
-const app=!getApps().length?initializeApp(firebaseConfig):getApps()[0];
-const auth=getAuth(app);
-let monInt=null,failC=0;
+const firebaseConfig = {
+  apiKey: "AIzaSyBICr62Oa_-69hATpfFrdTDfO9WV4bVVvU",
+  authDomain: "alqurmanix-d49f7.firebaseapp.com",
+  projectId: "alqurmanix-d49f7",
+  storageBucket: "alqurmanix-d49f7.firebasestorage.app",
+  messagingSenderId: "1017946245702",
+  appId: "1:1017946245702:web:575c425860c82166411847",
+  measurementId: "G-5XN1NMG997"
+};
 
-function getTabId(){let id=sessionStorage.getItem("active_tab_id");if(!id){id="tab_"+Math.random().toString(36).substr(2,9);sessionStorage.setItem("active_tab_id",id);}return id;}
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+const auth = getAuth(app);
 
-async function verifySession(){
-  const user=auth.currentUser;
-  if(!user){triggerSecurity("لم يتم العثور على جلسة دخول نشطة.");return;}
-  try{
-    const token=await user.getIdToken(true);
-    const res=await fetch("https://eo3phbvoihx4diw.m.pipedream.net",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},body:JSON.stringify({tabId:getTabId(),pageId:window.location.pathname})});
-    const result=await res.json();failC=0;
-    if(result.status?.action==="REDIRECT"){alert("تم إغلاق الجلسة لأسباب أمنية.");await signOut(auth);window.location.href="#";}
-    else if(result.status?.action==="WARN"){console.warn("تحذير: محاولات متبقية "+(3-result.status.count));}
-  }catch(e){failC++;if(failC>=3){await signOut(auth);triggerSecurity("فشل الاتصال بالمحرك الأمني.");}}
+let monitorInterval = null;
+let failureCount = 0;
+const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
+let idleTimer = null;
+let lastActivity = Date.now();
+
+const handlePopState = () => { verifySessionWithEngine(); };
+
+function getTabId() {
+  let tabId = sessionStorage.getItem("active_tab_id");
+  if (!tabId) {
+    tabId = "tab_" + Math.random().toString(36).substr(2, 9);
+    sessionStorage.setItem("active_tab_id", tabId);
+  }
+  return tabId;
 }
 
-function startMon(){if(monInt)return;verifySession();monInt=setInterval(()=>{if(auth.currentUser)verifySession();},4*60*1000);window.addEventListener('popstate',verifySession);history.pushState(null,null,location.href);}
-function stopMon(){if(monInt){clearInterval(monInt);monInt=null;}window.removeEventListener('popstate',verifySession);failC=0;}
+function resetIdleTimer() {
+  lastActivity = Date.now();
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    if (auth.currentUser) {
+      signOut(auth).then(() => {
+        window.dispatchEvent(new CustomEvent('aqxIdleExpired'));
+      });
+    }
+  }, IDLE_TIMEOUT_MS);
+}
 
-onAuthStateChanged(auth,(user)=>{
-  if(user){startMon();}
-  else{stopMon();setTimeout(()=>{triggerSecurity("محاولة دخول غير مصرح بها.");},2000);}
+['mousemove','keydown','scroll','click','touchstart','touchmove'].forEach(ev => {
+  document.addEventListener(ev, resetIdleTimer, { passive: true });
 });
 
-// ═══ SECURITY WARNING ═══
-const secW=document.getElementById('sec-warn'),cntEl=document.getElementById('sec-cnt');
-function triggerSecurity(reason){
-  secW.style.display='flex';
-  speakText("تحذير أمني شديد اللهجة. تم رصد محاولة غير مصرح بها. سيتم طردك فوراً من المنظومة.");
-  let n=5;cntEl.textContent=n;
-  const iv=setInterval(()=>{n--;cntEl.textContent=n;if(n<=0){clearInterval(iv);window.location.replace("https://github.com/alqurmanix");}},1000);
+async function verifySessionWithEngine() {
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    const token = await user.getIdToken(true);
+    const tabId = getTabId();
+    const pageId = window.location.pathname;
+    const response = await fetch("https://eo3phbvoihx4diw.m.pipedream.net", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+      body: JSON.stringify({ tabId, pageId })
+    });
+    const result = await response.json();
+    failureCount = 0;
+    if (result.status?.action === "REDIRECT") {
+      await signOut(auth);
+      window.dispatchEvent(new CustomEvent('aqxSecurityKick', { detail: 'engine_redirect' }));
+    } else if (result.status?.action === "WARN") {
+      console.warn("تحذير أمني: محاولات متبقية " + (3 - result.status.count));
+    }
+  } catch (error) {
+    failureCount++;
+    if (failureCount >= 3) {
+      await signOut(auth);
+      window.dispatchEvent(new CustomEvent('aqxSecurityKick', { detail: 'connection_failed' }));
+    }
+  }
 }
-document.addEventListener('contextmenu',e=>{e.preventDefault();triggerSecurity("محاولة فحص العناصر.");});
-document.addEventListener('keydown',e=>{
-  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&e.key==='I')||(e.ctrlKey&&(e.key==='u'||e.key==='U'))){
-    e.preventDefault();triggerSecurity("محاولة فتح أدوات المطورين.");
+
+function startSecurityMonitor() {
+  if (monitorInterval) return;
+  resetIdleTimer();
+  verifySessionWithEngine();
+  monitorInterval = setInterval(() => {
+    if (auth.currentUser) verifySessionWithEngine();
+  }, 4 * 60 * 1000);
+  window.addEventListener('popstate', handlePopState);
+  history.pushState(null, null, location.href);
+}
+
+function stopSecurityMonitor() {
+  if (monitorInterval) { clearInterval(monitorInterval); monitorInterval = null; }
+  if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
+  window.removeEventListener('popstate', handlePopState);
+  failureCount = 0;
+}
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    startSecurityMonitor();
+    window.aqxUser = user;
+    document.dispatchEvent(new CustomEvent('aqxUserReady', { detail: user }));
+  } else {
+    stopSecurityMonitor();
+    window.aqxUser = null;
+    document.dispatchEvent(new CustomEvent('aqxUserNotAuth'));
   }
 });
-window.onload=()=>{
-  let sf=sessionStorage.getItem("aqx_secured_session");
-  if(!sf&&window.history.length===1&&!document.referrer){triggerSecurity("محاولة فتح الرابط في تبويب جديد.");}
-  else{sessionStorage.setItem("aqx_secured_session","true");}
-};
 
-// ═══ VOICE ═══
-const synth=window.speechSynthesis;
-let femV=null;
-function loadV(){const vs=synth.getVoices();femV=vs.find(v=>v.lang.includes('ar')&&(v.name.toLowerCase().includes('female')||v.name.toLowerCase().includes('zira')))||vs.find(v=>v.lang.includes('ar'))||vs[0];}
-synth.onvoiceschanged=loadV;loadV();
+window.aqxAuth = auth;
+window.aqxSignOut = signOut;
+</script>
 
-const vi=document.getElementById('vi'),vt=document.getElementById('vt');
-window.speakText=function(txt){
-  if(synth.speaking)synth.cancel();
-  const u=new SpeechSynthesisUtterance(txt);
-  u.voice=femV;u.lang='ar-SA';u.rate=0.93;u.pitch=1.12;
-  vt.textContent=txt;vi.classList.add('on');
-  u.onend=u.onerror=()=>vi.classList.remove('on');
-  synth.speak(u);
-};
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-// ═══ GATE ═══
-const gate=document.getElementById('gate');
-document.getElementById('enter-btn').addEventListener('click',()=>{
-  gate.classList.add('hidden');
-  setTimeout(()=>speakText("أهلاً بك يا فندم في صفحة سياسة الخصوصية الخاصة بمنظومة القرماني إكس. نحن نضمن لك أعلى معايير الأمان والفخامة."),400);
+:root {
+  --purple-main: #8B5CF6;
+  --purple-light: #A78BFA;
+  --purple-dark: #6D28D9;
+  --orange-bg: #D97B3A;
+  --gold: #F59E0B;
+  --silver: #C8C8C8;
+  --white: #FFFFFF;
+  --font-main: 'Cairo', 'Tajawal', sans-serif;
+  --base-font: 20px;
+}
+
+html { scroll-behavior: smooth; font-size: var(--base-font); }
+
+body {
+  font-family: var(--font-main);
+  background: #1a0533;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #2d0a5e 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, #3b0764 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, #1e0442 0%, transparent 70%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  direction: rtl;
+  text-align: right;
+}
+
+#particles-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#security-warning {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+#security-warning.active { display: flex; }
+
+.sec-bg-anim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, #7A0000 0%, #000 65%);
+  animation: secPulse 0.55s ease-in-out infinite alternate;
+}
+@keyframes secPulse {
+  from { opacity: 0.55; }
+  to   { opacity: 1; }
+}
+
+.sec-content { position: relative; z-index: 2; max-width: 700px; }
+
+.sec-icon {
+  font-size: clamp(64px, 16vw, 110px);
+  display: block;
+  margin-bottom: 20px;
+  animation: secIconFlash 0.45s linear infinite alternate;
+}
+@keyframes secIconFlash {
+  from { filter: drop-shadow(0 0 12px #ff0000); transform: scale(0.94); }
+  to   { filter: drop-shadow(0 0 50px #ff3333) drop-shadow(0 0 90px #ff0000); transform: scale(1.06); }
+}
+
+.sec-title {
+  font-family: var(--font-main);
+  font-size: clamp(26px, 7vw, 54px);
+  font-weight: 900;
+  color: #FF0000;
+  margin-bottom: 18px;
+  animation: neonRed 0.4s linear infinite alternate;
+}
+@keyframes neonRed {
+  from { text-shadow: 0 0 12px #ff0000; }
+  to   { text-shadow: 0 0 24px #ff0000, 0 0 50px #ff0000, 0 0 80px #ff3333; }
+}
+
+.sec-body {
+  font-family: var(--font-main);
+  font-size: clamp(16px, 3.8vw, 24px);
+  color: #FFD700;
+  font-weight: 700;
+  line-height: 1.85;
+  margin-bottom: 28px;
+}
+
+.sec-redirect {
+  font-family: var(--font-main);
+  font-size: clamp(15px, 3vw, 20px);
+  color: #aaa;
+  margin-top: 18px;
+}
+
+.sec-countdown {
+  font-size: clamp(24px, 6vw, 42px);
+  color: #FF4444;
+  font-weight: 900;
+  display: block;
+  margin-top: 12px;
+  animation: neonRed 0.4s linear infinite alternate;
+}
+
+.sec-phrase {
+  font-family: var(--font-main);
+  font-size: clamp(17px, 4vw, 26px);
+  color: #ff6666;
+  font-weight: 800;
+  margin-top: 18px;
+  line-height: 1.6;
+  animation: neonRed 0.6s linear infinite alternate;
+}
+
+#auth-gate {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: linear-gradient(135deg, #1A0A2E, #2D1054);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 30px;
+  text-align: center;
+}
+#auth-gate.active { display: flex; }
+
+.ag-logo {
+  font-family: var(--font-main);
+  font-size: clamp(36px, 10vw, 68px);
+  font-weight: 900;
+  color: #FFD700;
+  text-shadow: 0 0 22px rgba(255,215,0,0.55);
+  letter-spacing: 5px;
+  margin-bottom: 22px;
+}
+.ag-title {
+  font-family: var(--font-main);
+  font-size: clamp(22px, 5.5vw, 34px);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 14px;
+}
+.ag-desc {
+  font-family: var(--font-main);
+  font-size: clamp(15px, 3.5vw, 20px);
+  color: rgba(255,255,255,0.62);
+  line-height: 1.9;
+  max-width: 440px;
+  margin-bottom: 10px;
+}
+.ag-redirect-note {
+  font-family: var(--font-main);
+  font-size: clamp(13px, 2.8vw, 16px);
+  color: rgba(255,215,0,0.7);
+  margin-top: 14px;
+}
+.ag-countdown {
+  font-weight: 900;
+  color: #FFD700;
+  font-size: 1.3em;
+  display: inline-block;
+  animation: neonGold 0.6s ease-in-out infinite alternate;
+}
+@keyframes neonGold {
+  from { text-shadow: 0 0 6px #FFD700; }
+  to   { text-shadow: 0 0 18px #FFD700, 0 0 36px #F59E0B; }
+}
+
+#page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: #0A0414;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 22px;
+  transition: opacity 0.5s ease;
+}
+#page-loader.fade-out { opacity: 0; pointer-events: none; }
+
+.loader-logo {
+  font-family: var(--font-main);
+  font-size: clamp(38px, 12vw, 80px);
+  font-weight: 900;
+  animation: neonColorCycle 2s linear infinite;
+  letter-spacing: 5px;
+}
+.loader-bar-wrap {
+  width: min(88vw, 300px);
+  height: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.loader-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #8B5CF6, #FFD700, #FF0080, #00CFFF);
+  border-radius: 10px;
+  animation: loaderFill 1.9s ease-in-out forwards;
+}
+@keyframes loaderFill { from { width:0; } to { width:100%; } }
+
+.loader-text {
+  font-family: var(--font-main);
+  font-size: clamp(13px, 2.8vw, 16px);
+  color: rgba(255,255,255,0.38);
+}
+
+#gateway {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, #3D1580 0%, #6D28D9 35%, #7C3AED 65%, #4C1D95 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  overflow: hidden;
+  padding: 24px;
+}
+#gateway.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.gw-particles-wrap { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+
+.gw-p {
+  position: absolute;
+  border-radius: 50%;
+  animation: gwFloat linear infinite;
+  opacity: 0;
+}
+@keyframes gwFloat {
+  0%   { transform: translateY(110vh) scale(0); opacity: 0; }
+  8%   { opacity: 0.7; }
+  92%  { opacity: 0.7; }
+  100% { transform: translateY(-60px) scale(1.2); opacity: 0; }
+}
+
+.gw-logo-wrap {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 22px;
+  animation: logoFloat 3.2s ease-in-out infinite;
+}
+@keyframes logoFloat {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+.gw-logo {
+  font-family: var(--font-main);
+  font-size: clamp(50px, 14vw, 100px);
+  font-weight: 900;
+  letter-spacing: 8px;
+  display: inline-block;
+}
+.gw-logo span { display: inline-block; animation: neonColorCycle 2.2s linear infinite; }
+.gw-logo span:nth-child(1){animation-delay:0s}
+.gw-logo span:nth-child(2){animation-delay:0.37s}
+.gw-logo span:nth-child(3){animation-delay:0.74s}
+
+@keyframes neonColorCycle {
+  0%   { color:#FF0080; text-shadow:0 0 10px #FF0080,0 0 24px #FF0080; }
+  16%  { color:#FF8C00; text-shadow:0 0 10px #FF8C00,0 0 24px #FF8C00; }
+  33%  { color:#FFD700; text-shadow:0 0 10px #FFD700,0 0 24px #FFD700; }
+  50%  { color:#00FF88; text-shadow:0 0 10px #00FF88,0 0 24px #00FF88; }
+  66%  { color:#00CFFF; text-shadow:0 0 10px #00CFFF,0 0 24px #00CFFF; }
+  83%  { color:#BF5FFF; text-shadow:0 0 10px #BF5FFF,0 0 24px #BF5FFF; }
+  100% { color:#FF0080; text-shadow:0 0 10px #FF0080,0 0 24px #FF0080; }
+}
+
+.gw-subtitle {
+  font-family: var(--font-main);
+  font-size: clamp(15px, 3.8vw, 26px);
+  color: rgba(255,255,255,0.88);
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-align: center;
+  margin-bottom: 10px;
+  z-index: 2;
+  position: relative;
+}
+
+.gw-tagline {
+  font-family: var(--font-main);
+  font-size: clamp(18px, 4.8vw, 32px);
+  font-weight: 800;
+  color: #FFD700;
+  text-shadow: 0 0 18px rgba(255,215,0,0.65);
+  text-align: center;
+  z-index: 2;
+  position: relative;
+  margin-bottom: 12px;
+  line-height: 1.55;
+}
+
+.gw-desc {
+  font-family: var(--font-main);
+  font-size: clamp(14px, 3.2vw, 20px);
+  color: rgba(255,255,255,0.72);
+  text-align: center;
+  max-width: min(90vw, 520px);
+  line-height: 2;
+  z-index: 2;
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.gw-progress-wrap {
+  width: min(90vw, 440px);
+  z-index: 2;
+  position: relative;
+  margin-bottom: 24px;
+}
+.gw-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  color: rgba(255,255,255,0.65);
+  font-size: clamp(12px, 2.6vw, 16px);
+  margin-bottom: 10px;
+  font-family: var(--font-main);
+}
+.gw-pbar-bg {
+  width: 100%;
+  height: 7px;
+  background: rgba(255,255,255,0.14);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.gw-pbar-fill {
+  height: 100%;
+  background: linear-gradient(90deg,#8B5CF6,#FFD700,#00CFFF,#FF0080);
+  background-size: 200% 100%;
+  border-radius: 10px;
+  width: 0%;
+  transition: width 0.35s ease;
+  animation: progressShimmer 2.2s linear infinite;
+}
+@keyframes progressShimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: 0% center; }
+}
+
+.gw-enter-btn {
+  background: linear-gradient(135deg,#FFD700,#F59E0B,#FF8C00);
+  border: none;
+  padding: clamp(13px,3.2vw,20px) clamp(32px,8vw,65px);
+  border-radius: 50px;
+  font-family: var(--font-main);
+  font-size: clamp(16px,3.8vw,24px);
+  font-weight: 900;
+  color: #1A0A2E;
+  cursor: pointer;
+  z-index: 2;
+  position: relative;
+  box-shadow: 0 0 28px rgba(255,215,0,0.55), 0 8px 32px rgba(0,0,0,0.32);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: 1px;
+}
+.gw-enter-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 45px rgba(255,215,0,0.85), 0 14px 42px rgba(0,0,0,0.42); }
+.gw-enter-btn:active { transform: scale(0.97); }
+
+.gw-skip-hint {
+  color: rgba(255,255,255,0.42);
+  font-size: clamp(12px,2.5vw,15px);
+  z-index: 2;
+  position: relative;
+  margin-top: 20px;
+  font-family: var(--font-main);
+  text-align: center;
+}
+.gw-count-num {
+  font-weight: 900;
+  color: #FFD700;
+  font-size: 1.25em;
+}
+
+#main-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(15,5,40,0.96);
+  backdrop-filter: blur(22px);
+  border-bottom: 1px solid rgba(139,92,246,0.3);
+  padding: 0 clamp(18px,5vw,50px);
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-logo {
+  font-family: var(--font-main);
+  font-size: clamp(22px,5.5vw,32px);
+  font-weight: 900;
+  color: #FFD700;
+  text-shadow: 0 0 14px rgba(255,215,0,0.5);
+  letter-spacing: 4px;
+}
+
+.header-date {
+  font-family: var(--font-main);
+  font-size: clamp(12px,2.6vw,15px);
+  color: rgba(255,255,255,0.52);
+  direction: rtl;
+  text-align: left;
+}
+
+#main-content { padding-top: 70px; min-height: 100vh; position: relative; z-index: 1; }
+
+.aqx-hero {
+  background: linear-gradient(135deg, rgba(15,5,45,0.97) 0%, rgba(30,8,90,0.92) 50%, rgba(15,5,45,0.97) 100%);
+  padding: clamp(48px,11vw,100px) clamp(20px,6vw,90px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: rgba(139,92,246,0.14);
+  border: 1px solid rgba(139,92,246,0.4);
+  padding: 9px 22px;
+  border-radius: 50px;
+  font-family: var(--font-main);
+  font-size: clamp(14px,2.8vw,18px);
+  color: #A78BFA;
+  margin-bottom: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.hero-title {
+  font-family: var(--font-main);
+  font-size: clamp(32px,8vw,72px);
+  font-weight: 900;
+  color: #FFFFFF;
+  line-height: 1.22;
+  margin-bottom: 18px;
+}
+.hero-title .accent {
+  background: linear-gradient(135deg,#FFD700,#FF8C00,#FF0080);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-org {
+  font-family: var(--font-main);
+  font-size: clamp(17px,4vw,28px);
+  color: #A78BFA;
+  font-weight: 700;
+  margin-bottom: 22px;
+  letter-spacing: 2px;
+}
+
+.hero-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  font-family: var(--font-main);
+  font-size: clamp(14px,2.8vw,18px);
+  color: rgba(255,255,255,0.52);
+}
+
+.hero-divider {
+  width: 65px;
+  height: 4px;
+  background: linear-gradient(90deg,#8B5CF6,#FFD700);
+  margin: 28px auto 0;
+  border-radius: 2px;
+}
+
+.content-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 clamp(16px,5vw,65px) 70px;
+}
+
+.policy-section {
+  background: rgba(139,92,246,0.07);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(139,92,246,0.22);
+  border-radius: 22px;
+  padding: clamp(28px,5.5vw,55px);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.policy-section::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 5px; height: 100%;
+  background: linear-gradient(180deg,#8B5CF6,#FFD700,#FF0080);
+  border-radius: 0 22px 22px 0;
+}
+.policy-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 55px rgba(0,0,0,0.38), 0 0 32px rgba(139,92,246,0.14);
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.section-icon { font-size: clamp(28px,5.5vw,38px); flex-shrink: 0; margin-top: 2px; }
+
+.section-title {
+  font-family: var(--font-main);
+  font-size: clamp(22px,5vw,34px);
+  font-weight: 900;
+  color: #FFFFFF;
+  line-height: 1.35;
+}
+.section-title .num { color: #FFD700; margin-left: 7px; }
+
+.section-body {
+  font-family: var(--font-main);
+  font-size: clamp(16px,3.2vw,20px);
+  color: rgba(255,255,255,0.88);
+  line-height: 2.1;
+  font-weight: 400;
+}
+.section-body p { margin-bottom: 20px; }
+.section-body p:last-child { margin-bottom: 0; }
+
+.policy-list { list-style: none; padding: 0; margin: 16px 0; }
+.policy-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(139,92,246,0.1);
+  font-family: var(--font-main);
+  font-size: clamp(15px,3.2vw,19px);
+  color: rgba(255,255,255,0.84);
+  line-height: 1.8;
+}
+.policy-list li:last-child { border-bottom: none; }
+.policy-list li::before { content:'◆'; color:#FFD700; font-size:11px; margin-top:6px; flex-shrink:0; }
+
+.definition-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%,280px),1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.def-card {
+  background: rgba(139,92,246,0.09);
+  border: 1px solid rgba(139,92,246,0.22);
+  border-radius: 14px;
+  padding: 20px 22px;
+  transition: all 0.3s ease;
+}
+.def-card:hover { background: rgba(139,92,246,0.18); border-color: rgba(139,92,246,0.42); }
+
+.def-term {
+  font-family: var(--font-main);
+  font-size: clamp(15px,3.2vw,19px);
+  font-weight: 900;
+  color: #FFD700;
+  margin-bottom: 9px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.def-term::before { content:'⬡'; color:#8B5CF6; font-size:13px; }
+
+.def-meaning {
+  font-family: var(--font-main);
+  font-size: clamp(14px,3vw,17px);
+  color: rgba(255,255,255,0.78);
+  line-height: 1.8;
+}
+
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%,220px),1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.principle-card {
+  background: linear-gradient(135deg,rgba(139,92,246,0.12),rgba(255,215,0,0.05));
+  border: 1px solid rgba(139,92,246,0.26);
+  border-radius: 16px;
+  padding: 22px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.principle-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 34px rgba(139,92,246,0.22);
+  border-color: rgba(255,215,0,0.32);
+}
+.principle-icon { font-size: 32px; margin-bottom: 12px; display: block; }
+.principle-text {
+  font-family: var(--font-main);
+  font-size: clamp(14px,3vw,17px);
+  color: rgba(255,255,255,0.9);
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.linked-policies { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 18px; }
+
+.policy-link-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: rgba(139,92,246,0.14);
+  border: 1px solid rgba(139,92,246,0.35);
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-family: var(--font-main);
+  font-size: clamp(13px,2.6vw,16px);
+  color: #A78BFA;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.policy-link-tag:hover { background: rgba(139,92,246,0.3); color:#fff; transform:translateY(-2px); }
+
+.highlight-box {
+  background: linear-gradient(135deg,rgba(255,215,0,0.09),rgba(255,140,0,0.05));
+  border: 1px solid rgba(255,215,0,0.26);
+  border-radius: 16px;
+  padding: 22px 28px;
+  margin: 22px 0;
+  font-family: var(--font-main);
+  font-size: clamp(15px,3.2vw,19px);
+  color: rgba(255,255,255,0.92);
+  line-height: 2;
+}
+.highlight-box strong { color: #FFD700; }
+
+.law-box {
+  background: linear-gradient(135deg,rgba(139,92,246,0.1),rgba(109,40,217,0.07));
+  border: 1px solid rgba(139,92,246,0.3);
+  border-radius: 16px;
+  padding: 22px 28px;
+  margin: 22px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.law-box-icon { font-size: 32px; flex-shrink: 0; }
+.law-box-text {
+  font-family: var(--font-main);
+  font-size: clamp(15px,3.2vw,19px);
+  color: rgba(255,255,255,0.9);
+  line-height: 2;
+}
+.law-box-text strong { color:#A78BFA; }
+
+.aqx-footer {
+  background: linear-gradient(135deg,rgba(6,1,20,0.99),rgba(12,4,42,0.99));
+  border-top: 1px solid rgba(139,92,246,0.2);
+  padding: clamp(44px,9vw,80px) clamp(20px,5vw,65px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-logo {
+  font-family: var(--font-main);
+  font-size: clamp(32px,9vw,58px);
+  font-weight: 900;
+  letter-spacing: 6px;
+  margin-bottom: 18px;
+  background: linear-gradient(135deg,#FFD700,#FF8C00,#FF0080,#8B5CF6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.footer-tagline {
+  font-family: var(--font-main);
+  font-size: clamp(16px,3.8vw,24px);
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 28px;
+  font-weight: 500;
+  line-height: 1.8;
+}
+
+.footer-seal {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  background: rgba(139,92,246,0.1);
+  border: 1px solid rgba(139,92,246,0.24);
+  border-radius: 18px;
+  padding: 22px 38px;
+  margin: 28px auto;
+}
+.footer-seal-icon { font-size: 40px; }
+.footer-seal-text {
+  font-family: var(--font-main);
+  font-size: clamp(14px,3vw,17px);
+  color: rgba(255,255,255,0.65);
+  line-height: 1.9;
+}
+.footer-seal-date {
+  font-family: var(--font-main);
+  font-size: clamp(15px,3.2vw,19px);
+  color: #FFD700;
+  font-weight: 800;
+}
+
+.footer-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(139,92,246,0.4),rgba(255,215,0,0.4),transparent);
+  margin: 28px 0;
+}
+
+.footer-copy {
+  font-family: var(--font-main);
+  font-size: clamp(13px,2.6vw,15px);
+  color: rgba(255,255,255,0.32);
+  line-height: 1.9;
+}
+.footer-copy strong { color:rgba(255,215,0,0.58); }
+
+#scroll-top {
+  position: fixed;
+  bottom: 32px;
+  left: 32px;
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg,#8B5CF6,#6D28D9);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 22px rgba(139,92,246,0.55);
+  z-index: 200;
+  opacity: 0;
+  transform: translateY(22px);
+  transition: all 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#scroll-top.visible { opacity:1; transform:translateY(0); }
+#scroll-top:hover { transform:translateY(-4px) scale(1.1); }
+
+#voice-status {
+  position: fixed;
+  bottom: 32px;
+  right: clamp(16px,5vw,44px);
+  background: rgba(12,4,34,0.96);
+  border: 1px solid rgba(139,92,246,0.42);
+  border-radius: 50px;
+  padding: 9px 20px;
+  font-family: var(--font-main);
+  font-size: clamp(12px,2.5vw,15px);
+  color: #A78BFA;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  max-width: 260px;
+  pointer-events: none;
+}
+#voice-status.active { opacity:1; }
+#voice-status .pulse-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: #A78BFA;
+  animation: pulseDot 1s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulseDot {
+  0%,100% { transform:scale(1); opacity:1; }
+  50%      { transform:scale(1.55); opacity:0.45; }
+}
+
+.readable-text {
+  cursor: pointer;
+  transition: color 0.2s ease;
+  display: inline;
+  border-radius: 4px;
+}
+.readable-text:hover { color:#FFD700; }
+.readable-text.speaking {
+  color: #00FF88;
+  text-shadow: 0 0 8px rgba(0,255,136,0.4);
+}
+
+@media (max-width:768px) {
+  .definition-grid  { grid-template-columns: 1fr; }
+  .principles-grid  { grid-template-columns: repeat(2,1fr); }
+  .policy-section   { padding: 22px 18px; }
+  .aqx-hero         { padding: 36px 18px 44px; }
+}
+@media (max-width:480px) {
+  .principles-grid  { grid-template-columns: 1fr; }
+  .hero-meta        { flex-direction:column; gap:8px; }
+  .law-box          { flex-direction:column; }
+  #scroll-top       { left:16px; bottom:80px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after { animation-duration:0.01ms !important; transition-duration:0.1ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="page-loader">
+  <div class="loader-logo">AQX</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-text">جارٍ تحميل منظومة القرماني إكس...</div>
+</div>
+
+<div id="security-warning">
+  <div class="sec-bg-anim"></div>
+  <div class="sec-content">
+    <span class="sec-icon">🚨</span>
+    <div class="sec-title">⚠️ تحذير أمني خطير ⚠️</div>
+    <div class="sec-body" id="sec-body-text">
+      تم رصد محاولة غير مصرح بها!<br>
+      هذه الصفحة محمية بأنظمة الأمن الرقمي لمنظومة القرماني إكس AQX.<br>
+      أي محاولة لفحص الكود المصدري أو نقل الرابط في تبويب أو متصفح جديد<br>
+      <strong>محظورة تمامًا وتُعدّ انتهاكًا أمنيًا موثّقًا.</strong>
+    </div>
+    <div class="sec-phrase" id="sec-phrase-text">🔒 هذا النظام يراقب — لا مجال للتحايل على منظومة القرماني إكس</div>
+    <div class="sec-redirect">
+      سيتم تحويلك فوراً إلى الصفحة الرئيسية...<br>
+      <span class="sec-countdown" id="sec-countdown">5</span>
+    </div>
+  </div>
+</div>
+
+<div id="auth-gate">
+  <div class="ag-logo">AQX</div>
+  <div class="ag-title">🔐 هذا المحتوى مقيّد</div>
+  <div class="ag-desc">
+    يجب تسجيل الدخول إلى منظومة القرماني إكس<br>
+    للوصول إلى هذه الصفحة.<br>
+    سيتم تحويلك تلقائيًا إلى الصفحة الرئيسية.
+  </div>
+  <div class="ag-redirect-note">
+    التحويل التلقائي خلال <span class="ag-countdown" id="ag-count">5</span> ثوانٍ...
+  </div>
+</div>
+
+<canvas id="particles-canvas"></canvas>
+
+<div id="gateway">
+  <div class="gw-particles-wrap" id="gw-particles"></div>
+
+  <div class="gw-logo-wrap">
+    <div class="gw-logo">
+      <span>A</span><span>Q</span><span>X</span>
+    </div>
+  </div>
+
+  <div class="gw-subtitle">منظومة القرماني إكس</div>
+  <div class="gw-tagline">🌟 حيث تُبنى الثقة على الشفافية 🌟</div>
+  <div class="gw-desc">
+    مرحباً بك في بوابة سياسة الخصوصية الرسمية لمنظومة القرماني إكس.<br>
+    وثيقة قانونية شاملة تضمن حقوقك وتحمي بياناتك.<br>
+    <em>يُرجى قراءتها بعناية قبل المتابعة.</em>
+  </div>
+
+  <div class="gw-progress-wrap">
+    <div class="gw-progress-labels">
+      <span>سيتم الدخول تلقائياً خلال</span>
+      <span><span id="gw-count" class="gw-count-num">15</span> ثانية</span>
+    </div>
+    <div class="gw-pbar-bg">
+      <div class="gw-pbar-fill" id="gw-progress"></div>
+    </div>
+  </div>
+
+  <button class="gw-enter-btn" id="gw-enter-btn" onclick="enterSite()">
+    <span>📜</span>
+    <span>قراءة سياسة الخصوصية الآن</span>
+  </button>
+
+  <div class="gw-skip-hint">
+    أو انتظر <span class="gw-count-num" id="gw-count2">15</span> ثانية للدخول التلقائي
+  </div>
+</div>
+
+<header id="main-header">
+  <div class="header-logo">⚡ AQX</div>
+  <div class="header-date" id="header-date"></div>
+</header>
+
+<main id="main-content">
+
+  <section class="aqx-hero">
+    <div class="hero-badge">📜 وثيقة قانونية رسمية ملزمة</div>
+    <h1 class="hero-title">سياسة <span class="accent">الخصوصية</span></h1>
+    <div class="hero-org">منظومة القرماني إكس (AQX)</div>
+    <div class="hero-meta">
+      <span>🗂️ الإصدار: 1.0</span>
+      <span>📅 آخر تحديث: <span id="hero-date"></span></span>
+      <span>✅ ملزمة قانونياً</span>
+    </div>
+    <div class="hero-divider"></div>
+  </section>
+
+  <div class="content-wrap">
+
+    <section class="policy-section" id="intro">
+      <div class="section-header">
+        <span class="section-icon">📌</span>
+        <h2 class="section-title">المقدمة</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">ترحب منظومة القرماني إكس (AQX) بكم، وتلتزم التزامًا كاملاً بحماية خصوصية مستخدميها، وصون بياناتهم الشخصية، والحفاظ على سريتها وأمنها وفقًا لأعلى المعايير التقنية والتنظيمية والقانونية المعمول بها.</span></p>
+        <p><span class="readable-text">تشكّل هذه السياسة وثيقةً قانونيةً ملزمةً تنظّم كيفية جمع البيانات الشخصية وغير الشخصية، ومعالجتها، واستخدامها، وتخزينها، ومشاركتها، وحمايتها، والاحتفاظ بها، وحذفها، وذلك عند استخدام أي من خدمات أو منتجات أو تطبيقات أو مواقع أو أنظمة أو منصات أو واجهات أو برمجيات أو حلول أو خدمات مستقبلية تابعة أو مملوكة أو مُدارة أو مرخصة أو يتم تشغيلها بواسطة منظومة القرماني إكس (AQX).</span></p>
+        <p><span class="readable-text">تسري هذه السياسة على جميع الخدمات الرقمية والواقعية التي تقدمها المنظومة، سواء تم الوصول إليها عبر مواقع الويب أو تطبيقات الهواتف الذكية أو تطبيقات سطح المكتب أو واجهات برمجة التطبيقات (API) أو الأنظمة السحابية أو منصات الذكاء الاصطناعي أو الخدمات الإلكترونية أو الخدمات الميدانية أو مراكز الدعم أو أي وسيلة حالية أو مستقبلية.</span></p>
+        <div class="highlight-box">
+          <strong>⚠️ إشعار مهم:</strong> <span class="readable-text">يُعدّ استخدام أي من خدمات المنظومة، أو إنشاء حساب، أو الاستمرار في استخدام الخدمات، أو الوصول إلى أي جزء منها، إقرارًا من المستخدم بأنه اطّلع على هذه السياسة وفهمها ووافق عليها بالقدر الذي يسمح به القانون.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="policy-section" id="scope">
+      <div class="section-header">
+        <span class="section-icon">🌐</span>
+        <h2 class="section-title"><span class="num">أولاً:</span> نطاق التطبيق</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تنطبق هذه السياسة على جميع الأشخاص الطبيعيين والاعتباريين الذين يتعاملون مع منظومة AQX بأي صفة كانت، بما في ذلك على سبيل المثال لا الحصر:</span></p>
+        <ul class="policy-list">
+          <li><span class="readable-text">الزوّار لأي من منصات أو خدمات المنظومة، سواء كانوا مسجّلين أو غير مسجّلين.</span></li>
+          <li><span class="readable-text">المستخدمون المسجّلون الذين أنشأوا حسابات بأي من خدمات المنظومة.</span></li>
+          <li><span class="readable-text">أصحاب الحسابات الذين يديرون بيانات وأنظمة رقمية ضمن المنظومة.</span></li>
+          <li><span class="readable-text">المشتركون في الباقات والخدمات المدفوعة أو المجانية.</span></li>
+          <li><span class="readable-text">العملاء بجميع فئاتهم وتصنيفاتهم التجارية والشخصية.</span></li>
+          <li><span class="readable-text">المطوّرون الذين يستخدمون واجهات برمجة التطبيقات (API) الخاصة بالمنظومة.</span></li>
+          <li><span class="readable-text">الشركاء التجاريون والاستراتيجيون المرتبطون بعقود واتفاقيات مع المنظومة.</span></li>
+          <li><span class="readable-text">الموردون ومقدّمو الخدمات والحلول التقنية أو اللوجستية.</span></li>
+          <li><span class="readable-text">المعلنون الذين يستخدمون منصات الإعلان الخاصة بالمنظومة.</span></li>
+          <li><span class="readable-text">المؤسسات والكيانات القانونية بجميع أشكالها وأحجامها.</span></li>
+          <li><span class="readable-text">الجهات الحكومية عند الاقتضاء وبالحدود المسموح بها قانونًا.</span></li>
+          <li><span class="readable-text">أي طرف يتعامل مع المنظومة بصورة مباشرة أو غير مباشرة أو عن طريق الوكالة.</span></li>
+        </ul>
+        <div class="highlight-box">
+          <strong>✅ توسيع النطاق:</strong> <span class="readable-text">تمتد أحكام هذه السياسة إلى جميع الخدمات الحالية والمستقبلية دون الحاجة إلى إصدار سياسة مستقلة لكل خدمة، ما لم يُنص على خلاف ذلك صراحةً.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="policy-section" id="definitions">
+      <div class="section-header">
+        <span class="section-icon">📖</span>
+        <h2 class="section-title"><span class="num">ثانياً:</span> التعريفات</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">لأغراض هذه السياسة، يكون للكلمات والعبارات التالية المعاني الموضحة قرين كل منها، ما لم يقتضِ السياق خلاف ذلك:</span></p>
+        <div class="definition-grid">
+          <div class="def-card">
+            <div class="def-term">AQX</div>
+            <div class="def-meaning readable-text">منظومة القرماني إكس بجميع مكوناتها وخدماتها وأنظمتها ومنصاتها الرقمية والمادية الحالية والمستقبلية.</div>
+          </div>
+          <div class="def-card">
+            <div class="def-term">المنصة</div>
+            <div class="def-meaning readable-text">أي موقع إلكتروني أو تطبيق أو خدمة أو نظام أو واجهة تابعة للمنظومة، أيًا كان شكلها أو وسيلة الوصول إليها.</div>
+          </div>
+          <div class="def-card">
+            <div class="def-term">المستخدم</div>
+            <div class="def-meaning readable-text">كل شخص طبيعي أو اعتباري يستخدم إحدى خدمات المنظومة بأي وسيلة، سواء كان مسجّلاً أو زائرًا.</div>
+          </div>
+          <div class="def-card">
+            <div class="def-term">الحساب</div>
+            <div class="def-meaning readable-text">الهوية الرقمية الخاصة بالمستخدم داخل المنظومة، وما تتضمنه من بيانات واعتمادات وصلاحيات.</div>
+          </div>
+          <div class="def-card">
+            <div class="def-term">البيانات الشخصية</div>
+            <div class="def-meaning readable-text">أي معلومات يمكن من خلالها تحديد هوية شخص بصورة مباشرة أو غير مباشرة، بما يشمل الاسم والبريد الإلكتروني وعنوان IP والمعرّف الرقمي وغيرها.</div>
+          </div>
+          <div class="def-card">
+            <div class="def-term">المعالجة</div>
+            <div class="def-meaning readable-text">أي عملية تُجرى على البيانات كالجمع أو التسجيل أو التنظيم أو التخزين أو التعديل أو الاستخدام أو النقل أو الحذف أو الإتلاف أو أي عملية أخرى يسمح بها القانون.</div>
+          </div>
+          <div class="def-card">
+            <div class="def-term">الجهات الخارجية</div>
+            <div class="def-meaning readable-text">أي مزوّد خدمة أو شريك أو جهة قانونية تتعامل مع المنظومة وفقًا للعقود والأنظمة المعمول بها، بما في ذلك مزوّدو الخدمات السحابية والتحليلية.</div>
+          </div>
+          <div class="def-card">
+            <div class="def-term">البيانات التقنية</div>
+            <div class="def-meaning readable-text">المعلومات التي يتم جمعها تلقائيًا من الأجهزة والمتصفحات والشبكات، كعنوان IP ونوع المتصفح وبيانات الجلسة والسجلات الرقمية.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="policy-section" id="principles">
+      <div class="section-header">
+        <span class="section-icon">⭐</span>
+        <h2 class="section-title"><span class="num">ثالثاً:</span> المبادئ الأساسية</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تلتزم منظومة AQX بمجموعة من المبادئ الراسخة التي تُشكّل العمود الفقري لسياسة الخصوصية وتوجّه كافة قراراتها المتعلقة بالبيانات:</span></p>
+        <div class="principles-grid">
+          <div class="principle-card">
+            <span class="principle-icon">🛡️</span>
+            <div class="principle-text readable-text">احترام خصوصية المستخدم في جميع الأحوال والظروف</div>
+          </div>
+          <div class="principle-card">
+            <span class="principle-icon">📉</span>
+            <div class="principle-text readable-text">جمع الحد الأدنى من البيانات اللازمة لتقديم الخدمة كلما أمكن ذلك</div>
+          </div>
+          <div class="principle-card">
+            <span class="principle-icon">✅</span>
+            <div class="principle-text readable-text">استخدام البيانات للأغراض المشروعة والمُعلنة فقط دون تجاوز</div>
+          </div>
+          <div class="principle-card">
+            <span class="principle-icon">🔐</span>
+            <div class="principle-text readable-text">تطبيق ضوابط أمنية وتقنية وإدارية مناسبة لحماية البيانات</div>
+          </div>
+          <div class="principle-card">
+            <span class="principle-icon">🚫</span>
+            <div class="principle-text readable-text">عدم بيع البيانات الشخصية للمستخدمين بصفتها بيانات شخصية</div>
+          </div>
+          <div class="principle-card">
+            <span class="principle-icon">⚖️</span>
+            <div class="principle-text readable-text">تمكين المستخدم من ممارسة حقوقه وفقًا للقانون والسياسات المعمول بها</div>
+          </div>
+          <div class="principle-card">
+            <span class="principle-icon">🔄</span>
+            <div class="principle-text readable-text">مراجعة وتحسين إجراءات الخصوصية بصورة مستمرة لمواكبة التطورات التقنية والتنظيمية</div>
+          </div>
+          <div class="principle-card">
+            <span class="principle-icon">🌟</span>
+            <div class="principle-text readable-text">الشفافية الكاملة في التعامل مع البيانات وإخطار المستخدمين بأي تغييرات جوهرية</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="policy-section" id="law">
+      <div class="section-header">
+        <span class="section-icon">⚖️</span>
+        <h2 class="section-title">القانون الواجب التطبيق والاختصاص القضائي</h2>
+      </div>
+      <div class="section-body">
+        <div class="law-box">
+          <span class="law-box-icon">🏛️</span>
+          <div class="law-box-text">
+            <span class="readable-text">تخضع هذه السياسة وتُفسَّر وفقًا لقوانين <strong>جمهورية مصر العربية</strong>، ويكون الاختصاص القضائي الحصري في أي نزاع ينشأ بشأنها أو يرتبط بها لمحاكم <strong>محافظة أسوان</strong> بجميع درجاتها واختصاصاتها، وذلك ما لم يفرض قانون واجب التطبيق خلاف ذلك.</span>
+          </div>
+        </div>
+        <p><span class="readable-text">تشمل هذه السلطة القضائية النزاعات المتعلقة بتفسير هذه السياسة أو تطبيقها أو انتهاكها، سواء كانت دعاوى تعاقدية أو تقصيرية أو ذات طابع تنظيمي أو إداري. وبقبول هذه السياسة، يُقرّ المستخدم باختصاص هذه المحاكم.</span></p>
+        <p><span class="readable-text">في حال وجود عناصر دولية، يجوز للمنظومة الاستناد إلى اتفاقيات التحكيم الدولي المعمول بها، مع الأخذ بعين الاعتبار أن النصوص العربية في هذه السياسة هي المرجع الرسمي في جميع الأحوال.</span></p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="related">
+      <div class="section-header">
+        <span class="section-icon">🔗</span>
+        <h2 class="section-title">السياسات المرتبطة</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تُقرأ هذه السياسة وتُطبَّق جنبًا إلى جنب مع مجموعة من الوثائق القانونية والتنظيمية المكمّلة لها، والتي تشكّل مجتمعةً المنظومة القانونية الشاملة لمنظومة القرماني إكس (AQX):</span></p>
+        <div class="linked-policies">
+          <a href="#" class="policy-link-tag">📋 شروط الاستخدام</a>
+          <a href="#" class="policy-link-tag">🍪 سياسة ملفات تعريف الارتباط</a>
+          <a href="#" class="policy-link-tag">🤖 سياسة الذكاء الاصطناعي</a>
+          <a href="#" class="policy-link-tag">🔐 سياسة الأمان</a>
+          <a href="#" class="policy-link-tag">📦 سياسة الاحتفاظ بالبيانات</a>
+          <a href="#" class="policy-link-tag">👶 سياسة الأطفال</a>
+          <a href="#" class="policy-link-tag">💻 سياسة المطورين وواجهات API</a>
+          <a href="#" class="policy-link-tag">📝 اتفاقيات الخدمات الأخرى</a>
+        </div>
+        <div class="highlight-box" style="margin-top:22px;">
+          <strong>📌 ملاحظة:</strong> <span class="readable-text">في حال تعارض أي بند في هذه السياسة مع بنود الوثائق المرتبطة، يُرجَع إلى الاتفاقية الأكثر تخصصًا في الموضوع المحدد، وفي جميع الأحوال تُعدّ هذه السياسة الوثيقة الأصلية الحاكمة.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="policy-section" id="priority">
+      <div class="section-header">
+        <span class="section-icon">🏆</span>
+        <h2 class="section-title">أولوية النسخة اللغوية</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">في حال ترجمة هذه السياسة إلى لغات متعددة لخدمة جمهور عالمي أوسع، تكون النسخة العربية هي المرجع الرسمي والحاكم، ما لم تُحدد المنظومة صراحةً خلاف ذلك في حالات استثنائية بعينها.</span></p>
+        <p><span class="readable-text">وتُعدّ الترجمات الأخرى تيسيرًا للفهم ولا تُنشئ أي التزامات أو حقوق تتجاوز ما ورد في النص العربي الأصلي. وعند أي خلاف في التفسير ناجم عن الترجمة، يُرجَع حصرًا إلى النسخة العربية.</span></p>
+        <div class="law-box">
+          <span class="law-box-icon">📜</span>
+          <div class="law-box-text">
+            <strong>الوثيقة الرسمية:</strong> النسخة العربية — محافظة أسوان — جمهورية مصر العربية<br>
+            <strong>الترجمات الأخرى:</strong> للاستئناس فقط، ولا تُعتدّ بها في النزاعات القانونية.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="policy-section" id="severability">
+      <div class="section-header">
+        <span class="section-icon">🛡️</span>
+        <h2 class="section-title">قابلية الفصل بين الأحكام (Severability)</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">إذا قضت جهة قضائية أو تحكيمية مختصة ببطلان أي مادة أو بند أو جزء من هذه السياسة، أو قررت عدم إمكانية تنفيذه لأي سبب قانوني أو تنظيمي، فإن ذلك لا يمسّ صحة باقي أحكام السياسة وسريانها.</span></p>
+        <p><span class="readable-text">تبقى جميع الأحكام الأخرى سارية ومنتجة لآثارها القانونية الكاملة كأنها لم تتضمن أصلاً الجزء الملغى أو غير القابل للتنفيذ. وتسعى المنظومة في هذه الحالة إلى استبدال الجزء المُلغى بما يحقق الغاية ذاتها التي كانت مقصودة منه، وذلك في أقرب وقت ممكن ووفقًا للقانون المعمول به.</span></p>
+        <div class="highlight-box">
+          <strong>⚡ الضمان القانوني:</strong> <span class="readable-text">هذا البند يضمن استمرار سريان السياسة واستقرارها القانوني في مواجهة أي طعن جزئي فيها، ويُشكّل صمام أمان قانونيًا حقيقيًا لصالح المنظومة والمستخدمين على حدٍّ سواء.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="policy-section" id="nowaiver">
+      <div class="section-header">
+        <span class="section-icon">🚫</span>
+        <h2 class="section-title">عدم التنازل عن الحقوق</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">لا يُعدّ إخفاق منظومة AQX أو تأخّرها أو امتناعها عن ممارسة أي حق أو صلاحية ممنوحة لها بموجب هذه السياسة أو القانون المعمول به، تنازلاً عن هذا الحق أو الصلاحية، سواء في الحالة المحددة أو في الحالات المستقبلية المماثلة.</span></p>
+        <p><span class="readable-text">يحتفظ بحقه القانوني الكامل طوال مدة سريان هذه السياسة وما بعدها وفقًا للقواعد العامة في القانون المدني المصري والتشريعات ذات الصلة. ولا يُنشئ التنازل الجزئي عن حق معين في وقت بعينه قرينةً على التنازل عنه في المستقبل أو في ما يتعلق بحقوق أخرى.</span></p>
+        <div class="law-box">
+          <span class="law-box-icon">⚖️</span>
+          <div class="law-box-text">
+            <span class="readable-text"><strong>المبدأ القانوني:</strong> يمنح هذا البند المنظومة مرونة تشغيلية كاملة دون أن يُفسَّر التساهل في لحظة بعينها على أنه استسلام قانوني دائم، مما يعزز قدرة المنظومة على إنفاذ حقوقها متى رأت ذلك ضروريًا.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="policy-section" id="amendments">
+      <div class="section-header">
+        <span class="section-icon">✏️</span>
+        <h2 class="section-title">التعديلات والتحديثات الدورية</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تحتفظ منظومة AQX بحقها في تعديل هذه السياسة أو تحديثها أو مراجعتها في أي وقت ولأي سبب، بما في ذلك التغييرات في الخدمات أو القوانين أو التطورات التقنية أو متطلبات الحماية.</span></p>
+        <ul class="policy-list">
+          <li><span class="readable-text">تُحدَّث السياسة تلقائيًا بتاريخ كل يوم لضمان الدقة الزمنية في التوثيق.</span></li>
+          <li><span class="readable-text">في حالة التعديلات الجوهرية التي تمسّ حقوقًا أساسية، تُخطر المنظومة المستخدمين عبر البريد الإلكتروني أو الإشعارات الداخلية أو الإعلانات على المنصة وفقًا لما يقتضيه القانون.</span></li>
+          <li><span class="readable-text">تُشار إلى تاريخ آخر تحديث بوضوح في مقدمة هذه الوثيقة، ويُنصح المستخدمون بمراجعتها دوريًا.</span></li>
+          <li><span class="readable-text">يُعدّ استمرار استخدام الخدمات بعد نشر التعديلات قبولاً ضمنيًا لها، ما لم يُعرب المستخدم عن اعتراضه وفق الإجراءات المحددة.</span></li>
+          <li><span class="readable-text">للتعديلات الطفيفة التي لا تمس جوهر الحقوق، يكفي نشرها على المنصة دون إخطار مسبق.</span></li>
+        </ul>
+        <div class="highlight-box">
+          <strong>📅 تاريخ اليوم:</strong> <span id="amendments-date"></span> — <span class="readable-text">هذه الوثيقة حيّة ومحدَّثة تلقائيًا في كل يوم.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="policy-section" id="datasale">
+      <div class="section-header">
+        <span class="section-icon">🔒</span>
+        <h2 class="section-title">سياسة البيانات الشخصية والحماية من التجارة غير المشروعة</h2>
+      </div>
+      <div class="section-body">
+        <div class="highlight-box">
+          <strong>📢 التزام راسخ:</strong> <span class="readable-text">لا تبيع منظومة AQX البيانات الشخصية للمستخدمين بصفتها بيانات شخصية، ولا تُؤجّرها أو تتاجر بها، إلا إذا اقتضى القانون ذلك، أو وافق المستخدم صراحةً، أو كان ذلك جزءًا من معاملة تجارية مشروعة ومُعلن عنها وفقًا للقانون.</span>
+        </div>
+        <p><span class="readable-text">يشمل هذا الالتزام جميع أشكال البيانات الشخصية، بما فيها بيانات الهوية والاتصال والموقع والسلوك الرقمي والتفضيلات، وينطبق على كافة العلاقات مع الأطراف الثالثة بما فيها شركاء التسويق والإعلان.</span></p>
+        <p><span class="readable-text">في الحالات التي يُتيح فيها القانون أو العقد تبادل بعض البيانات مع جهات خارجية بعينها، تلتزم المنظومة بإخطار المستخدم وضمان أن هذا التبادل يخدم مصلحته ويتم وفقًا لأعلى معايير الأمان والسرية.</span></p>
+        <ul class="policy-list">
+          <li><span class="readable-text"><strong>حق الوصول:</strong> للمستخدم الحق في الاطلاع على البيانات التي تحتفظ بها المنظومة عنه وطلب نسخة منها في أي وقت.</span></li>
+          <li><span class="readable-text"><strong>حق التصحيح:</strong> يمكن للمستخدم طلب تصحيح البيانات غير الدقيقة أو المضللة أو المنقوصة.</span></li>
+          <li><span class="readable-text"><strong>حق الحذف:</strong> يحق للمستخدم في حالات معينة طلب حذف بياناته وفقًا للإطار القانوني المعمول به.</span></li>
+          <li><span class="readable-text"><strong>حق الاعتراض:</strong> يمكن للمستخدم الاعتراض على بعض أنواع المعالجة وفقًا للضوابط القانونية المقررة.</span></li>
+          <li><span class="readable-text"><strong>حق النقل:</strong> في الحالات الملائمة، يحق للمستخدم الحصول على بياناته بصيغ قابلة للقراءة الآلية ونقلها.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="policy-section" id="closing">
+      <div class="section-header">
+        <span class="section-icon">✨</span>
+        <h2 class="section-title">الخاتمة — عهد المنظومة مع مستخدميها</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">في ختام هذه الوثيقة التأسيسية لمنظومة القرماني إكس (AQX)، نؤكد بوضوح وصراحة أن الثقة ليست مجرد كلمة نكتبها في سياسة، بل هي عهدٌ نجدّده مع كل مستخدم، ومبدأٌ يتجسّد في كل خط من خطوط الكود وكل قرار من قراراتنا التشغيلية.</span></p>
+        <p><span class="readable-text">إن منظومة AQX ليست مجرد خدمة رقمية — إنها مشروع حضاري يؤمن بأن الإنسان أغلى من البيانات، وأن الخصوصية حق أصيل لا مجرد التزام قانوني. نبني اليوم البنية التحتية القانونية والتقنية التي ستحمي ملايين المستخدمين في المستقبل، بمسؤولية تليق بثقتهم وطموحاتهم.</span></p>
+        <div class="highlight-box">
+          <strong>🌟 رسالتنا النهائية:</strong> <span class="readable-text">أنتم تمنحونا ثقتكم، ونحن نردّ هذه الثقة بالشفافية الكاملة، والحماية الحقيقية، والالتزام المستمر بأن نكون في مستوى توقعاتكم — دائمًا وأبدًا. منظومة القرماني إكس AQX — معكم في كل خطوة.</span>
+        </div>
+        <div class="law-box">
+          <span class="law-box-icon">📋</span>
+          <div class="law-box-text">
+            <strong>للتواصل بشأن سياسة الخصوصية:</strong><br>
+            البريد الإلكتروني: <a href="#" style="color:#A78BFA;text-decoration:none;">privacy@aqx.com</a><br>
+            العنوان: محافظة أسوان، جمهورية مصر العربية<br>
+            <strong>الإصدار:</strong> 1.0 &nbsp;|&nbsp; <strong>آخر تحديث:</strong> <span id="closing-date"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="aqx-footer">
+  <div class="footer-logo">AQX</div>
+  <div class="footer-tagline">
+    منظومة القرماني إكس — حيث الثقة تلتقي بالتكنولوجيا<br>
+    <span style="font-size:0.78em;color:rgba(255,255,255,0.38);">بناءً على مبادئ الشفافية والحماية والمسؤولية</span>
+  </div>
+  <div class="footer-seal">
+    <span class="footer-seal-icon">🏛️</span>
+    <div class="footer-seal-text">
+      وثيقة رسمية معتمدة — الإصدار 1.0<br>
+      الاختصاص القضائي: محاكم محافظة أسوان — جمهورية مصر العربية
+    </div>
+    <div class="footer-seal-date" id="footer-date-display"></div>
+  </div>
+  <div class="footer-divider"></div>
+  <div class="footer-copy">
+    <strong>© منظومة القرماني إكس AQX</strong> — جميع الحقوق محفوظة<br>
+    هذه الوثيقة محمية بموجب قوانين حقوق الملكية الفكرية. يُحظر نسخها أو تعديلها أو توزيعها بدون إذن كتابي مسبق.<br>
+    <span style="color:rgba(255,255,255,0.22);">النسخة العربية هي المرجع الرسمي الوحيد المعتمد.</span>
+  </div>
+</footer>
+
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="العودة للأعلى">↑</button>
+
+<div id="voice-status">
+  <div class="pulse-dot"></div>
+  <span id="voice-text">جارٍ التشغيل...</span>
+</div>
+
+<script>
+'use strict';
+
+function getArabicDate() {
+  const now = new Date();
+  try {
+    return now.toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+  } catch(e) {
+    return now.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+  }
+}
+
+function updateAllDates() {
+  const d = getArabicDate();
+  ['hero-date','amendments-date','closing-date','footer-date-display','header-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = d;
+  });
+}
+
+updateAllDates();
+
+const _now = new Date();
+const _msToMidnight = new Date(_now.getFullYear(), _now.getMonth(), _now.getDate()+1, 0,0,0) - _now;
+setTimeout(() => { updateAllDates(); setInterval(updateAllDates, 86400000); }, _msToMidnight);
+
+const canvas = document.getElementById('particles-canvas');
+const ctx    = canvas.getContext('2d');
+
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const P_COLORS = ['#FFD700','#C8C8C8','#F59E0B','#E5E4E2','#FBBF24','#D4AF37','#B8B8B8','#FFEC7A','#E0E0E0'];
+const P_COUNT  = window.innerWidth < 600 ? 45 : 90;
+const ptcls    = [];
+
+for (let i = 0; i < P_COUNT; i++) {
+  ptcls.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 3.8 + 0.9,
+    dx: (Math.random() - 0.5) * 0.75,
+    dy: (Math.random() - 0.5) * 0.75 - 0.18,
+    color: P_COLORS[Math.floor(Math.random() * P_COLORS.length)],
+    phase: Math.random() * Math.PI * 2
+  });
+}
+
+function animParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ptcls.forEach(p => {
+    p.phase += 0.038;
+    const alpha = 0.28 + 0.45 * Math.abs(Math.sin(p.phase));
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = alpha;
+    ctx.shadowBlur  = 9;
+    ctx.shadowColor = p.color;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur  = 0;
+    p.x += p.dx;  p.y += p.dy;
+    if (p.x < -15) p.x = canvas.width + 15;
+    if (p.x > canvas.width + 15)  p.x = -15;
+    if (p.y < -15) p.y = canvas.height + 15;
+    if (p.y > canvas.height + 15) p.y = -15;
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+let gwTimer  = null;
+let gwSecs   = 15;
+let gwDone   = false;
+
+(function createGwParticles() {
+  const wrap = document.getElementById('gw-particles');
+  if (!wrap) return;
+  for (let i = 0; i < 28; i++) {
+    const p   = document.createElement('div');
+    p.className = 'gw-p';
+    const sz  = Math.random() * 14 + 5;
+    const dur = Math.random() * 7 + 4;
+    const del = Math.random() * 7;
+    const hue = Math.floor(Math.random() * 360);
+    p.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;background:hsl(${hue},78%,62%);animation-duration:${dur}s;animation-delay:${del}s;`;
+    wrap.appendChild(p);
+  }
+})();
+
+function startGateway() {
+  playVoice('مرحباً بك في بوابة منظومة القرماني إكس. يُرجى الانتظار لقراءة سياسة الخصوصية أو الضغط على الزر للدخول الآن.');
+  const cEl  = document.getElementById('gw-count');
+  const c2El = document.getElementById('gw-count2');
+  const pEl  = document.getElementById('gw-progress');
+  gwTimer = setInterval(() => {
+    gwSecs--;
+    if (cEl)  cEl.textContent  = gwSecs;
+    if (c2El) c2El.textContent = gwSecs;
+    if (pEl)  pEl.style.width  = ((15 - gwSecs) / 15 * 100) + '%';
+    if (gwSecs <= 0) { clearInterval(gwTimer); enterSite(); }
+  }, 1000);
+}
+
+function enterSite() {
+  if (gwDone) return;
+  gwDone = true;
+  clearInterval(gwTimer);
+  const gw = document.getElementById('gateway');
+  if (gw) { gw.classList.add('hidden'); setTimeout(() => gw.remove(), 900); }
+  playVoice('أهلاً وسهلاً بك في صفحة سياسة الخصوصية لمنظومة القرماني إكس. يمكنك الآن قراءة الوثيقة كاملةً.');
+}
+window.enterSite = enterSite;
+
+document.getElementById('gw-enter-btn')?.addEventListener('mouseenter', () => {
+  if (!isSpeaking) playVoice('اضغط لقراءة سياسة الخصوصية الآن.');
 });
-setTimeout(()=>{if(!gate.classList.contains('hidden'))gate.classList.add('hidden');},9000);
 
-// ═══ DATE ═══
-document.getElementById('auto-date').innerText=new Date().toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+const scrollBtn = document.getElementById('scroll-top');
+window.addEventListener('scroll', () => {
+  scrollBtn.classList.toggle('visible', window.scrollY > 420);
+}, { passive: true });
 
-// ═══ HEADER LINES ═══
-const hsp=document.getElementById('hsp');
-if(hsp){var ws=['170px','228px','290px','228px','170px'],ops=[.17,.27,.44,.27,.17],wr=document.createElement('div');wr.style.cssText='display:flex;flex-direction:column;gap:11px;align-items:center;width:100%;';ws.forEach(function(w,i){var l=document.createElement('div');l.style.cssText='width:'+w+';height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,'+ops[i]+'),transparent);border-radius:1px;';wr.appendChild(l);});hsp.appendChild(wr);}
+const synth = window.speechSynthesis;
+let arabicVoice  = null;
+let isSpeaking   = false;
+let currentUtt   = null;
 
-// ═══ INTERACTIVE TEXT CLICK ═══
-document.querySelectorAll('.itx').forEach(el=>{
-  el.addEventListener('click',function(e){
-    const txt=(e.target.innerText||e.target.textContent||'').trim();
-    if(txt)speakText(txt.substring(0,200));
+function loadVoices() {
+  const vv = synth.getVoices();
+  arabicVoice =
+    vv.find(v => v.lang === 'ar-EG' && /fem|f/i.test(v.name)) ||
+    vv.find(v => v.lang.startsWith('ar') && /fem|f/i.test(v.name)) ||
+    vv.find(v => v.lang === 'ar-EG') ||
+    vv.find(v => v.lang.startsWith('ar')) ||
+    null;
+}
+loadVoices();
+synth.addEventListener('voiceschanged', loadVoices);
+
+function playVoice(text, onEnd) {
+  if (!text || !synth) return;
+  if (synth.speaking) synth.cancel();
+
+  const vsEl = document.getElementById('voice-status');
+  const vtEl = document.getElementById('voice-text');
+
+  currentUtt = new SpeechSynthesisUtterance(text);
+  currentUtt.lang   = 'ar-EG';
+  if (arabicVoice) currentUtt.voice = arabicVoice;
+  currentUtt.rate   = 0.9;
+  currentUtt.pitch  = 1.12;
+  currentUtt.volume = 1;
+
+  isSpeaking = true;
+  if (vsEl) vsEl.classList.add('active');
+  if (vtEl) vtEl.textContent = text.substring(0, 42) + (text.length > 42 ? '...' : '');
+
+  currentUtt.onend = () => {
+    isSpeaking = false;
+    if (vsEl) vsEl.classList.remove('active');
+    if (onEnd) onEnd();
+  };
+  currentUtt.onerror = () => {
+    isSpeaking = false;
+    if (vsEl) vsEl.classList.remove('active');
+  };
+
+  synth.speak(currentUtt);
+}
+
+document.querySelectorAll('.readable-text').forEach(el => {
+  el.addEventListener('click', function () {
+    const t = this.textContent.trim();
+    if (!t) return;
+    document.querySelectorAll('.readable-text.speaking').forEach(x => x.classList.remove('speaking'));
+    this.classList.add('speaking');
+    playVoice(t, () => this.classList.remove('speaking'));
   });
 });
 
-// ═══ TOC SCROLL ═══
-window.scrollTo_=function(sel){
-  const t=document.querySelector(sel);
-  if(t){t.scrollIntoView({behavior:'smooth',block:'start'});}
-};
+document.querySelectorAll('.policy-link-tag').forEach(el => {
+  el.addEventListener('click', function (e) {
+    if (this.getAttribute('href') === '#') e.preventDefault();
+    playVoice('سيتم فتح: ' + this.textContent.trim());
+  });
+});
 
-// ═══ REVEAL ═══
-var rv=document.querySelectorAll('.rv');
-if('IntersectionObserver' in window){
-  var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');ro.unobserve(e.target);}});},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
-  rv.forEach(function(el){ro.observe(el);});
-}else{rv.forEach(function(el){el.classList.add('vis');});}
+document.querySelectorAll('.section-title').forEach(el => {
+  el.addEventListener('mouseenter', function () {
+    if (!isSpeaking) playVoice(this.textContent.trim());
+  });
+});
 
-// ═══ MOUSE STARS ═══
-if(window.innerWidth>=768){
-  var stSt=document.createElement('style');stSt.textContent='@keyframes stFd{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,calc(-50% - 36px)) scale(.15)}}';document.head.appendChild(stSt);
-  var stTh=false;
-  document.addEventListener('mousemove',function(e){if(stTh)return;stTh=true;setTimeout(()=>stTh=false,80);if(Math.random()>.52)return;var g=Math.random()>.5,sz=(Math.random()*5+2)|0,s=document.createElement('div');s.style.cssText='position:fixed;left:'+e.clientX+'px;top:'+e.clientY+'px;width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:'+(g?'rgba(201,168,76,.88)':'rgba(200,205,235,.78)')+';pointer-events:none;z-index:9997;animation:stFd .95s ease-out forwards;transform:translate(-50%,-50%);box-shadow:0 0 '+(sz*2)+'px '+(g?'rgba(201,168,76,.5)':'rgba(180,190,220,.5)')+';';document.body.appendChild(s);setTimeout(()=>s.remove(),1e3);});
+document.querySelector('.footer-logo')?.addEventListener('mouseenter', () => {
+  if (!isSpeaking) playVoice('منظومة القرماني إكس — حيث الثقة تلتقي بالتكنولوجيا');
+});
+
+document.querySelector('.hero-title')?.addEventListener('mouseenter', () => {
+  if (!isSpeaking) playVoice('سياسة الخصوصية — منظومة القرماني إكس.');
+});
+document.querySelector('.hero-badge')?.addEventListener('mouseenter', () => {
+  if (!isSpeaking) playVoice('هذه وثيقة قانونية رسمية ملزمة.');
+});
+
+let secTriggered = false;
+let devToolsWarnCount = 0;
+const MAX_DEVTOOLS_WARNS = 3;
+
+document.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  playVoice('تحذير! هذه الصفحة محمية. لا يُسمح بفحص الكود المصدري.');
+});
+
+document.addEventListener('keydown', e => {
+  const blocked =
+    e.key === 'F12' ||
+    (e.ctrlKey && e.shiftKey && ['I','J','C','K'].includes(e.key.toUpperCase())) ||
+    (e.ctrlKey && ['U','S'].includes(e.key.toUpperCase()));
+  if (blocked) {
+    e.preventDefault();
+    handleDevToolsAttempt();
+  }
+});
+
+let devOpen = false;
+setInterval(() => {
+  const wDiff = window.outerWidth  - window.innerWidth;
+  const hDiff = window.outerHeight - window.innerHeight;
+  if ((wDiff > 160 || hDiff > 160) && !devOpen) {
+    devOpen = true;
+    handleDevToolsAttempt();
+  } else if (wDiff <= 160 && hDiff <= 160) {
+    devOpen = false;
+  }
+}, 1000);
+
+function handleDevToolsAttempt() {
+  if (secTriggered) return;
+  devToolsWarnCount++;
+  const remaining = MAX_DEVTOOLS_WARNS - devToolsWarnCount;
+
+  if (devToolsWarnCount < MAX_DEVTOOLS_WARNS) {
+    playVoice('تحذير أمني! هذه المحاولة رقم ' + devToolsWarnCount + ' — تبقّى لك ' + remaining + ' محاولة قبل الطرد الفوري.');
+    const warnFlash = document.createElement('div');
+    warnFlash.style.cssText = `position:fixed;inset:0;background:rgba(255,0,0,0.18);z-index:88888;pointer-events:none;animation:secPulse 0.3s ease 3;`;
+    document.body.appendChild(warnFlash);
+    setTimeout(() => warnFlash.remove(), 1000);
+  } else {
+    triggerSecWarning('devtools');
+  }
 }
 
-// ═══ WELCOME VOICE ═══
-setTimeout(()=>speakText("أهلاً بك في سياسة الخصوصية الخاصة بمنظومة القرماني إكس. اضغط على أي نص لقراءته بصوت عالٍ."),1200);
+const SEC_PHRASES = [
+  '🔒 هذا النظام يراقب — لا مجال للتحايل على منظومة القرماني إكس',
+  '⛔ الاختراق الأمني موثّق ومُسجَّل — ستتحمل العواقب القانونية كاملة',
+  '🚨 بياناتك وجهازك مُعرَّفان — تم إرسال تقرير الانتهاك فوراً',
+  '🛡️ الأمن الرقمي لمنظومة AQX لا يُخترق — أنت الآن في السجل الأمني',
+  '⚡ محاولتك رُصدت وحُفظت — لا مهرب من منظومة القرماني إكس'
+];
 
+function triggerSecWarning(reason) {
+  if (secTriggered) return;
+  secTriggered = true;
+
+  const warn   = document.getElementById('security-warning');
+  const body   = document.getElementById('sec-body-text');
+  const phrase = document.getElementById('sec-phrase-text');
+
+  if (body) {
+    if (reason === 'devtools') {
+      body.innerHTML = '🚨 تم رصد محاولة فتح أدوات المطورين أو فحص الكود المصدري!<br><br><strong>هذا الفعل مخالف صريح لسياسة الأمان لمنظومة القرماني إكس AQX.</strong><br>تم توثيق هذه المحاولة وتسجيلها. سيتم إغلاق الجلسة فوراً.';
+    } else if (reason === 'new_tab') {
+      body.innerHTML = '🚨 محاولة فتح الرابط في تبويب أو متصفح جديد تم رصدها!<br><br><strong>هذه الصفحة محمية — لا يُسمح بفتحها خارج الجلسة الأصلية.</strong><br>تم توثيق هذه المحاولة. سيتم إغلاق الجلسة الآن.';
+    } else if (reason === 'idle') {
+      body.innerHTML = '⏰ انتهت جلستك بسبب عدم النشاط لمدة ثلاثين دقيقة متواصلة.<br><br><strong>لحماية أمانك، يتم إغلاق الجلسة تلقائياً.</strong><br>سيتم تحويلك إلى الصفحة الرئيسية.';
+    } else {
+      body.innerHTML = '🚨 محاولة وصول غير مصرح بها تم رصدها!<br><br><strong>هذه الصفحة محمية. تم توثيق هذه المحاولة.</strong><br>سيتم إغلاق الجلسة الآن.';
+    }
+  }
+
+  if (phrase) {
+    phrase.textContent = SEC_PHRASES[Math.floor(Math.random() * SEC_PHRASES.length)];
+  }
+
+  if (warn) warn.classList.add('active');
+
+  playVoice('تحذير أمني خطير! تم رصد محاولة غير مصرح بها. سيتم طردك من الصفحة فوراً ولن تتمكن من العودة.');
+
+  let c = 5;
+  const cdEl = document.getElementById('sec-countdown');
+  const t = setInterval(() => {
+    c--;
+    if (cdEl) cdEl.textContent = c;
+    if (c <= 0) {
+      clearInterval(t);
+      redirectToMain();
+    }
+  }, 1000);
+
+  setTimeout(redirectToMain, 5600);
+}
+
+function redirectToMain() {
+  window.location.href = 'index.html';
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    sessionStorage.setItem('aqx_tab_hidden_at', Date.now().toString());
+  } else {
+    const hiddenAt = sessionStorage.getItem('aqx_tab_hidden_at');
+    if (hiddenAt) {
+      sessionStorage.removeItem('aqx_tab_hidden_at');
+    }
+  }
+});
+
+const _aqxTabKey = 'aqx_page_open_' + window.location.pathname;
+const _aqxOpenTime = Date.now().toString();
+
+window.addEventListener('load', () => {
+  const existing = localStorage.getItem(_aqxTabKey);
+  if (existing && (Date.now() - parseInt(existing)) < 500) {
+    triggerSecWarning('new_tab');
+  }
+  localStorage.setItem(_aqxTabKey, _aqxOpenTime);
+});
+
+window.addEventListener('beforeunload', () => {
+  if (localStorage.getItem(_aqxTabKey) === _aqxOpenTime) {
+    localStorage.removeItem(_aqxTabKey);
+  }
+});
+
+window.addEventListener('aqxIdleExpired', () => {
+  playVoice('انتهت جلستك بسبب عدم النشاط لمدة ثلاثين دقيقة. سيتم تحويلك للصفحة الرئيسية.');
+  triggerSecWarning('idle');
+});
+
+window.addEventListener('aqxSecurityKick', () => {
+  playVoice('تحذير أمني! تم إغلاق الجلسة. سيتم تحويلك فوراً.');
+  triggerSecWarning('kick');
+});
+
+document.addEventListener('aqxUserReady', () => {
+  document.getElementById('auth-gate').classList.remove('active');
+});
+
+document.addEventListener('aqxUserNotAuth', () => {
+  const ag = document.getElementById('auth-gate');
+  ag.classList.add('active');
+  playVoice('يجب تسجيل الدخول للوصول إلى هذه الصفحة. سيتم تحويلك تلقائياً إلى الصفحة الرئيسية.');
+
+  let agCount = 5;
+  const agEl  = document.getElementById('ag-count');
+  const agInt = setInterval(() => {
+    agCount--;
+    if (agEl) agEl.textContent = agCount;
+    if (agCount <= 0) {
+      clearInterval(agInt);
+      window.location.href = 'index.html';
+    }
+  }, 1000);
+});
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('page-loader');
+    if (loader) {
+      loader.classList.add('fade-out');
+      setTimeout(() => loader.remove(), 520);
+    }
+    startGateway();
+  }, 1900);
+});
 </script>
 </body>
 </html>
+HTMLEOF
+Done

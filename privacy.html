@@ -1773,21 +1773,6 @@ function createGatewayParticles() {
 }
 createGatewayParticles();
 
-// ===== SIDEBAR =====
-function openSidebar() {
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('sidebar-overlay').classList.add('active');
-  playVoice('القائمة الجانبية مفتوحة. يمكنك التنقل بين أقسام الوثيقة.');
-}
-
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebar-overlay').classList.remove('active');
-}
-
-window.openSidebar = openSidebar;
-window.closeSidebar = closeSidebar;
-
 // ===== SCROLL TO TOP =====
 const scrollBtn = document.getElementById('scroll-top');
 window.addEventListener('scroll', () => {

@@ -1,809 +1,1805 @@
+cat > /home/claude/aqx-children-policy.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AQX — القرمانى اكس | بوابة العطاء العالمي</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>سياسة حماية الأطفال | منظومة القرماني إكس AQX</title>
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Tajawal:wght@300;400;500;700;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBICr62Oa_-69hATpfFrdTDfO9WV4bVVvU",
+  authDomain: "alqurmanix-d49f7.firebaseapp.com",
+  projectId: "alqurmanix-d49f7",
+  storageBucket: "alqurmanix-d49f7.firebasestorage.app",
+  messagingSenderId: "1017946245702",
+  appId: "1:1017946245702:web:575c425860c82166411847",
+  measurementId: "G-5XN1NMG997"
+};
+
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+const auth = getAuth(app);
+
+let monitorInterval = null;
+let failureCount = 0;
+const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
+let idleTimer = null;
+
+const handlePopState = () => { verifySessionWithEngine(); };
+
+function getTabId() {
+  let tabId = sessionStorage.getItem("active_tab_id");
+  if (!tabId) {
+    tabId = "tab_" + Math.random().toString(36).substr(2, 9);
+    sessionStorage.setItem("active_tab_id", tabId);
+  }
+  return tabId;
+}
+
+function resetIdleTimer() {
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    if (auth.currentUser) {
+      signOut(auth).then(() => {
+        window.dispatchEvent(new CustomEvent('aqxIdleExpired'));
+      });
+    }
+  }, IDLE_TIMEOUT_MS);
+}
+
+['mousemove','keydown','scroll','click','touchstart','touchmove'].forEach(ev => {
+  document.addEventListener(ev, resetIdleTimer, { passive: true });
+});
+
+async function verifySessionWithEngine() {
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    const token = await user.getIdToken(true);
+    const tabId = getTabId();
+    const pageId = window.location.pathname;
+    const response = await fetch("https://eo3phbvoihx4diw.m.pipedream.net", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+      body: JSON.stringify({ tabId, pageId })
+    });
+    const result = await response.json();
+    failureCount = 0;
+    if (result.status?.action === "REDIRECT") {
+      await signOut(auth);
+      window.dispatchEvent(new CustomEvent('aqxSecurityKick', { detail: 'engine_redirect' }));
+    } else if (result.status?.action === "WARN") {
+      console.warn("تحذير أمني: محاولات متبقية " + (3 - result.status.count));
+    }
+  } catch (error) {
+    failureCount++;
+    if (failureCount >= 3) {
+      await signOut(auth);
+      window.dispatchEvent(new CustomEvent('aqxSecurityKick', { detail: 'connection_failed' }));
+    }
+  }
+}
+
+function startSecurityMonitor() {
+  if (monitorInterval) return;
+  resetIdleTimer();
+  verifySessionWithEngine();
+  monitorInterval = setInterval(() => {
+    if (auth.currentUser) verifySessionWithEngine();
+  }, 4 * 60 * 1000);
+  window.addEventListener('popstate', handlePopState);
+  history.pushState(null, null, location.href);
+}
+
+function stopSecurityMonitor() {
+  if (monitorInterval) { clearInterval(monitorInterval); monitorInterval = null; }
+  if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
+  window.removeEventListener('popstate', handlePopState);
+  failureCount = 0;
+}
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    startSecurityMonitor();
+    window.aqxUser = user;
+    document.dispatchEvent(new CustomEvent('aqxUserReady', { detail: user }));
+  } else {
+    stopSecurityMonitor();
+    window.aqxUser = null;
+    document.dispatchEvent(new CustomEvent('aqxUserNotAuth'));
+  }
+});
+
+window.aqxAuth = auth;
+window.aqxSignOut = signOut;
+</script>
+
 <style>
-/* ═══════════════════════════════════════════════
-   AQX — DESIGN TOKENS
-═══════════════════════════════════════════════ */
-:root{
-  --gold:#C9A84C;--gold-l:#E8C97A;--gold-d:#8A6A1F;
-  --silver:#BEC5D4;--silver-l:#E8EAF6;
-  --navy:#080C24;--navy-m:#0F1535;--navy-l:#1A2550;
-  --violet:#6B4FA0;
-  --tx:#E8E4DC;--tx-m:#9CA3C0;--tx-d:#6A7090;
-  --border:rgba(201,168,76,.18);
-  --card:rgba(15,21,53,.72);--card-h:rgba(25,34,80,.92);
-  --r-sm:8px;--r-md:16px;--r-lg:28px;
-  --sh-g:0 0 32px rgba(201,168,76,.22);
-  --sh-d:0 12px 48px rgba(0,0,0,.55);
-  --fn-d:'Cinzel','Amiri',serif;
-  --fn-b:'Tajawal','Arial',sans-serif;
-  --tr:.35s cubic-bezier(.4,0,.2,1);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;font-size:16px}
-body{
-  font-family:var(--fn-b);background:var(--navy);color:var(--tx);
-  min-height:100vh;overflow-x:hidden;line-height:1.7;position:relative;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --rose-main: #e11d48;
+  --rose-light: #fb7185;
+  --rose-soft: #fda4af;
+  --sky-main: #0ea5e9;
+  --sky-light: #38bdf8;
+  --gold: #F59E0B;
+  --white: #FFFFFF;
+  --font-main: 'Cairo', 'Tajawal', sans-serif;
+  --base-font: 20px;
+  --bg-main: #fdf2f4;
+  --bg-card: rgba(255,255,255,0.62);
+  --card-border: rgba(225,29,72,0.18);
+  --text-main: #4a0a1a;
+  --text-sub: #7c1030;
+  --text-muted: rgba(74,10,26,0.55);
 }
 
-/* ═══ CANVAS ═══ */
-#pc{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.9}
+html { scroll-behavior: smooth; font-size: var(--base-font); }
 
-/* ═══ AURORA ═══ */
-.au-wrap{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.au{position:absolute;border-radius:50%;filter:blur(90px);opacity:.11;animation:auFloat 20s ease-in-out infinite}
-.au1{width:70vw;height:60vh;background:radial-gradient(ellipse,#C9A84C 0%,transparent 70%);top:-20%;left:-10%;animation-duration:22s}
-.au2{width:55vw;height:65vh;background:radial-gradient(ellipse,#6B4FA0 0%,transparent 70%);top:30%;right:-15%;animation-duration:27s;animation-delay:-9s}
-.au3{width:60vw;height:50vh;background:radial-gradient(ellipse,#2A4A8A 0%,transparent 70%);bottom:-10%;left:20%;animation-duration:24s;animation-delay:-15s}
-@keyframes auFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(3vw,-4vh) scale(1.08)}66%{transform:translate(-2vw,5vh) scale(.94)}}
-
-/* ═══ VOICE INDICATOR ═══ */
-#vi{
-  position:fixed;bottom:28px;left:50%;
-  transform:translateX(-50%) translateY(120px);
-  background:rgba(10,14,36,.97);border:1px solid var(--gold);
-  border-radius:50px;padding:11px 26px;
-  display:flex;align-items:center;gap:13px;
-  z-index:9999;transition:transform .45s cubic-bezier(.34,1.56,.64,1),opacity .35s;
-  opacity:0;backdrop-filter:blur(14px);box-shadow:var(--sh-g);
-  max-width:90vw;
-}
-#vi.on{transform:translateX(-50%) translateY(0);opacity:1}
-.vw{display:flex;align-items:center;gap:3px;height:22px}
-.vw span{display:block;width:3px;background:var(--gold);border-radius:3px;animation:vWave 1.1s ease-in-out infinite}
-.vw span:nth-child(1){height:6px}.vw span:nth-child(2){height:14px;animation-delay:.15s}
-.vw span:nth-child(3){height:20px;animation-delay:.3s}.vw span:nth-child(4){height:14px;animation-delay:.45s}
-.vw span:nth-child(5){height:6px;animation-delay:.6s}
-@keyframes vWave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.9)}}
-#vt{font-size:.85rem;color:var(--gold-l);font-weight:500;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-/* ═══ HEADER SPACE — 5 lines ═══ */
-.hsp{
-  height:clamp(90px,13vh,140px);position:relative;z-index:1;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;
-  padding:24px 0 12px;
-}
-.hline{height:1px;border-radius:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,var(--op)),transparent)}
-
-/* ═══ HERO ═══ */
-.hero{position:relative;z-index:1;padding:clamp(36px,8vw,96px) clamp(20px,5vw,80px);text-align:center}
-.hero-in{max-width:980px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:clamp(26px,4vw,50px)}
-
-/* logo */
-.logo-wrap{display:flex;flex-direction:column;align-items:center;gap:7px}
-.lstar{color:var(--gold);font-size:1.3rem;display:inline-block;animation:spin 9s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.lsub{font-family:var(--fn-b);font-size:clamp(.72rem,2vw,.95rem);font-weight:300;color:var(--silver);letter-spacing:.22em;text-transform:uppercase}
-.lneon{
-  font-family:var(--fn-d);font-size:clamp(4.5rem,15vw,9rem);font-weight:900;
-  letter-spacing:.08em;line-height:1;
-  animation:neon 6s ease-in-out infinite;
-}
-@keyframes neon{
-  0%,100%{color:#C9A84C;text-shadow:0 0 20px #C9A84C,0 0 55px #C9A84C66,0 0 90px #C9A84C33}
-  20%{color:#E8C97A;text-shadow:0 0 22px #E8C97A,0 0 60px #E8C97A55}
-  40%{color:#BEC5D4;text-shadow:0 0 20px #BEC5D4,0 0 55px #7B9AEA44}
-  60%{color:#A78BF0;text-shadow:0 0 22px #A78BF0,0 0 65px #7B5EA744}
-  80%{color:#7AC8EA;text-shadow:0 0 20px #7AC8EA,0 0 55px #2A9AB033}
+body {
+  font-family: var(--font-main);
+  background: var(--bg-main);
+  background-image:
+    radial-gradient(ellipse at 12% 18%, #fce7ec 0%, transparent 52%),
+    radial-gradient(ellipse at 88% 82%, #fde8d0 0%, transparent 52%),
+    radial-gradient(ellipse at 50% 50%, #fff0f3 0%, transparent 68%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  direction: rtl;
+  text-align: right;
+  color: var(--text-main);
 }
 
-/* tagline */
-.tg-main{font-family:'Amiri',serif;font-size:clamp(1.2rem,4vw,2.1rem);font-weight:700;color:var(--gold-l);line-height:1.4}
-.tg-sub{font-size:clamp(.88rem,2.3vw,1.1rem);color:var(--silver);font-weight:300;margin-top:7px}
-
-/* stats */
-.stats{display:flex;gap:clamp(10px,3vw,26px);flex-wrap:wrap;justify-content:center}
-.sc{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);
-  padding:clamp(13px,3vw,22px) clamp(16px,4vw,34px);backdrop-filter:blur(14px);
-  transition:var(--tr);cursor:default;text-align:center;
+#particles-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
 }
-.sc:hover{border-color:var(--gold);box-shadow:var(--sh-g);transform:translateY(-4px)}
-.sn{display:block;font-family:var(--fn-d);font-size:clamp(1.4rem,4vw,2.3rem);font-weight:700;color:var(--gold-l);line-height:1.1}
-.sl{display:block;font-size:clamp(.68rem,1.7vw,.82rem);color:var(--tx-m);margin-top:4px;letter-spacing:.04em}
 
-/* buttons */
-.cta-wrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
-.btn-p{
-  display:inline-flex;align-items:center;gap:9px;
-  background:linear-gradient(135deg,#C9A84C 0%,#E8C97A 50%,#C9A84C 100%);
-  background-size:200% 100%;color:#0A0E2A;font-family:var(--fn-b);font-weight:700;
-  font-size:clamp(.93rem,2.5vw,1.12rem);padding:clamp(13px,2.5vw,19px) clamp(26px,5vw,50px);
-  border-radius:50px;text-decoration:none;border:none;cursor:pointer;
-  position:relative;overflow:hidden;transition:var(--tr);
-  animation:gsh 3s ease-in-out infinite,glow 2.5s ease-in-out infinite;
+/* ===== SECURITY WARNING ===== */
+#security-warning {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
 }
-@keyframes gsh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(201,168,76,.35),0 4px 20px rgba(0,0,0,.3)}50%{box-shadow:0 0 48px rgba(201,168,76,.7),0 8px 28px rgba(0,0,0,.4)}}
-.btn-p:hover{transform:translateY(-3px) scale(1.03)}
-.btn-p.lg{font-size:clamp(1rem,2.8vw,1.28rem);padding:clamp(15px,3vw,23px) clamp(34px,6vw,70px)}
-.shim{position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.28) 50%,transparent 60%);background-size:200% 100%;animation:shimmer 2.6s linear infinite;border-radius:inherit}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.btn-s{
-  display:inline-flex;align-items:center;gap:9px;background:transparent;color:var(--gold-l);
-  font-family:var(--fn-b);font-weight:600;font-size:clamp(.93rem,2.5vw,1.08rem);
-  padding:clamp(13px,2.5vw,19px) clamp(26px,5vw,46px);border-radius:50px;
-  border:1.5px solid var(--gold);text-decoration:none;transition:var(--tr);
+#security-warning.active { display: flex; }
+
+.sec-bg-anim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, #7A0000 0%, #000 65%);
+  animation: secPulse 0.55s ease-in-out infinite alternate;
 }
-.btn-s:hover{background:rgba(201,168,76,.12);transform:translateY(-2px);box-shadow:0 0 24px rgba(201,168,76,.25)}
-.btn-g{display:inline-flex;align-items:center;color:var(--silver);font-size:1rem;text-decoration:none;border-bottom:1px solid transparent;padding:7px 0;transition:var(--tr)}
-.btn-g:hover{color:var(--gold-l);border-bottom-color:var(--gold)}
-.bi{font-size:1.1em;line-height:1}
-
-/* scroll hint */
-.sh{display:flex;flex-direction:column;align-items:center;gap:9px;color:var(--tx-d);font-size:.8rem;letter-spacing:.1em}
-.sa{width:19px;height:19px;border-left:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(-45deg);animation:bounce 2s ease-in-out infinite}
-@keyframes bounce{0%,100%{transform:rotate(-45deg) translateY(0)}50%{transform:rotate(-45deg) translateY(5px)}}
-
-/* ═══ CONVICTION STRIP ═══ */
-.conv{
-  position:relative;z-index:1;
-  background:linear-gradient(90deg,rgba(201,168,76,.07) 0%,rgba(107,79,160,.11) 50%,rgba(201,168,76,.07) 100%);
-  border-top:1px solid rgba(201,168,76,.2);border-bottom:1px solid rgba(201,168,76,.2);
-  padding:clamp(18px,4vw,34px) clamp(20px,6vw,80px);
+@keyframes secPulse {
+  from { opacity: 0.55; }
+  to   { opacity: 1; }
 }
-.conv-in{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:clamp(18px,4vw,46px);flex-wrap:wrap;justify-content:center;text-align:center}
-.conv-tx{font-family:'Amiri',serif;font-size:clamp(.97rem,3vw,1.3rem);line-height:1.75;color:var(--tx);flex:1;min-width:240px}
-.hl{color:var(--gold-l);font-weight:700}
-.btn-cv{
-  display:inline-block;background:linear-gradient(135deg,var(--gold-d),var(--gold));color:#0A0E2A;
-  font-weight:700;font-size:.97rem;padding:13px 34px;border-radius:50px;text-decoration:none;
-  white-space:nowrap;transition:var(--tr);flex-shrink:0;
+
+.sec-content { position: relative; z-index: 2; max-width: 700px; }
+
+.sec-icon {
+  font-size: clamp(64px, 16vw, 110px);
+  display: block;
+  margin-bottom: 20px;
+  animation: secIconFlash 0.45s linear infinite alternate;
 }
-.btn-cv:hover{transform:translateY(-2px);box-shadow:0 0 28px rgba(201,168,76,.42)}
-
-/* ═══ SECTIONS ═══ */
-.sec{position:relative;z-index:1;padding:clamp(55px,10vw,115px) clamp(20px,6vw,80px);max-width:1280px;margin:0 auto}
-.sec-hd{text-align:center;margin-bottom:clamp(34px,6vw,66px)}
-.ey{font-size:.76rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:13px}
-.stl{font-family:'Amiri',serif;font-size:clamp(1.75rem,5vw,3.1rem);font-weight:700;color:var(--tx);line-height:1.2;margin-bottom:13px}
-.sdesc{font-size:clamp(.9rem,2.2vw,1.08rem);color:var(--tx-m);max-width:600px;margin:0 auto}
-
-/* ═══ GATEWAY TABS ═══ */
-.gtabs{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:clamp(22px,4vw,42px)}
-.gt{
-  background:var(--card);border:1px solid var(--border);border-radius:50px;
-  color:var(--tx-m);font-family:var(--fn-b);font-size:clamp(.75rem,2vw,.9rem);font-weight:500;
-  padding:9px 18px;cursor:pointer;transition:var(--tr);backdrop-filter:blur(10px);white-space:nowrap;
+@keyframes secIconFlash {
+  from { filter: drop-shadow(0 0 12px #ff0000); transform: scale(0.94); }
+  to   { filter: drop-shadow(0 0 50px #ff3333) drop-shadow(0 0 90px #ff0000); transform: scale(1.06); }
 }
-.gt:hover{color:var(--gold-l);border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.07)}
-.gt.on{background:linear-gradient(135deg,rgba(201,168,76,.24),rgba(107,79,160,.18));border-color:var(--gold);color:var(--gold-l);font-weight:700;box-shadow:0 0 18px rgba(201,168,76,.18)}
 
-/* ═══ GATE PANELS ═══ */
-.gp{animation:fIn .45s ease}
-.gp[hidden]{display:none}
-@keyframes fIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.gph{text-align:center;margin-bottom:clamp(26px,5vw,50px)}
-.gph h3{font-family:'Amiri',serif;font-size:clamp(1.35rem,4vw,2.15rem);color:var(--gold-l);margin-bottom:11px;font-weight:700}
-.gph p{font-size:clamp(.88rem,2.2vw,1.05rem);color:var(--tx-m);max-width:620px;margin:0 auto;line-height:1.78}
-
-/* ═══ CARDS ═══ */
-.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:clamp(13px,3vw,22px);margin-bottom:clamp(22px,4vw,38px)}
-.cc{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
-  padding:clamp(18px,4vw,30px) clamp(15px,3vw,22px);cursor:pointer;transition:var(--tr);
-  backdrop-filter:blur(14px);position:relative;overflow:hidden;text-align:center;
+.sec-title {
+  font-family: var(--font-main);
+  font-size: clamp(26px, 7vw, 54px);
+  font-weight: 900;
+  color: #FF0000;
+  margin-bottom: 18px;
+  animation: neonRed 0.4s linear infinite alternate;
 }
-.cc::before{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(201,168,76,.05),transparent);opacity:0;transition:opacity .3s}
-.cc:hover{background:var(--card-h);border-color:var(--gold);transform:translateY(-6px) scale(1.02);box-shadow:0 12px 40px rgba(0,0,0,.4),0 0 28px rgba(201,168,76,.18)}
-.cc:hover::before{opacity:1}
-.cc.gl{border-color:rgba(201,168,76,.44);background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(15,21,53,.8))}
-.ci{display:block;font-size:clamp(1.9rem,5vw,2.7rem);margin-bottom:11px;line-height:1}
-.cc h4{font-family:'Amiri',serif;font-size:clamp(.97rem,2.5vw,1.18rem);color:var(--tx);margin-bottom:7px;font-weight:700}
-.cc p{font-size:clamp(.75rem,1.8vw,.86rem);color:var(--tx-m);line-height:1.55}
-.cb{position:absolute;top:13px;left:13px;background:linear-gradient(135deg,var(--gold-d),var(--gold));color:#0A0E2A;font-size:.66rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.05em}
-.cb.urg{background:linear-gradient(135deg,#c0392b,#e74c3c)!important;color:#fff!important}
-.up{animation:upulse 2s ease-in-out infinite}
-@keyframes upulse{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.4)}50%{box-shadow:0 0 0 10px rgba(231,76,60,0)}}
-.gab{display:inline-flex;align-items:center;gap:7px;color:var(--gold-l);font-weight:600;font-size:.97rem;text-decoration:none;border-bottom:1px solid rgba(201,168,76,.32);padding:5px 0;transition:var(--tr)}
-.gab:hover{color:var(--gold);border-bottom-color:var(--gold);letter-spacing:.02em}
-
-/* ═══ WAYS GRID ═══ */
-.wg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,195px),1fr));gap:clamp(11px,2.5vw,19px)}
-.wc{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);
-  padding:clamp(17px,3.5vw,26px) clamp(13px,3vw,19px);text-decoration:none;
-  text-align:center;cursor:pointer;transition:var(--tr);backdrop-filter:blur(12px);display:block;
+@keyframes neonRed {
+  from { text-shadow: 0 0 12px #ff0000; }
+  to   { text-shadow: 0 0 24px #ff0000, 0 0 50px #ff0000, 0 0 80px #ff3333; }
 }
-.wc:hover{border-color:var(--gold);background:var(--card-h);transform:translateY(-5px);box-shadow:var(--sh-g)}
-.wc.gw{border-color:rgba(201,168,76,.48);background:linear-gradient(135deg,rgba(201,168,76,.11),rgba(15,21,53,.8))}
-.wi{display:block;font-size:1.75rem;margin-bottom:9px}
-.wc h4{font-size:clamp(.83rem,2vw,.95rem);color:var(--tx);margin-bottom:5px;font-weight:600;font-family:'Amiri',serif}
-.wc p{font-size:clamp(.7rem,1.6vw,.78rem);color:var(--tx-d);line-height:1.5}
 
-/* ═══ IMPACT ═══ */
-.imp-sec{background:linear-gradient(135deg,rgba(201,168,76,.05) 0%,rgba(107,79,160,.08) 100%);border-radius:var(--r-lg);border:1px solid var(--border)}
-.ig{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,195px),1fr));gap:clamp(18px,4vw,38px)}
-.ii{text-align:center;padding:clamp(15px,3vw,26px);cursor:default;transition:transform .3s}
-.ii:hover{transform:scale(1.05)}
-.in{display:block;font-family:var(--fn-d);font-size:clamp(1.9rem,5vw,2.9rem);font-weight:700;color:var(--gold-l);line-height:1;margin-bottom:7px}
-.ilb{font-size:clamp(.8rem,2vw,.92rem);color:var(--tx-m)}
-
-/* ═══ FINAL CTA ═══ */
-.fcta{text-align:center}
-.fcta-in{max-width:720px;margin:0 auto}
-.fic{color:var(--gold);font-size:2.4rem;display:block;margin-bottom:19px;animation:spin 10s linear infinite}
-.ftl{font-family:'Amiri',serif;font-size:clamp(1.75rem,5vw,2.9rem);font-weight:700;color:var(--tx);margin-bottom:19px;line-height:1.3}
-.fsb{font-size:clamp(.9rem,2.2vw,1.08rem);color:var(--tx-m);line-height:1.8;margin-bottom:38px;max-width:570px;margin-left:auto;margin-right:auto}
-.fbg{display:flex;gap:19px;justify-content:center;flex-wrap:wrap;align-items:center;margin-bottom:26px}
-.ftr{font-size:.8rem;color:var(--tx-d);display:flex;align-items:center;justify-content:center;gap:7px}
-
-/* ═══ FOOTER ═══ */
-footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:clamp(38px,6vw,70px) clamp(20px,6vw,80px) 0;margin-top:18px}
-.fi{max-width:1200px;margin:0 auto;display:flex;gap:clamp(22px,5vw,58px);flex-wrap:wrap;justify-content:space-between;align-items:flex-start;margin-bottom:38px}
-.fl{font-family:var(--fn-d);font-size:1.75rem;font-weight:900;color:var(--gold-l);display:block;margin-bottom:7px}
-.fbr p{font-size:.84rem;color:var(--tx-d);max-width:230px;line-height:1.6}
-.fln{display:flex;flex-direction:column;gap:11px}
-.fln a{color:var(--tx-m);text-decoration:none;font-size:.88rem;transition:color .25s}
-.fln a:hover{color:var(--gold-l)}
-.fso{display:flex;gap:14px;align-items:center}
-.fso a{color:var(--tx-d);text-decoration:none;font-size:1.15rem;width:39px;height:39px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:50%;transition:var(--tr)}
-.fso a:hover{color:var(--gold-l);border-color:var(--gold);box-shadow:0 0 16px rgba(201,168,76,.2)}
-.fb{border-top:1px solid var(--border);padding:18px 0;text-align:center;max-width:1200px;margin:0 auto}
-.fb p{font-size:.76rem;color:var(--tx-d)}
-
-/* ═══ RESPONSIVE ═══ */
-@media(max-width:768px){
-  .hero{padding:38px 18px}
-  .stats{gap:9px}
-  .sc{padding:11px 16px}
-  .gtabs{gap:5px}
-  .gt{padding:7px 12px;font-size:.73rem}
-  .cg{grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:11px}
-  .conv-in{flex-direction:column}
-  .fi{flex-direction:column;gap:30px}
-  .fbg{flex-direction:column;align-items:center}
-  .cta-wrap{flex-direction:column;align-items:center}
-  .btn-p,.btn-s{width:100%;max-width:320px;justify-content:center}
-  .wg{grid-template-columns:repeat(auto-fill,minmax(min(100%,148px),1fr))}
+.sec-body {
+  font-family: var(--font-main);
+  font-size: clamp(16px, 3.8vw, 24px);
+  color: #FFD700;
+  font-weight: 700;
+  line-height: 1.85;
+  margin-bottom: 28px;
 }
-@media(max-width:480px){
-  .lneon{font-size:clamp(3.2rem,18vw,4.8rem)}
-  .cg{grid-template-columns:1fr 1fr}
-  .ig{grid-template-columns:1fr 1fr}
+
+.sec-redirect {
+  font-family: var(--font-main);
+  font-size: clamp(15px, 3vw, 20px);
+  color: #aaa;
+  margin-top: 18px;
 }
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+
+.sec-countdown {
+  font-size: clamp(24px, 6vw, 42px);
+  color: #FF4444;
+  font-weight: 900;
+  display: block;
+  margin-top: 12px;
+  animation: neonRed 0.4s linear infinite alternate;
 }
-:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+
+.sec-phrase {
+  font-family: var(--font-main);
+  font-size: clamp(17px, 4vw, 26px);
+  color: #ff6666;
+  font-weight: 800;
+  margin-top: 18px;
+  line-height: 1.6;
+  animation: neonRed 0.6s linear infinite alternate;
+}
+
+/* ===== AUTH GATE ===== */
+#auth-gate {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: linear-gradient(135deg, #3b0019, #6b0f2a);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 30px;
+  text-align: center;
+}
+#auth-gate.active { display: flex; }
+
+.ag-logo {
+  font-family: var(--font-main);
+  font-size: clamp(36px, 10vw, 68px);
+  font-weight: 900;
+  color: #FFD700;
+  text-shadow: 0 0 22px rgba(255,215,0,0.55);
+  letter-spacing: 5px;
+  margin-bottom: 22px;
+}
+.ag-title {
+  font-family: var(--font-main);
+  font-size: clamp(22px, 5.5vw, 34px);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 14px;
+}
+.ag-desc {
+  font-family: var(--font-main);
+  font-size: clamp(15px, 3.5vw, 20px);
+  color: rgba(255,255,255,0.65);
+  line-height: 1.9;
+  max-width: 440px;
+  margin-bottom: 10px;
+}
+.ag-redirect-note {
+  font-family: var(--font-main);
+  font-size: clamp(13px, 2.8vw, 16px);
+  color: rgba(255,215,0,0.75);
+  margin-top: 14px;
+}
+.ag-countdown {
+  font-weight: 900;
+  color: #FFD700;
+  font-size: 1.3em;
+  display: inline-block;
+  animation: neonGold 0.6s ease-in-out infinite alternate;
+}
+@keyframes neonGold {
+  from { text-shadow: 0 0 6px #FFD700; }
+  to   { text-shadow: 0 0 18px #FFD700, 0 0 36px #F59E0B; }
+}
+
+/* ===== PAGE LOADER ===== */
+#page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: #3b0019;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 22px;
+  transition: opacity 0.5s ease;
+}
+#page-loader.fade-out { opacity: 0; pointer-events: none; }
+
+.loader-logo {
+  font-family: var(--font-main);
+  font-size: clamp(38px, 12vw, 80px);
+  font-weight: 900;
+  animation: neonColorCycle 2s linear infinite;
+  letter-spacing: 5px;
+}
+.loader-bar-wrap {
+  width: min(88vw, 300px);
+  height: 5px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.loader-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #e11d48, #FFD700, #fb7185, #f472b6);
+  border-radius: 10px;
+  animation: loaderFill 1.9s ease-in-out forwards;
+}
+@keyframes loaderFill { from { width:0; } to { width:100%; } }
+
+.loader-text {
+  font-family: var(--font-main);
+  font-size: clamp(12px, 2.8vw, 15px);
+  color: rgba(255,255,255,0.42);
+}
+
+/* ===== GATEWAY ===== */
+#gateway {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, #4a0020 0%, #be123c 35%, #e11d48 65%, #9f1239 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  overflow: hidden;
+  padding: 24px;
+}
+#gateway.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.gw-particles-wrap { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+
+.gw-p {
+  position: absolute;
+  border-radius: 50%;
+  animation: gwFloat linear infinite;
+  opacity: 0;
+}
+@keyframes gwFloat {
+  0%   { transform: translateY(110vh) scale(0); opacity: 0; }
+  8%   { opacity: 0.7; }
+  92%  { opacity: 0.7; }
+  100% { transform: translateY(-60px) scale(1.2); opacity: 0; }
+}
+
+.gw-logo-wrap {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 22px;
+  animation: logoFloat 3.2s ease-in-out infinite;
+}
+@keyframes logoFloat {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+.gw-logo {
+  font-family: var(--font-main);
+  font-size: clamp(50px, 14vw, 100px);
+  font-weight: 900;
+  letter-spacing: 8px;
+  display: inline-block;
+}
+.gw-logo span { display: inline-block; animation: neonColorCycle 2.2s linear infinite; }
+.gw-logo span:nth-child(1){animation-delay:0s}
+.gw-logo span:nth-child(2){animation-delay:0.37s}
+.gw-logo span:nth-child(3){animation-delay:0.74s}
+
+@keyframes neonColorCycle {
+  0%   { color:#FFD700; text-shadow:0 0 10px #FFD700,0 0 24px #FFD700; }
+  20%  { color:#fb7185; text-shadow:0 0 10px #fb7185,0 0 24px #fb7185; }
+  40%  { color:#f9a8d4; text-shadow:0 0 10px #f9a8d4,0 0 24px #f9a8d4; }
+  60%  { color:#F59E0B; text-shadow:0 0 10px #F59E0B,0 0 24px #F59E0B; }
+  80%  { color:#fda4af; text-shadow:0 0 10px #fda4af,0 0 24px #fda4af; }
+  100% { color:#FFD700; text-shadow:0 0 10px #FFD700,0 0 24px #FFD700; }
+}
+
+.gw-subtitle {
+  font-family: var(--font-main);
+  font-size: clamp(15px, 3.8vw, 26px);
+  color: rgba(255,255,255,0.9);
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-align: center;
+  margin-bottom: 10px;
+  z-index: 2;
+  position: relative;
+}
+
+.gw-tagline {
+  font-family: var(--font-main);
+  font-size: clamp(18px, 4.8vw, 32px);
+  font-weight: 800;
+  color: #FFD700;
+  text-shadow: 0 0 18px rgba(255,215,0,0.65);
+  text-align: center;
+  z-index: 2;
+  position: relative;
+  margin-bottom: 12px;
+  line-height: 1.55;
+}
+
+.gw-desc {
+  font-family: var(--font-main);
+  font-size: clamp(14px, 3.2vw, 20px);
+  color: rgba(255,255,255,0.78);
+  text-align: center;
+  max-width: min(90vw, 520px);
+  line-height: 2;
+  z-index: 2;
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.gw-progress-wrap {
+  width: min(90vw, 440px);
+  z-index: 2;
+  position: relative;
+  margin-bottom: 24px;
+}
+.gw-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  color: rgba(255,255,255,0.7);
+  font-size: clamp(12px, 2.6vw, 16px);
+  margin-bottom: 10px;
+  font-family: var(--font-main);
+}
+.gw-pbar-bg {
+  width: 100%;
+  height: 7px;
+  background: rgba(255,255,255,0.16);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.gw-pbar-fill {
+  height: 100%;
+  background: linear-gradient(90deg,#e11d48,#FFD700,#fb7185,#f9a8d4);
+  background-size: 200% 100%;
+  border-radius: 10px;
+  width: 0%;
+  transition: width 0.35s ease;
+  animation: progressShimmer 2.2s linear infinite;
+}
+@keyframes progressShimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: 0% center; }
+}
+
+.gw-enter-btn {
+  background: linear-gradient(135deg,#FFD700,#F59E0B,#D97706);
+  border: none;
+  padding: clamp(13px,3.2vw,20px) clamp(32px,8vw,65px);
+  border-radius: 50px;
+  font-family: var(--font-main);
+  font-size: clamp(16px,3.8vw,24px);
+  font-weight: 900;
+  color: #4a0020;
+  cursor: pointer;
+  z-index: 2;
+  position: relative;
+  box-shadow: 0 0 28px rgba(255,215,0,0.55), 0 8px 32px rgba(0,0,0,0.22);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: 1px;
+}
+.gw-enter-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 45px rgba(255,215,0,0.85), 0 14px 42px rgba(0,0,0,0.3); }
+.gw-enter-btn:active { transform: scale(0.97); }
+
+.gw-skip-hint {
+  color: rgba(255,255,255,0.45);
+  font-size: clamp(12px,2.5vw,15px);
+  z-index: 2;
+  position: relative;
+  margin-top: 20px;
+  font-family: var(--font-main);
+  text-align: center;
+}
+.gw-count-num {
+  font-weight: 900;
+  color: #FFD700;
+  font-size: 1.25em;
+}
+
+/* ===== HEADER ===== */
+#main-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(74,0,32,0.97);
+  backdrop-filter: blur(22px);
+  border-bottom: 1px solid rgba(225,29,72,0.28);
+  padding: 0 clamp(18px,5vw,50px);
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-logo {
+  font-family: var(--font-main);
+  font-size: clamp(22px,5.5vw,32px);
+  font-weight: 900;
+  color: #FFD700;
+  text-shadow: 0 0 14px rgba(255,215,0,0.5);
+  letter-spacing: 4px;
+}
+
+.header-date {
+  font-family: var(--font-main);
+  font-size: clamp(12px,2.6vw,15px);
+  color: rgba(255,255,255,0.55);
+  direction: rtl;
+  text-align: left;
+}
+
+/* ===== MAIN ===== */
+#main-content {
+  padding-top: 70px;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.top-space { height: clamp(60px,8vw,100px); width: 100%; }
+
+/* ===== HERO ===== */
+.aqx-hero {
+  background: linear-gradient(135deg, rgba(74,0,32,0.94) 0%, rgba(190,18,60,0.84) 50%, rgba(74,0,32,0.94) 100%);
+  padding: clamp(48px,11vw,100px) clamp(20px,6vw,90px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: rgba(225,29,72,0.18);
+  border: 1px solid rgba(251,113,133,0.4);
+  padding: 9px 22px;
+  border-radius: 50px;
+  font-family: var(--font-main);
+  font-size: clamp(14px,2.8vw,18px);
+  color: #fda4af;
+  margin-bottom: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.hero-title {
+  font-family: var(--font-main);
+  font-size: clamp(32px,8vw,72px);
+  font-weight: 900;
+  color: #FFFFFF;
+  line-height: 1.22;
+  margin-bottom: 18px;
+}
+.hero-title .accent {
+  background: linear-gradient(135deg,#FFD700,#F59E0B,#fb7185);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-org {
+  font-family: var(--font-main);
+  font-size: clamp(17px,4vw,28px);
+  color: #fda4af;
+  font-weight: 700;
+  margin-bottom: 22px;
+  letter-spacing: 2px;
+}
+
+.hero-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  font-family: var(--font-main);
+  font-size: clamp(14px,2.8vw,18px);
+  color: rgba(255,255,255,0.6);
+}
+
+.hero-divider {
+  width: 65px;
+  height: 4px;
+  background: linear-gradient(90deg,#e11d48,#FFD700);
+  margin: 28px auto 0;
+  border-radius: 2px;
+}
+
+/* ===== CONTENT ===== */
+.content-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 clamp(16px,5vw,65px) 70px;
+}
+
+.policy-section {
+  background: rgba(255,255,255,0.60);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(225,29,72,0.16);
+  border-radius: 22px;
+  padding: clamp(28px,5.5vw,55px);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 24px rgba(225,29,72,0.07);
+}
+.policy-section::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 5px; height: 100%;
+  background: linear-gradient(180deg,#e11d48,#FFD700,#fb7185);
+  border-radius: 0 22px 22px 0;
+}
+.policy-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 55px rgba(225,29,72,0.13), 0 0 32px rgba(225,29,72,0.08);
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.section-icon { font-size: clamp(28px,5.5vw,38px); flex-shrink: 0; margin-top: 2px; }
+
+.section-title {
+  font-family: var(--font-main);
+  font-size: clamp(22px,5vw,34px);
+  font-weight: 900;
+  color: var(--text-main);
+  line-height: 1.35;
+}
+.section-title .num { color: #e11d48; margin-left: 7px; }
+
+.section-body {
+  font-family: var(--font-main);
+  font-size: clamp(16px,3.2vw,20px);
+  color: var(--text-sub);
+  line-height: 2.1;
+  font-weight: 400;
+}
+.section-body p { margin-bottom: 20px; }
+.section-body p:last-child { margin-bottom: 0; }
+
+.policy-list { list-style: none; padding: 0; margin: 16px 0; }
+.policy-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(225,29,72,0.1);
+  font-family: var(--font-main);
+  font-size: clamp(15px,3.2vw,19px);
+  color: var(--text-sub);
+  line-height: 1.8;
+}
+.policy-list li:last-child { border-bottom: none; }
+.policy-list li::before { content:'◆'; color:#e11d48; font-size:11px; margin-top:6px; flex-shrink:0; }
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%,260px),1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.info-card {
+  background: rgba(225,29,72,0.06);
+  border: 1px solid rgba(225,29,72,0.18);
+  border-radius: 14px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+}
+.info-card:hover {
+  background: rgba(225,29,72,0.12);
+  border-color: rgba(225,29,72,0.35);
+  transform: translateY(-2px);
+}
+.info-card-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+.info-card-text {
+  font-family: var(--font-main);
+  font-size: clamp(14px,3vw,17px);
+  color: var(--text-sub);
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%,210px),1fr));
+  gap: 13px;
+  margin-top: 18px;
+}
+
+.tool-card {
+  background: linear-gradient(135deg,rgba(225,29,72,0.08),rgba(251,113,133,0.05));
+  border: 1px solid rgba(225,29,72,0.2);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.tool-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(225,29,72,0.16);
+  border-color: rgba(245,158,11,0.3);
+}
+.tool-icon { font-size: 30px; margin-bottom: 11px; display: block; }
+.tool-text {
+  font-family: var(--font-main);
+  font-size: clamp(13px,3vw,16px);
+  color: var(--text-sub);
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.highlight-box {
+  background: linear-gradient(135deg,rgba(225,29,72,0.08),rgba(251,113,133,0.05));
+  border: 1px solid rgba(225,29,72,0.25);
+  border-radius: 16px;
+  padding: 22px 28px;
+  margin: 22px 0;
+  font-family: var(--font-main);
+  font-size: clamp(15px,3.2vw,19px);
+  color: var(--text-sub);
+  line-height: 2;
+}
+.highlight-box strong { color: #e11d48; }
+
+.gold-box {
+  background: linear-gradient(135deg,rgba(245,158,11,0.1),rgba(217,119,6,0.06));
+  border: 1px solid rgba(245,158,11,0.28);
+  border-radius: 16px;
+  padding: 22px 28px;
+  margin: 22px 0;
+  font-family: var(--font-main);
+  font-size: clamp(15px,3.2vw,19px);
+  color: var(--text-sub);
+  line-height: 2;
+}
+.gold-box strong { color: #D97706; }
+
+.law-box {
+  background: linear-gradient(135deg,rgba(225,29,72,0.07),rgba(159,18,57,0.05));
+  border: 1px solid rgba(225,29,72,0.24);
+  border-radius: 16px;
+  padding: 22px 28px;
+  margin: 22px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.law-box-icon { font-size: 32px; flex-shrink: 0; }
+.law-box-text {
+  font-family: var(--font-main);
+  font-size: clamp(15px,3.2vw,19px);
+  color: var(--text-sub);
+  line-height: 2;
+}
+.law-box-text strong { color:#e11d48; }
+
+.linked-policies { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 18px; }
+
+.policy-link-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: rgba(225,29,72,0.08);
+  border: 1px solid rgba(225,29,72,0.28);
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-family: var(--font-main);
+  font-size: clamp(13px,2.6vw,16px);
+  color: #be123c;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.policy-link-tag:hover { background: rgba(225,29,72,0.18); color: #9f1239; transform:translateY(-2px); }
+
+/* ===== FOOTER ===== */
+.aqx-footer {
+  background: linear-gradient(135deg,rgba(74,0,32,0.99),rgba(45,0,18,0.99));
+  border-top: 1px solid rgba(225,29,72,0.22);
+  padding: clamp(44px,9vw,80px) clamp(20px,5vw,65px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-logo {
+  font-family: var(--font-main);
+  font-size: clamp(32px,9vw,58px);
+  font-weight: 900;
+  letter-spacing: 6px;
+  margin-bottom: 18px;
+  background: linear-gradient(135deg,#FFD700,#F59E0B,#fb7185,#e11d48);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.footer-tagline {
+  font-family: var(--font-main);
+  font-size: clamp(16px,3.8vw,24px);
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 28px;
+  font-weight: 500;
+  line-height: 1.8;
+}
+
+.footer-seal {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  background: rgba(225,29,72,0.12);
+  border: 1px solid rgba(225,29,72,0.24);
+  border-radius: 18px;
+  padding: 22px 38px;
+  margin: 28px auto;
+}
+.footer-seal-icon { font-size: 40px; }
+.footer-seal-text {
+  font-family: var(--font-main);
+  font-size: clamp(14px,3vw,17px);
+  color: rgba(255,255,255,0.65);
+  line-height: 1.9;
+}
+.footer-seal-date {
+  font-family: var(--font-main);
+  font-size: clamp(15px,3.2vw,19px);
+  color: #FFD700;
+  font-weight: 800;
+}
+
+.footer-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(225,29,72,0.5),rgba(255,215,0,0.45),transparent);
+  margin: 28px 0;
+}
+
+.footer-copy {
+  font-family: var(--font-main);
+  font-size: clamp(13px,2.6vw,15px);
+  color: rgba(255,255,255,0.35);
+  line-height: 1.9;
+}
+.footer-copy strong { color:rgba(255,215,0,0.6); }
+
+/* ===== SCROLL TOP ===== */
+#scroll-top {
+  position: fixed;
+  bottom: 32px;
+  left: 32px;
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg,#e11d48,#9f1239);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 22px rgba(225,29,72,0.5);
+  z-index: 200;
+  opacity: 0;
+  transform: translateY(22px);
+  transition: all 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#scroll-top.visible { opacity:1; transform:translateY(0); }
+#scroll-top:hover { transform:translateY(-4px) scale(1.1); }
+
+/* ===== VOICE STATUS ===== */
+#voice-status {
+  position: fixed;
+  bottom: 32px;
+  right: clamp(16px,5vw,44px);
+  background: rgba(74,0,32,0.97);
+  border: 1px solid rgba(225,29,72,0.45);
+  border-radius: 50px;
+  padding: 9px 20px;
+  font-family: var(--font-main);
+  font-size: clamp(12px,2.5vw,15px);
+  color: #fda4af;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  max-width: 260px;
+  pointer-events: none;
+}
+#voice-status.active { opacity:1; }
+#voice-status .pulse-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: #fda4af;
+  animation: pulseDot 1s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulseDot {
+  0%,100% { transform:scale(1); opacity:1; }
+  50%      { transform:scale(1.55); opacity:0.45; }
+}
+
+/* ===== READABLE TEXT ===== */
+.readable-text {
+  cursor: pointer;
+  transition: color 0.2s ease;
+  display: inline;
+  border-radius: 4px;
+}
+.readable-text:hover { color:#be123c; }
+.readable-text.speaking {
+  color: #e11d48;
+  text-shadow: 0 0 8px rgba(225,29,72,0.3);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:768px) {
+  .cards-grid    { grid-template-columns: 1fr; }
+  .tools-grid    { grid-template-columns: repeat(2,1fr); }
+  .policy-section { padding: 22px 18px; }
+  .aqx-hero      { padding: 36px 18px 44px; }
+}
+@media (max-width:480px) {
+  .tools-grid    { grid-template-columns: 1fr; }
+  .hero-meta     { flex-direction:column; gap:8px; }
+  .law-box       { flex-direction:column; }
+  #scroll-top    { left:16px; bottom:80px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after { animation-duration:0.01ms !important; transition-duration:0.1ms !important; }
+}
 </style>
 </head>
 <body>
 
-<canvas id="pc"></canvas>
-<div class="au-wrap" aria-hidden="true"><div class="au au1"></div><div class="au au2"></div><div class="au au3"></div></div>
-
-<!-- Voice Indicator -->
-<div id="vi" aria-live="polite">
-  <div class="vw"><span></span><span></span><span></span><span></span><span></span></div>
-  <span id="vt"></span>
+<div id="page-loader">
+  <div class="loader-logo">AQX</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-text">جارٍ تحميل منظومة القرماني إكس...</div>
 </div>
 
-<!-- ═══ HEADER SPACE — 5 lines ═══ -->
-<div class="hsp" id="hsp"></div>
-
-<!-- ═══ HERO ═══ -->
-<header class="hero" role="banner">
-  <div class="hero-in">
-
-    <div class="logo-wrap">
-      <span class="lstar" aria-hidden="true">✦</span>
-      <span class="lsub">القرمانى اكس</span>
-      <h1 class="lneon">AQX</h1>
-      <span class="lsub">بوابة العطاء العالمي</span>
-      <span class="lstar" aria-hidden="true">✦</span>
+<div id="security-warning">
+  <div class="sec-bg-anim"></div>
+  <div class="sec-content">
+    <span class="sec-icon">🚨</span>
+    <div class="sec-title">⚠️ تحذير أمني خطير ⚠️</div>
+    <div class="sec-body" id="sec-body-text">
+      تم رصد محاولة غير مصرح بها!<br>
+      هذه الصفحة محمية بأنظمة الأمن الرقمي لمنظومة القرماني إكس AQX.<br>
+      أي محاولة لفحص الكود المصدري أو نقل الرابط في تبويب أو متصفح جديد<br>
+      <strong>محظورة تمامًا وتُعدّ انتهاكًا أمنيًا موثّقًا.</strong>
     </div>
-
-    <div>
-      <p class="tg-main">كل قطرة خير تُحيي بحراً من الأمل</p>
-      <p class="tg-sub">لسنا منصة تبرعات — نحن منظومة التغيير العالمي الشامل</p>
+    <div class="sec-phrase" id="sec-phrase-text">🔒 هذا النظام يراقب — لا مجال للتحايل على منظومة القرماني إكس</div>
+    <div class="sec-redirect">
+      سيتم تحويلك فوراً إلى الصفحة الرئيسية...<br>
+      <span class="sec-countdown" id="sec-countdown">5</span>
     </div>
-
-    <div class="stats">
-      <div class="sc" data-v="مليون ونصف مستفيد حول العالم"><span class="sn">١٫٥M+</span><span class="sl">مستفيد حول العالم</span></div>
-      <div class="sc" data-v="مئة وثلاثة وعشرون دولة شريكة"><span class="sn">١٢٣</span><span class="sl">دولة شريكة</span></div>
-      <div class="sc" data-v="ثمانية وتسعون بالمئة نسبة الشفافية"><span class="sn">٩٨٪</span><span class="sl">شفافية موثّقة</span></div>
-      <div class="sc" data-v="أكثر من مليون مشروع خيري منجز"><span class="sn">١M+</span><span class="sl">مشروع خيري منجز</span></div>
-    </div>
-
-    <div class="cta-wrap">
-      <a href="donate.html" class="btn-p" data-v="تبرع الآن وكن جزءاً من التغيير العالمي" onclick="navTo(event,this)">
-        <span class="bi">💎</span>تبرّع الآن — غيِّر حياة<span class="shim"></span>
-      </a>
-      <a href="volunteer.html" class="btn-s" data-v="انضم إلينا كمتطوع وساهم بوقتك وخبرتك" onclick="navTo(event,this)">
-        <span class="bi">🤝</span>تطوّع معنا
-      </a>
-    </div>
-
-    <div class="sh" aria-hidden="true"><span>اكتشف بوابات العطاء</span><div class="sa"></div></div>
   </div>
+</div>
+
+<div id="auth-gate">
+  <div class="ag-logo">AQX</div>
+  <div class="ag-title">🔐 هذا المحتوى مقيّد</div>
+  <div class="ag-desc">
+    يجب تسجيل الدخول إلى منظومة القرماني إكس<br>
+    للوصول إلى هذه الصفحة.<br>
+    سيتم تحويلك تلقائيًا إلى الصفحة الرئيسية.
+  </div>
+  <div class="ag-redirect-note">
+    التحويل التلقائي خلال <span class="ag-countdown" id="ag-count">5</span> ثوانٍ...
+  </div>
+</div>
+
+<canvas id="particles-canvas"></canvas>
+
+<div id="gateway">
+  <div class="gw-particles-wrap" id="gw-particles"></div>
+  <div class="gw-logo-wrap">
+    <div class="gw-logo"><span>A</span><span>Q</span><span>X</span></div>
+  </div>
+  <div class="gw-subtitle">منظومة القرماني إكس</div>
+  <div class="gw-tagline">🛡️ حماية الطفل أولوية لا تُناقَش 🛡️</div>
+  <div class="gw-desc">
+    مرحباً بك في بوابة سياسة حماية الأطفال الرسمية لمنظومة القرماني إكس.<br>
+    وثيقة قانونية شاملة تُرسّخ حق الطفل في الحماية والأمان الرقمي.<br>
+    <em>يُرجى قراءتها بعناية قبل المتابعة.</em>
+  </div>
+  <div class="gw-progress-wrap">
+    <div class="gw-progress-labels">
+      <span>سيتم الدخول تلقائياً خلال</span>
+      <span><span id="gw-count" class="gw-count-num">15</span> ثانية</span>
+    </div>
+    <div class="gw-pbar-bg">
+      <div class="gw-pbar-fill" id="gw-progress"></div>
+    </div>
+  </div>
+  <button class="gw-enter-btn" id="gw-enter-btn" onclick="enterSite()">
+    <span>👶</span>
+    <span>قراءة سياسة حماية الأطفال الآن</span>
+  </button>
+  <div class="gw-skip-hint">
+    أو انتظر <span class="gw-count-num" id="gw-count2">15</span> ثانية للدخول التلقائي
+  </div>
+</div>
+
+<header id="main-header">
+  <div class="header-logo">⚡ AQX</div>
+  <div class="header-date" id="header-date"></div>
 </header>
 
-<!-- ═══ CONVICTION STRIP ═══ -->
-<section class="conv" aria-label="رسالة إقناعية">
-  <div class="conv-in">
-    <p class="conv-tx"><span class="hl">٣ ثوانٍ فقط</span> تفصلك عن إنقاذ حياة. لا تدع اللحظة تمر — كل ثانية، طفلٌ ينتظر، أسرةٌ تحتاج، حلمٌ ينكسر. <span class="hl">أنت القادر على إعادة البناء.</span></p>
-    <a href="donate.html" class="btn-cv" data-v="تبرع الآن قبل أن تغادر الصفحة" onclick="navTo(event,this)">تبرّع الآن ←</a>
-  </div>
-</section>
+<main id="main-content">
 
-<!-- ═══ GATEWAYS ═══ -->
-<main>
-<section class="sec" aria-label="بوابات العطاء">
-  <div class="sec-hd">
-    <div class="ey">بوابات العطاء الشاملة</div>
-    <h2 class="stl">اختر مجال عطائك</h2>
-    <p class="sdesc">لأن العطاء لا يقتصر على المال — هنا تجد كل شكل من أشكال الخير</p>
-  </div>
+  <div class="top-space"></div>
 
-  <div class="gtabs" role="tablist">
-    <button class="gt on" role="tab" aria-selected="true" data-t="g-care" data-v="الكفالة والرعاية — ارعَ إنساناً وغيِّر مساره للأبد" onclick="swG(this)">🟢 الكفالة</button>
-    <button class="gt" role="tab" aria-selected="false" data-t="g-food" data-v="الغذاء والمعيشة — لأن الجوع لا يعرف الانتظار" onclick="swG(this)">🍞 الغذاء</button>
-    <button class="gt" role="tab" aria-selected="false" data-t="g-health" data-v="الصحة — كل عملية أنقذت حياة ببضعة دراهم" onclick="swG(this)">🏥 الصحة</button>
-    <button class="gt" role="tab" aria-selected="false" data-t="g-hous" data-v="الإسكان — سقف يحمي أسرة ويُعيد الكرامة" onclick="swG(this)">🏠 الإسكان</button>
-    <button class="gt" role="tab" aria-selected="false" data-t="g-sadq" data-v="الصدقات الجارية — عطاء يبقى بعد رحيلك" onclick="swG(this)">🕌 الجاري</button>
-    <button class="gt" role="tab" aria-selected="false" data-t="g-edu" data-v="التعليم — استثمر في عقل يُغيِّر أمة" onclick="swG(this)">🎓 التعليم</button>
-    <button class="gt" role="tab" aria-selected="false" data-t="g-soc" data-v="الدعم الاجتماعي — لأن المجتمع أُسَر تتماسك" onclick="swG(this)">💍 الاجتماعي</button>
-    <button class="gt" role="tab" aria-selected="false" data-t="g-dev" data-v="التنمية والتمكين — علِّم الإنسان كيف يصطاد" onclick="swG(this)">🌱 التنمية</button>
-    <button class="gt" role="tab" aria-selected="false" data-t="g-rel" data-v="الإغاثة والطوارئ — ابعث الأمل حيث يشتد الظلام" onclick="swG(this)">🌍 الإغاثة</button>
-    <button class="gt" role="tab" aria-selected="false" data-t="g-nm" data-v="التبرعات غير المالية — تبرّع بما تملكه مهما كان" onclick="swG(this)">❤️ غير مالي</button>
-  </div>
-
-  <!-- ── CARE ── -->
-  <div class="gp" id="g-care" role="tabpanel">
-    <div class="gph"><h3>كفالة إنسان = حياة كاملة مُغيَّرة</h3><p>لحظة واحدة من قرارك تصنع فارقاً يمتد لعمر كامل. كفالتك ليست مساعدة — هي شراكة في مستقبل أفضل.</p></div>
-    <div class="cg">
-      <div class="cc gl" data-v="كفالة يتيم — اكفل يتيماً وكن رفيقه في الجنة" onclick="goCard(this,'كفالة-يتيم.html')"><span class="ci">👶</span><h4>كفالة يتيم</h4><p>كن رفيقه في الدنيا والآخرة</p><div class="cb">الأعلى طلباً</div></div>
-      <div class="cc" data-v="كفالة أسرة — أنقذ أسرة كاملة بكفالة واحدة" onclick="goCard(this,'كفالة-اسرة.html')"><span class="ci">👨‍👩‍👧‍👦</span><h4>كفالة أسرة</h4><p>دعم شامل لأسرة بأكملها</p></div>
-      <div class="cc" data-v="كفالة أرملة — ساند امرأة تحمل بمفردها عبء الحياة" onclick="goCard(this,'كفالة-ارملة.html')"><span class="ci">🌸</span><h4>كفالة أرملة</h4><p>قوّة لمن تحمل بمفردها</p></div>
-      <div class="cc" data-v="كفالة مسن — لأن كبار السن يستحقون الكرامة" onclick="goCard(this,'كفالة-مسن.html')"><span class="ci">👴</span><h4>كفالة مسن</h4><p>كرامة في أعوامهم الأخيرة</p></div>
-      <div class="cc" data-v="كفالة ذوي الإعاقة — ادعم من يحتاج دعمك أكثر من غيره" onclick="goCard(this,'كفالة-اعاقة.html')"><span class="ci">♿</span><h4>ذوو الإعاقة</h4><p>قدراتهم تتخطى الإعاقة</p></div>
-      <div class="cc" data-v="كفالة حافظ القرآن — استثمر في حراس كتاب الله" onclick="goCard(this,'كفالة-قران.html')"><span class="ci">📖</span><h4>كفالة حافظ قرآن</h4><p>استثمر في حراس كلام الله</p></div>
+  <section class="aqx-hero">
+    <div class="hero-badge">👶 وثيقة قانونية رسمية ملزمة</div>
+    <h1 class="hero-title">سياسة <span class="accent">حماية الأطفال</span></h1>
+    <div class="hero-org">منظومة القرماني إكس (AQX)</div>
+    <div class="hero-meta">
+      <span>🗂️ الإصدار: 1.0</span>
+      <span>📅 آخر تحديث: <span id="hero-date"></span></span>
+      <span>✅ ملزمة قانونياً</span>
     </div>
-    <a href="كفالة-كل.html" class="gab" data-v="اكتشف جميع فرص الكفالة" onclick="navTo(event,this)">اكتشف كل فرص الكفالة ←</a>
-  </div>
+    <div class="hero-divider"></div>
+  </section>
 
-  <!-- ── FOOD ── -->
-  <div class="gp" id="g-food" role="tabpanel" hidden>
-    <div class="gph"><h3>لأن الجوع لا يعرف الانتظار</h3><p>في كل دقيقة، طفلٌ يبكي من الجوع. طعامك اليوم ليس تبرعاً — هو إنسانية.</p></div>
-    <div class="cg">
-      <div class="cc gl" data-v="إطعام الطعام — أطعم جائعاً وانل أجر عظيم" onclick="goCard(this,'اطعام.html')"><span class="ci">🍽️</span><h4>إطعام الجائعين</h4><p>أعظم الصدقات أجراً</p><div class="cb">عاجل</div></div>
-      <div class="cc" data-v="سلال غذائية — سلة غذاء تكفي أسرة شهراً كاملاً" onclick="goCard(this,'سلال-غذاء.html')"><span class="ci">🧺</span><h4>سلال غذائية</h4><p>شهر من الاطمئنان لأسرة</p></div>
-      <div class="cc" data-v="وجبات ساخنة — دفء الطعام يُذيب برد المعاناة" onclick="goCard(this,'وجبات.html')"><span class="ci">🥘</span><h4>وجبات ساخنة</h4><p>دفء يصل القلب قبل المعدة</p></div>
-      <div class="cc" data-v="كسوة العيد — أدخل الفرحة على قلب طفل في العيد" onclick="goCard(this,'كسوة-عيد.html')"><span class="ci">👗</span><h4>كسوة العيد</h4><p>فرحة العيد لكل طفل</p></div>
-      <div class="cc" data-v="سقيا الماء — الماء الحلال يمحو الذنوب" onclick="goCard(this,'سقيا-ماء.html')"><span class="ci">💧</span><h4>سقيا الماء</h4><p>أجرٌ يتجدد مع كل قطرة</p></div>
-      <div class="cc" data-v="مخبز خيري — خبز يومي لعائلات لا تعرف الغد" onclick="goCard(this,'مخبز-خيري.html')"><span class="ci">🍞</span><h4>مخبز خيري</h4><p>خبز يومي لمن لا يجده</p></div>
-    </div>
-    <a href="غذاء-كل.html" class="gab" data-v="اكتشف جميع مشاريع الغذاء" onclick="navTo(event,this)">كل مشاريع الغذاء والمعيشة ←</a>
-  </div>
+  <div class="content-wrap">
 
-  <!-- ── HEALTH ── -->
-  <div class="gp" id="g-health" role="tabpanel" hidden>
-    <div class="gph"><h3>صحتك تنقذ حياة غيرك</h3><p>عملية جراحية واحدة بتبرعك = طفل يرى أباه يكبر. لا ثمن للحياة، لكن تبرعك يصنع المعجزات.</p></div>
-    <div class="cg">
-      <div class="cc gl" data-v="العمليات الحرجة — عمليتك تعطي الحياة لمن فقدها" onclick="goCard(this,'عمليات-حرجة.html')"><span class="ci">🫀</span><h4>العمليات الحرجة</h4><p>بضع دراهم تنقذ روحاً</p><div class="cb">حرج</div></div>
-      <div class="cc" data-v="علاج السرطان — ادعم محارباً يقاوم المرض" onclick="goCard(this,'علاج-سرطان.html')"><span class="ci">🎗️</span><h4>دعم مرضى السرطان</h4><p>قف بجانب المحاربين</p></div>
-      <div class="cc" data-v="جلسات الغسيل الكلوي — جلسة تُبقي الأمل حياً" onclick="goCard(this,'غسيل-كلى.html')"><span class="ci">🫁</span><h4>غسيل الكلى</h4><p>جلسات تُديم الحياة</p></div>
-      <div class="cc" data-v="الأطراف الصناعية — أعد لمبتور قدرته على المضي قُدُماً" onclick="goCard(this,'اطراف-صناعية.html')"><span class="ci">🦾</span><h4>أطراف صناعية</h4><p>أعد الحركة والكرامة</p></div>
-      <div class="cc" data-v="الكراسي المتحركة — استقلالية بلا حدود" onclick="goCard(this,'كراسي-متحركة.html')"><span class="ci">♿</span><h4>كراسي متحركة</h4><p>استقلالية بلا حدود</p></div>
-      <div class="cc" data-v="الروشتة الخيرية — دواء يُتِمُّ شفاء من لا يقدر عليه" onclick="goCard(this,'روشتة-خيرية.html')"><span class="ci">💊</span><h4>الروشتة الخيرية</h4><p>دواء لمن لا يملك ثمنه</p></div>
-    </div>
-    <a href="صحة-كل.html" class="gab" data-v="اكتشف جميع المشاريع الصحية" onclick="navTo(event,this)">كل المشاريع الصحية ←</a>
-  </div>
+    <!-- INTRO -->
+    <section class="policy-section" id="intro">
+      <div class="section-header">
+        <span class="section-icon">📌</span>
+        <h2 class="section-title">المقدمة</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تلتزم منظومة القرماني إكس (AQX) بحماية خصوصية وسلامة ورفاهية الأطفال والقُصّر عند استخدامهم لأي من خدماتها أو منصاتها أو تطبيقاتها أو واجهاتها الرقمية أو أي خدمات مستقبلية تابعة لها، وذلك وفقًا للقوانين المحلية والدولية واجبة التطبيق والمعايير المعترف بها لحماية الأطفال على الإنترنت.</span></p>
+        <p><span class="readable-text">وتُعد هذه السياسة جزءًا لا يتجزأ من شروط الاستخدام وسياسة الخصوصية، ويُعد استخدام الخدمات موافقة ضمنية على أحكامها، مع مراعاة القيود العمرية المنصوص عليها.</span></p>
+        <div class="highlight-box">
+          <strong>⚠️ إشعار مهم:</strong> <span class="readable-text">حماية الأطفال ليست مجرد التزام قانوني بالنسبة لمنظومة AQX — بل هي قيمة أصيلة وأولوية قصوى تتجسد في كل قرار تشغيلي وتقني وقانوني تتخذه المنظومة.</span>
+        </div>
+      </div>
+    </section>
 
-  <!-- ── HOUSING ── -->
-  <div class="gp" id="g-hous" role="tabpanel" hidden>
-    <div class="gph"><h3>سقف يحمي — كرامة تُعاد</h3><p>المنزل ليس بناءً — هو الأمان والحلم والمستقبل. تبرعك اليوم يبني وطناً لأسرة.</p></div>
-    <div class="cg">
-      <div class="cc gl" data-v="بناء منزل — ابنِ منزلاً وانل صدقة جارية وأجر عظيم" onclick="goCard(this,'بناء-منزل.html')"><span class="ci">🏗️</span><h4>بناء منزل</h4><p>أجرٌ جارٍ لكل يوم سكنوا</p><div class="cb">صدقة جارية</div></div>
-      <div class="cc" data-v="ترميم منزل — أصلح جداراً يقف بين أسرة والبرد" onclick="goCard(this,'ترميم-منزل.html')"><span class="ci">🔨</span><h4>ترميم منزل</h4><p>إصلاح يُعيد الكرامة</p></div>
-      <div class="cc" data-v="سداد الإيجار — أنقذ أسرة من شبح الطرد" onclick="goCard(this,'سداد-ايجار.html')"><span class="ci">🔑</span><h4>سداد الإيجار</h4><p>أنقذ أسرة من الطرد</p></div>
-      <div class="cc" data-v="وصلة مياه وكهرباء — أضئ منزلاً وأروِ عطشاً" onclick="goCard(this,'وصلات.html')"><span class="ci">💡</span><h4>مياه وكهرباء</h4><p>ضوء وماء لكل بيت</p></div>
-      <div class="cc" data-v="مساكن الطوارئ — مأوى فوري لمن فقد كل شيء" onclick="goCard(this,'مساكن-طوارئ.html')"><span class="ci">🏕️</span><h4>مساكن الطوارئ</h4><p>مأوى فوري للمنكوبين</p></div>
-      <div class="cc" data-v="تأثيث المنزل — اجعل المنزل الفارغ بيتاً دافئاً" onclick="goCard(this,'تاثيث.html')"><span class="ci">🛋️</span><h4>تأثيث المنزل</h4><p>منزل إلى بيت حقيقي</p></div>
-    </div>
-    <a href="اسكان-كل.html" class="gab" data-v="اكتشف مشاريع الإسكان" onclick="navTo(event,this)">كل مشاريع الإسكان ←</a>
-  </div>
+    <!-- AGE -->
+    <section class="policy-section" id="age">
+      <div class="section-header">
+        <span class="section-icon">🎂</span>
+        <h2 class="section-title"><span class="num">أولاً:</span> الحد الأدنى للعمر</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">لا يُسمح باستخدام خدمات منظومة AQX للأشخاص الذين تقل أعمارهم عن الحد الأدنى القانوني المسموح به في الدولة أو الإقليم محل الإقامة، ما لم يتم الحصول على موافقة ولي الأمر أو الوصي القانوني، أو وجود إطار قانوني يسمح بذلك.</span></p>
+        <div class="gold-box">
+          <strong>📌 الحد الأدنى العام:</strong> <span class="readable-text">في حال عدم وجود تحديد قانوني واضح، تعتمد المنظومة حدًا أدنى عامًا قدره <strong>13 عامًا</strong> كحد أدنى للاستخدام، ما لم يتطلب القانون خلاف ذلك.</span>
+        </div>
+        <div class="cards-grid">
+          <div class="info-card">
+            <span class="info-card-icon">📋</span>
+            <div class="info-card-text readable-text">الحصول على موافقة صريحة من ولي الأمر أو الوصي القانوني عند الحاجة</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">⚖️</span>
+            <div class="info-card-text readable-text">احترام الإطار القانوني واجب التطبيق في كل دولة أو إقليم</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">🔍</span>
+            <div class="info-card-text readable-text">التحقق من السن عند الحاجة وفقًا للإجراءات الأمنية المعتمدة</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <!-- ── SADAQA JARIYA ── -->
-  <div class="gp" id="g-sadq" role="tabpanel" hidden>
-    <div class="gph"><h3>عطاء لا ينتهي بعد رحيلك</h3><p>الصدقة الجارية هي سهمك في الخلود. زرع شجرة اليوم ستُظلِّل بعدك الأجيال.</p></div>
-    <div class="cg">
-      <div class="cc gl" data-v="بناء مسجد — بيت الله يبني لك بيتاً في الجنة" onclick="goCard(this,'بناء-مسجد.html')"><span class="ci">🕌</span><h4>بناء مسجد</h4><p>بيتُ الله يرفع اسمك</p><div class="cb">أجر دائم</div></div>
-      <div class="cc" data-v="حفر بئر — كل رشفة ماء صدقة جارية باسمك" onclick="goCard(this,'حفر-بئر.html')"><span class="ci">🪣</span><h4>حفر بئر</h4><p>كل رشفة صدقة لك</p></div>
-      <div class="cc" data-v="وقف مصحف — كتاب الله يُتلى وأجره يعود إليك" onclick="goCard(this,'وقف-مصحف.html')"><span class="ci">📖</span><h4>وقف مصحف</h4><p>أجرٌ بكل حرف يُتلى</p></div>
-      <div class="cc" data-v="بناء مدرسة — كل عالم تخرج من مدرستك في ميزانك" onclick="goCard(this,'بناء-مدرسة.html')"><span class="ci">🏫</span><h4>بناء مدرسة</h4><p>كل علم نشروه لك</p></div>
-      <div class="cc" data-v="محطة مياه — مياه نقية تصل لآلاف المستفيدين" onclick="goCard(this,'محطة-مياه.html')"><span class="ci">🚰</span><h4>محطة مياه</h4><p>ماء نقي لألف أسرة</p></div>
-      <div class="cc" data-v="مركز تحفيظ القرآن — كل حافظ تخرّج منه في صحيفتك" onclick="goCard(this,'مركز-تحفيظ.html')"><span class="ci">✨</span><h4>مركز تحفيظ</h4><p>حُفّاظ يُزينون صحيفتك</p></div>
-    </div>
-    <a href="جاري-كل.html" class="gab" data-v="اكتشف الصدقات الجارية" onclick="navTo(event,this)">كل فرص الصدقة الجارية ←</a>
-  </div>
+    <!-- CONSENT -->
+    <section class="policy-section" id="consent">
+      <div class="section-header">
+        <span class="section-icon">✅</span>
+        <h2 class="section-title"><span class="num">ثانيًا:</span> موافقة ولي الأمر</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">في الحالات التي يتطلب فيها القانون موافقة ولي الأمر، تلتزم منظومة AQX بما يلي:</span></p>
+        <ul class="policy-list">
+          <li><span class="readable-text">يجب أن تكون الموافقة صريحة وقابلة للإثبات والتوثيق القانوني.</span></li>
+          <li><span class="readable-text">يتحمل ولي الأمر المسؤولية الكاملة عن استخدام الطفل للخدمات.</span></li>
+          <li><span class="readable-text">يحق للمنظومة طلب التحقق من هذه الموافقة في أي وقت ولأي سبب مشروع.</span></li>
+        </ul>
+        <div class="highlight-box">
+          <strong>🛡️ ملاحظة:</strong> <span class="readable-text">لا تتحمل منظومة AQX المسؤولية عن أي استخدام غير مصرح به يُجريه قاصر دون علم ولي الأمر أو بدون موافقته المعتمدة.</span>
+        </div>
+      </div>
+    </section>
 
-  <!-- ── EDUCATION ── -->
-  <div class="gp" id="g-edu" role="tabpanel" hidden>
-    <div class="gph"><h3>استثمر في عقل يُغيِّر أمة</h3><p>العلم سلاح لا يُصادَر. تعليم طفل واحد قد يُخرج للعالم عالماً يُنقذ الملايين.</p></div>
-    <div class="cg">
-      <div class="cc gl" data-v="منح دراسية — افتح أبواب المستقبل لطالب موهوب" onclick="goCard(this,'منح-دراسية.html')"><span class="ci">🎓</span><h4>منح دراسية</h4><p>مستقبل لمن استحق</p><div class="cb">تغيير حياة</div></div>
-      <div class="cc" data-v="أجهزة للطلاب — لابتوب يفتح عالم التعلم" onclick="goCard(this,'اجهزة-طلاب.html')"><span class="ci">💻</span><h4>أجهزة للطلاب</h4><p>التكنولوجيا في يد المحتاج</p></div>
-      <div class="cc" data-v="تعليم البرمجة — علِّم لغة المستقبل لمن يصنع المستقبل" onclick="goCard(this,'تعليم-برمجة.html')"><span class="ci">👨‍💻</span><h4>تعليم البرمجة</h4><p>لغة المستقبل للجميع</p></div>
-      <div class="cc" data-v="محو الأمية — القراءة حق إنساني لا رفاهية" onclick="goCard(this,'محو-امية.html')"><span class="ci">📚</span><h4>محو الأمية</h4><p>القراءة حق لا رفاهية</p></div>
-      <div class="cc" data-v="تعليم القرآن — علِّم كلام الله لمن يحتاج" onclick="goCard(this,'تعليم-قران.html')"><span class="ci">🌙</span><h4>تعليم القرآن</h4><p>كلام الله لكل القلوب</p></div>
-      <div class="cc" data-v="الحقائب المدرسية — هيّئ طفلاً ليبدأ عامه بثقة" onclick="goCard(this,'حقائب-مدرسية.html')"><span class="ci">🎒</span><h4>حقائب مدرسية</h4><p>ابدأ العام بثقة وكرامة</p></div>
-    </div>
-    <a href="تعليم-كل.html" class="gab" data-v="اكتشف كل مشاريع التعليم" onclick="navTo(event,this)">كل مشاريع التعليم ←</a>
-  </div>
+    <!-- DATA -->
+    <section class="policy-section" id="data">
+      <div class="section-header">
+        <span class="section-icon">🔒</span>
+        <h2 class="section-title"><span class="num">ثالثًا:</span> جمع بيانات الأطفال</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تلتزم منظومة AQX بأعلى معايير الحماية عند جمع أو معالجة أي بيانات تخص الأطفال والقُصّر:</span></p>
+        <ul class="policy-list">
+          <li><span class="readable-text">جمع الحد الأدنى من البيانات الضرورية فقط لتقديم الخدمة بصورة صحيحة.</span></li>
+          <li><span class="readable-text">عدم جمع أي بيانات غير ضرورية أو تتجاوز الغرض التشغيلي المحدد.</span></li>
+          <li><span class="readable-text">استخدام البيانات فقط للأغراض التشغيلية أو القانونية المصرح بها صراحةً.</span></li>
+          <li><span class="readable-text">تطبيق تدابير أمنية مشددة ومتقدمة لحماية بيانات القُصّر من أي اختراق أو سوء استخدام.</span></li>
+        </ul>
+        <div class="gold-box">
+          <strong>📢 التزام راسخ:</strong> <span class="readable-text">لا يتم استخدام بيانات الأطفال لأغراض تسويقية مباشرة دون موافقة قانونية مناسبة ومُوثَّقة، وتبقى حماية بيانات القاصر أولوية مطلقة تعلو على أي اعتبارات تجارية.</span>
+        </div>
+      </div>
+    </section>
 
-  <!-- ── SOCIAL ── -->
-  <div class="gp" id="g-soc" role="tabpanel" hidden>
-    <div class="gph"><h3>المجتمع أُسَر تتماسك</h3><p>يداً بيد، نبني مجتمعاً لا يترك أحداً خلفه. الدعم الاجتماعي هو عمود الحضارة الحقيقية.</p></div>
-    <div class="cg">
-      <div class="cc gl" data-v="زواج غير المقتدرين — ساعد شاباً على تكوين أسرة" onclick="goCard(this,'زواج.html')"><span class="ci">💍</span><h4>زواج المحتاجين</h4><p>أسرة تبدأ بدعمك</p><div class="cb">بناء مجتمع</div></div>
-      <div class="cc" data-v="سداد الديون — حرِّر إنساناً من قيود المديونية" onclick="goCard(this,'سداد-ديون.html')"><span class="ci">🔓</span><h4>سداد الديون</h4><p>حرّر من قيود المديونية</p></div>
-      <div class="cc" data-v="دعم الغارمين — أخرج إنساناً من الضائقة المالية" onclick="goCard(this,'غارمين.html')"><span class="ci">🤲</span><h4>دعم الغارمين</h4><p>طريق العودة يبدأ بك</p></div>
-      <div class="cc" data-v="دعم الأمهات — الأم قلعة الأسرة فأسندها" onclick="goCard(this,'دعم-امهات.html')"><span class="ci">👩‍👧</span><h4>دعم الأمهات</h4><p>قوّة من وراء كل أسرة</p></div>
-      <div class="cc" data-v="تجهيز العرائس — أضف البهجة ليوم لا يُنسى" onclick="goCard(this,'تجهيز-عرائس.html')"><span class="ci">👰</span><h4>تجهيز العرائس</h4><p>بهجة يوم لا يُنسى</p></div>
-      <div class="cc" data-v="لمّ شمل الأسر — أعد الأسرة المفرّقة إلى بعضها" onclick="goCard(this,'لم-شمل.html')"><span class="ci">🏡</span><h4>لمّ شمل الأسر</h4><p>الأسرة المكتملة هي السعادة</p></div>
-    </div>
-    <a href="اجتماعي-كل.html" class="gab" data-v="اكتشف برامج الدعم الاجتماعي" onclick="navTo(event,this)">كل برامج الدعم الاجتماعي ←</a>
-  </div>
+    <!-- CONTENT -->
+    <section class="policy-section" id="content">
+      <div class="section-header">
+        <span class="section-icon">🚫</span>
+        <h2 class="section-title"><span class="num">رابعًا:</span> المحتوى غير المناسب للأطفال</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تحظر منظومة AQX بصورة قاطعة عرض أو إتاحة أو الترويج لأي محتوى غير مناسب للقُصّر، بما في ذلك على سبيل المثال لا الحصر:</span></p>
+        <div class="cards-grid">
+          <div class="info-card">
+            <span class="info-card-icon">🩸</span>
+            <div class="info-card-text readable-text">المحتوى العنيف أو الدموي أو الصادم الذي يؤثر سلبًا على نفسية الطفل</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">🔞</span>
+            <div class="info-card-text readable-text">المحتوى الجنسي أو الإباحي بأي شكل أو درجة</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">💢</span>
+            <div class="info-card-text readable-text">المحتوى الذي يشجع على العنف أو الكراهية أو التمييز</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">⚠️</span>
+            <div class="info-card-text readable-text">المحتوى غير القانوني أو الضار أو المُضلَّل</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">🧠</span>
+            <div class="info-card-text readable-text">أي محتوى قد يؤثر سلبًا على النمو النفسي أو السلوكي أو الاجتماعي للأطفال</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <!-- ── DEVELOPMENT ── -->
-  <div class="gp" id="g-dev" role="tabpanel" hidden>
-    <div class="gph"><h3>لا تعطِه سمكة — علِّمه الصيد</h3><p>التمكين الحقيقي هو بناء إنسان يُعيل نفسه. مشروع صغير اليوم = قصة نجاح غداً.</p></div>
-    <div class="cg">
-      <div class="cc gl" data-v="تمويل مشروع صغير — بذرة مالية تُنبت شجرة رزق" onclick="goCard(this,'مشروع-صغير.html')"><span class="ci">🚀</span><h4>مشاريع صغيرة</h4><p>رزق يُغير حياة أسرة</p><div class="cb">تمكين</div></div>
-      <div class="cc" data-v="دعم المزارعين — ادعم من يُطعم الجميع" onclick="goCard(this,'دعم-مزارعين.html')"><span class="ci">🌾</span><h4>دعم المزارعين</h4><p>يُطعمون الجميع فادعمهم</p></div>
-      <div class="cc" data-v="تمكين المرأة — قوِّي امرأة تقوِّي مجتمعاً بأكمله" onclick="goCard(this,'تمكين-مراة.html')"><span class="ci">👩‍💼</span><h4>تمكين المرأة</h4><p>قوِّيها تقوَّى الأسرة كلها</p></div>
-      <div class="cc" data-v="تدريب وتشغيل — مهارة مكتسبة تُغني عن العطاء" onclick="goCard(this,'تدريب-تشغيل.html')"><span class="ci">📋</span><h4>تدريب وتشغيل</h4><p>من متلقٍّ إلى مُعطٍ</p></div>
-      <div class="cc" data-v="دعم رواد الأعمال — اكتشف قصة النجاح القادمة" onclick="goCard(this,'رواد-اعمال.html')"><span class="ci">💡</span><h4>رواد الأعمال</h4><p>فكرة قد تغير العالم</p></div>
-      <div class="cc" data-v="تمكين الشباب — استثمر في جيل اليوم قائد الغد" onclick="goCard(this,'تمكين-شباب.html')"><span class="ci">🌟</span><h4>تمكين الشباب</h4><p>قادة الغد بين أيديهم</p></div>
-    </div>
-    <a href="تنمية-كل.html" class="gab" data-v="اكتشف مشاريع التنمية والتمكين" onclick="navTo(event,this)">كل مشاريع التنمية والتمكين ←</a>
-  </div>
+    <!-- TOOLS -->
+    <section class="policy-section" id="tools">
+      <div class="section-header">
+        <span class="section-icon">🛠️</span>
+        <h2 class="section-title"><span class="num">خامسًا:</span> أدوات الحماية</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">قد توفر منظومة AQX مجموعة من الأدوات والآليات المتطورة لضمان بيئة رقمية آمنة للأطفال:</span></p>
+        <div class="tools-grid">
+          <div class="tool-card">
+            <span class="tool-icon">🔍</span>
+            <div class="tool-text readable-text">أنظمة تصفية المحتوى وفلترة النتائج غير اللائقة</div>
+          </div>
+          <div class="tool-card">
+            <span class="tool-icon">🛡️</span>
+            <div class="tool-text readable-text">وضع الاستخدام الآمن (Safe Mode) للقُصّر</div>
+          </div>
+          <div class="tool-card">
+            <span class="tool-icon">👨‍👩‍👧</span>
+            <div class="tool-text readable-text">أدوات الرقابة الأبوية وإدارة الصلاحيات</div>
+          </div>
+          <div class="tool-card">
+            <span class="tool-icon">⚙️</span>
+            <div class="tool-text readable-text">إعدادات تقييد المحتوى والتحكم في الوصول</div>
+          </div>
+          <div class="tool-card">
+            <span class="tool-icon">📊</span>
+            <div class="tool-text readable-text">تقارير الاستخدام للآباء والأوصياء القانونيين</div>
+          </div>
+          <div class="tool-card">
+            <span class="tool-icon">🚨</span>
+            <div class="tool-text readable-text">أنظمة كشف النشاط غير المناسب وتنبيه الأهل</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <!-- ── RELIEF ── -->
-  <div class="gp" id="g-rel" role="tabpanel" hidden>
-    <div class="gph"><h3>ابعث الأمل حيث يشتد الظلام</h3><p>في لحظات الكوارث لا يوجد غد — فقط الآن. إغاثتك اليوم هي الفارق بين الحياة والموت.</p></div>
-    <div class="cg">
-      <div class="cc gl up" data-v="إغاثة عاجلة — لا وقت للتأخير، حياة تنتظر" onclick="goCard(this,'اغاثة-عاجلة.html')"><span class="ci">🚨</span><h4>إغاثة عاجلة</h4><p>كل ثانية تفرق</p><div class="cb urg">عاجل جداً</div></div>
-      <div class="cc" data-v="ضحايا الزلازل — أنقذ من سُرقت منهم الأرض" onclick="goCard(this,'زلازل.html')"><span class="ci">🌋</span><h4>ضحايا الزلازل</h4><p>الأرض تهزّت — أنت ثابت</p></div>
-      <div class="cc" data-v="اللاجئون والنازحون — إنسان مثلك فقد كل شيء" onclick="goCard(this,'لاجئون.html')"><span class="ci">⛺</span><h4>اللاجئون والنازحون</h4><p>إنسان مثلك يستحق الحياة</p></div>
-      <div class="cc" data-v="الإغاثة الشتوية — ادفئ أسرة في ليالي البرد القارسة" onclick="goCard(this,'اغاثة-شتوية.html')"><span class="ci">❄️</span><h4>الإغاثة الشتوية</h4><p>دفء في البرد القاسي</p></div>
-      <div class="cc" data-v="ضحايا الفيضانات — قلوب لا تزال تأمل" onclick="goCard(this,'فيضانات.html')"><span class="ci">🌊</span><h4>ضحايا الفيضانات</h4><p>جرفهم السيل فأنقذهم</p></div>
-      <div class="cc" data-v="مناطق النزاعات — السلام يبدأ منك" onclick="goCard(this,'نزاعات.html')"><span class="ci">🕊️</span><h4>مناطق النزاعات</h4><p>السلام يبدأ منك</p></div>
-    </div>
-    <a href="اغاثة-كل.html" class="gab" data-v="اكتشف مشاريع الإغاثة الطارئة" onclick="navTo(event,this)">كل مشاريع الإغاثة والطوارئ ←</a>
-  </div>
+    <!-- RESPONSIBILITY -->
+    <section class="policy-section" id="responsibility">
+      <div class="section-header">
+        <span class="section-icon">👨‍👩‍👧</span>
+        <h2 class="section-title"><span class="num">سادسًا:</span> مسؤولية ولي الأمر</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">يتحمل ولي الأمر أو الوصي القانوني المسؤولية الكاملة والمباشرة عن جميع جوانب استخدام الطفل للخدمات، بما في ذلك:</span></p>
+        <ul class="policy-list">
+          <li><span class="readable-text">مراقبة استخدام الطفل للخدمات بصورة منتظمة ومستمرة.</span></li>
+          <li><span class="readable-text">ضبط إعدادات الأمان والخصوصية المناسبة لسن الطفل ومتطلباته.</span></li>
+          <li><span class="readable-text">الموافقة الصريحة على الاستخدام عند الاقتضاء قانونًا أو تنظيميًا.</span></li>
+          <li><span class="readable-text">الإشراف الدوري على المحتوى الذي يتم الوصول إليه والتفاعل معه.</span></li>
+        </ul>
+        <div class="highlight-box">
+          <strong>⚠️ إخلاء مسؤولية:</strong> <span class="readable-text">لا تتحمل منظومة AQX المسؤولية عن إساءة استخدام القاصر للخدمات في حال عدم وجود إشراف كافٍ من ولي الأمر أو الوصي القانوني.</span>
+        </div>
+      </div>
+    </section>
 
-  <!-- ── NON-MONEY ── -->
-  <div class="gp" id="g-nm" role="tabpanel" hidden>
-    <div class="gph"><h3>تبرّع بما تملكه — مهما كان</h3><p>ليس الخير مقتصراً على المال. وقتك، خبرتك، دمك، أفكارك — كلها قيمة لا تُقدَّر لمن يحتاجها.</p></div>
-    <div class="cg">
-      <div class="cc gl" data-v="تبرع بوقتك كمتطوع — ساعة من وقتك تصنع فارقاً هائلاً" onclick="goCard(this,'تطوع.html')"><span class="ci">⏳</span><h4>تبرّع بوقتك</h4><p>التطوع أشرف صور العطاء</p><div class="cb">مؤثر</div></div>
-      <div class="cc" data-v="تبرع بالدم — دمك يُنقذ ثلاثة أرواح في خطوة واحدة" onclick="goCard(this,'تبرع-دم.html')"><span class="ci">🩸</span><h4>التبرع بالدم</h4><p>قطرة تُنقذ ثلاثة</p></div>
-      <div class="cc" data-v="تبرع بخبرتك — علمك ومهارتك ثروة لمن يحتاجها" onclick="goCard(this,'تبرع-خبرة.html')"><span class="ci">🧠</span><h4>تبرّع بالخبرة</h4><p>علمك أثمن من ذهبك</p></div>
-      <div class="cc" data-v="تبرع بالملابس — ما لا تحتاجه يُدفئ من يحتاجه" onclick="goCard(this,'تبرع-ملابس.html')"><span class="ci">👕</span><h4>تبرّع بالملابس</h4><p>ما لا تحتاجه يُدفئ آخر</p></div>
-      <div class="cc" data-v="نشر الحملات — كلمة تشاركها قد تُنقذ حياة" onclick="goCard(this,'نشر-حملات.html')"><span class="ci">📢</span><h4>نشر الحملات</h4><p>مشاركة واحدة تُغير الكثير</p></div>
-      <div class="cc" data-v="التبرع بالشعر لمرضى السرطان — هبة جمال لمن فقد شعره بالعلاج" onclick="goCard(this,'تبرع-شعر.html')"><span class="ci">💇</span><h4>التبرع بالشعر</h4><p>جمالٌ يُهدى لمحاربة السرطان</p></div>
-    </div>
-    <a href="غير-مالي-كل.html" class="gab" data-v="اكتشف جميع أشكال العطاء غير المالي" onclick="navTo(event,this)">كل أشكال العطاء غير المالي ←</a>
-  </div>
-</section>
+    <!-- ABUSE -->
+    <section class="policy-section" id="abuse">
+      <div class="section-header">
+        <span class="section-icon">🚨</span>
+        <h2 class="section-title"><span class="num">سابعًا:</span> الإساءة أو الاستغلال</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تتخذ منظومة AQX موقفًا صارمًا وحازمًا تجاه أي إساءة أو استغلال للأطفال، بما في ذلك:</span></p>
+        <div class="cards-grid">
+          <div class="info-card">
+            <span class="info-card-icon">😰</span>
+            <div class="info-card-text readable-text">التهديد أو التحرش أو الاستدراج بأي وسيلة رقمية أو تقنية</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">📸</span>
+            <div class="info-card-text readable-text">استغلال بيانات أو صور القاصرين لأي غرض غير مشروع</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">📤</span>
+            <div class="info-card-text readable-text">نشر أو مشاركة محتوى يُسيء للأطفال أو ينتهك حقوقهم</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">⛔</span>
+            <div class="info-card-text readable-text">أي نشاط غير قانوني يستهدف القُصّر أو يُعرّضهم للخطر</div>
+          </div>
+        </div>
+        <div class="gold-box" style="margin-top:22px;">
+          <strong>⚡ الإجراءات الفورية:</strong> <span class="readable-text">تحتفظ المنظومة بحق إزالة المحتوى المخالف فورًا، وتعليق أو إنهاء الحسابات المخالفة، والإبلاغ عن الانتهاكات للجهات الأمنية والقانونية المختصة دون إشعار مسبق.</span>
+        </div>
+      </div>
+    </section>
 
-<!-- ═══ WAYS ═══ -->
-<section class="sec" style="border-top:1px solid var(--border)">
-  <div class="sec-hd">
-    <div class="ey">خيارات مرنة لكل شخص</div>
-    <h2 class="stl">اختر طريقة مساهمتك</h2>
-  </div>
-  <div class="wg">
-    <a href="donate.html?t=monthly" class="wc" data-v="التبرع الشهري — أثر دائم بتعهد منتظم" onclick="navTo(event,this)"><span class="wi">📅</span><h4>التبرع الشهري</h4><p>أثر دائم بتعهد منتظم</p></a>
-    <a href="donate.html?t=sadaqa" class="wc" data-v="الصدقة الجارية — عطاء لا يتوقف بعد وفاتك" onclick="navTo(event,this)"><span class="wi">🌙</span><h4>الصدقة الجارية</h4><p>عطاؤك لا يتوقف بعد رحيلك</p></a>
-    <a href="donate.html?t=gift" class="wc" data-v="إهداء التبرع — هدية المعنى لمن تحب" onclick="navTo(event,this)"><span class="wi">🎁</span><h4>إهداء تبرع</h4><p>أثمن هدية تُقدمها</p></a>
-    <a href="donate.html?t=deceased" class="wc" data-v="التبرع عن متوفى — أرسل الأجر لمن أحببت" onclick="navTo(event,this)"><span class="wi">📿</span><h4>عن روح متوفى</h4><p>أجرٌ يصل إليهم بعد رحيلهم</p></a>
-    <a href="وقف.html" class="wc gw" data-v="إنشاء وقف دائم — وقف باسمك يخدم الإنسانية إلى الأبد" onclick="navTo(event,this)"><span class="wi">💎</span><h4>إنشاء وقف دائم</h4><p>إرثك الحقيقي للأجيال القادمة</p></a>
-    <a href="رعاية.html" class="wc" data-v="رعاية حملة — شراكة تجمع بين شركتك والخير" onclick="navTo(event,this)"><span class="wi">🏢</span><h4>رعاية شركة</h4><p>شراكة الخير مع مؤسستك</p></a>
-    <a href="تمويل-مشروع.html" class="wc" data-v="تمويل مشروع كامل — امتلك مشروعاً وانل أجره كله" onclick="navTo(event,this)"><span class="wi">🏆</span><h4>تمويل مشروع كامل</h4><p>أجرٌ كامل لك وحدك</p></a>
-    <a href="volunteer.html" class="wc" data-v="التطوع — ساهم بوقتك وخبرتك ومهارتك" onclick="navTo(event,this)"><span class="wi">🤝</span><h4>التطوع</h4><p>قيمتك تتخطى المال</p></a>
-  </div>
-</section>
+    <!-- VERIFICATION -->
+    <section class="policy-section" id="verification">
+      <div class="section-header">
+        <span class="section-icon">🔍</span>
+        <h2 class="section-title"><span class="num">ثامنًا:</span> التحقق والتعليق</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تحتفظ منظومة AQX بالحق الكامل في اتخاذ أي من الإجراءات التالية متى رأت ذلك ضروريًا:</span></p>
+        <ul class="policy-list">
+          <li><span class="readable-text">طلب إثبات العمر عند الحاجة وبأي وسيلة تراها المنظومة مناسبة.</span></li>
+          <li><span class="readable-text">تعليق الحسابات المشكوك في أعمار أصحابها أو مدى امتثالهم للسياسة.</span></li>
+          <li><span class="readable-text">منع الوصول إلى بعض الخدمات أو المحتوى وفقًا لتقييمها الأمني.</span></li>
+          <li><span class="readable-text">إنهاء الحسابات غير المتوافقة مع هذه السياسة بصورة نهائية.</span></li>
+        </ul>
+      </div>
+    </section>
 
-<!-- ═══ IMPACT ═══ -->
-<section class="sec imp-sec" id="impSec">
-  <div class="sec-hd">
-    <div class="ey">أثرنا معاً</div>
-    <h2 class="stl">أرقام تتكلم من القلب</h2>
-  </div>
-  <div class="ig">
-    <div class="ii" data-v="خمسون مليون وجبة قُدِّمت للجائعين"><span class="in" data-tg="50000000">0</span><span class="ilb">وجبة قُدِّمت</span></div>
-    <div class="ii" data-v="مئة وخمسة وعشرون ألف يتيم تحت الكفالة"><span class="in" data-tg="125000">0</span><span class="ilb">يتيم مكفول</span></div>
-    <div class="ii" data-v="ثلاثة وعشرون ألف عملية جراحية ناجحة"><span class="in" data-tg="23000">0</span><span class="ilb">عملية جراحية ناجحة</span></div>
-    <div class="ii" data-v="خمسة وثمانون ألف منزل بُني أو رُمِّم"><span class="in" data-tg="85000">0</span><span class="ilb">منزل بُني أو رُمِّم</span></div>
-  </div>
-</section>
+    <!-- DATA PROCESSING -->
+    <section class="policy-section" id="dataprocessing">
+      <div class="section-header">
+        <span class="section-icon">⚙️</span>
+        <h2 class="section-title"><span class="num">تاسعًا:</span> معالجة البيانات</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تتم معالجة بيانات الأطفال وفقًا لأعلى معايير الحماية، وبما يتوافق مع:</span></p>
+        <div class="cards-grid">
+          <div class="info-card">
+            <span class="info-card-icon">🔐</span>
+            <div class="info-card-text readable-text">سياسة الخصوصية الشاملة لمنظومة القرماني إكس AQX</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">⚖️</span>
+            <div class="info-card-text readable-text">القوانين والتشريعات المحلية والدولية واجبة التطبيق</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">📉</span>
+            <div class="info-card-text readable-text">مبادئ تقليل البيانات إلى الحد الأدنى الضروري فقط</div>
+          </div>
+          <div class="info-card">
+            <span class="info-card-icon">🎯</span>
+            <div class="info-card-text readable-text">مبدأ الغرض المحدد وعدم تجاوز الاستخدام المصرح به</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<!-- ═══ FINAL CTA ═══ -->
-<section class="sec fcta">
-  <div class="fcta-in">
-    <span class="fic" aria-hidden="true">✦</span>
-    <h2 class="ftl">لحظتك الآن — لا تنتظر الغد</h2>
-    <p class="fsb">كل لحظة تتأخر فيها، حياة تنتظر. تبرعك لن يفقد قيمته — لكنه قد يفقد وقت أثره. اجعل اللحظة الحاضرة خالدة.</p>
-    <div class="fbg">
-      <a href="donate.html" class="btn-p lg" data-v="ابدأ رحلة العطاء الآن وكن جزءاً من التغيير الحقيقي" onclick="navTo(event,this)">
-        <span class="bi">💎</span>ابدأ رحلة العطاء الآن<span class="shim"></span>
-      </a>
-      <a href="من-نحن.html" class="btn-g" data-v="تعرف على AQX أكثر وكيف نضمن وصول تبرعك" onclick="navTo(event,this)">من نحن؟</a>
-    </div>
-    <p class="ftr"><span>🔒</span>تبرعاتك مؤمَّنة ومراقَبة بالكامل · شفافية ١٠٠٪ · إيصالات فورية</p>
+    <!-- UPDATES -->
+    <section class="policy-section" id="updates">
+      <div class="section-header">
+        <span class="section-icon">✏️</span>
+        <h2 class="section-title"><span class="num">عاشرًا:</span> التحديثات</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">يجوز لمنظومة AQX تعديل هذه السياسة في أي وقت وفقًا للتطورات القانونية أو التقنية أو التشغيلية، ويُعد الإصدار المنشور هو النسخة المعتمدة اعتبارًا من تاريخ نشره.</span></p>
+        <div class="highlight-box">
+          <strong>📅 تاريخ اليوم:</strong> <span id="amendments-date"></span> — <span class="readable-text">هذه الوثيقة حيّة ومحدَّثة تلقائيًا في كل يوم.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAW -->
+    <section class="policy-section" id="law">
+      <div class="section-header">
+        <span class="section-icon">⚖️</span>
+        <h2 class="section-title"><span class="num">الحادي عشر:</span> القانون والاختصاص القضائي</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تخضع هذه السياسة لقوانين جمهورية مصر العربية، ويكون الاختصاص القضائي لمحاكم محافظة أسوان — جمهورية مصر العربية، وذلك دون الإخلال بأي قواعد قانونية آمرة محلية أو دولية.</span></p>
+        <div class="law-box">
+          <span class="law-box-icon">🏛️</span>
+          <div class="law-box-text">
+            <span class="readable-text"><strong>الاختصاص القضائي الحصري:</strong> محاكم محافظة أسوان — جمهورية مصر العربية<br>
+            <strong>القانون الواجب التطبيق:</strong> قوانين جمهورية مصر العربية والاتفاقيات الدولية ذات الصلة<br>
+            <strong>الوثيقة الرسمية:</strong> النسخة العربية هي المرجع الحاكم في جميع النزاعات</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLOSING -->
+    <section class="policy-section" id="closing">
+      <div class="section-header">
+        <span class="section-icon">✨</span>
+        <h2 class="section-title">أحكام ختامية</h2>
+      </div>
+      <div class="section-body">
+        <p><span class="readable-text">تشكل هذه السياسة جزءًا لا يتجزأ من الإطار القانوني لمنظومة AQX، ويُعد استمرار استخدام الخدمات موافقةً على جميع أحكامها وبنودها.</span></p>
+        <p><span class="readable-text">وتلتزم المنظومة بحماية الأطفال بوصفها أولوية قصوى ضمن منظومة الأمان والامتثال والخصوصية، وتُجدّد هذا العهد مع كل تحديث وكل قرار وكل خط في كودها الرقمي.</span></p>
+        <div class="highlight-box">
+          <strong>🌟 رسالتنا للأهل:</strong> <span class="readable-text">أطفالكم أمانة في أعناقنا قبل أن يكونوا مستخدمين. منظومة القرماني إكس AQX تضع سلامة الطفل فوق كل اعتبار، وتعمل بجد لتكون بيئة رقمية آمنة ومسؤولة تليق بثقتكم.</span>
+        </div>
+        <div class="law-box">
+          <span class="law-box-icon">📋</span>
+          <div class="law-box-text">
+            <strong>للتواصل بشأن سياسة حماية الأطفال:</strong><br>
+            البريد الإلكتروني: <a href="#" style="color:#e11d48;text-decoration:none;">children@aqx.com</a><br>
+            العنوان: محافظة أسوان، جمهورية مصر العربية<br>
+            <strong>الإصدار:</strong> 1.0 &nbsp;|&nbsp; <strong>آخر تحديث:</strong> <span id="closing-date"></span>
+          </div>
+        </div>
+        <div class="linked-policies" style="margin-top:22px;">
+          <a href="#" class="policy-link-tag">📋 شروط الاستخدام</a>
+          <a href="#" class="policy-link-tag">🔐 سياسة الخصوصية</a>
+          <a href="#" class="policy-link-tag">🍪 سياسة ملفات الارتباط</a>
+          <a href="#" class="policy-link-tag">🤖 سياسة الذكاء الاصطناعي</a>
+          <a href="#" class="policy-link-tag">📦 سياسة الاحتفاظ بالبيانات</a>
+        </div>
+      </div>
+    </section>
+
   </div>
-</section>
 </main>
 
-<!-- ═══ FOOTER ═══ -->
-<footer role="contentinfo">
-  <div class="fi">
-    <div class="fbr"><span class="fl">AQX</span><p>القرمانى اكس — بوابة العطاء العالمي الشامل</p></div>
-    <nav class="fln" aria-label="روابط التذييل">
-      <a href="من-نحن.html" data-v="من نحن" onclick="navTo(event,this)">من نحن</a>
-      <a href="مشاريعنا.html" data-v="مشاريعنا" onclick="navTo(event,this)">مشاريعنا</a>
-      <a href="الشفافية.html" data-v="الشفافية" onclick="navTo(event,this)">الشفافية</a>
-      <a href="تواصل.html" data-v="تواصل معنا" onclick="navTo(event,this)">تواصل معنا</a>
-      <a href="volunteer.html" data-v="تطوع" onclick="navTo(event,this)">تطوع</a>
-    </nav>
-    <div class="fso">
-      <a href="https://twitter.com/aqx" aria-label="تويتر" data-v="تابعنا على تويتر" onclick="navTo(event,this)">𝕏</a>
-      <a href="https://instagram.com/aqx" aria-label="انستغرام" data-v="تابعنا على انستغرام" onclick="navTo(event,this)">📸</a>
-      <a href="https://youtube.com/aqx" aria-label="يوتيوب" data-v="شاهد قصص التأثير" onclick="navTo(event,this)">▶</a>
-    </div>
+<footer class="aqx-footer">
+  <div class="footer-logo">AQX</div>
+  <div class="footer-tagline">
+    منظومة القرماني إكس — حيث الثقة تلتقي بالتكنولوجيا<br>
+    <span style="font-size:0.78em;color:rgba(255,255,255,0.38);">بناءً على مبادئ الشفافية والحماية والمسؤولية</span>
   </div>
-  <div class="fb"><p>© ٢٠٢٥ AQX القرمانى اكس — جميع الحقوق محفوظة</p></div>
+  <div class="footer-seal">
+    <span class="footer-seal-icon">🏛️</span>
+    <div class="footer-seal-text">
+      وثيقة رسمية معتمدة — الإصدار 1.0<br>
+      الاختصاص القضائي: محاكم محافظة أسوان — جمهورية مصر العربية
+    </div>
+    <div class="footer-seal-date" id="footer-date-display"></div>
+  </div>
+  <div class="footer-divider"></div>
+  <div class="footer-copy">
+    <strong>© منظومة القرماني إكس AQX</strong> — جميع الحقوق محفوظة<br>
+    هذه الوثيقة محمية بموجب قوانين حقوق الملكية الفكرية. يُحظر نسخها أو تعديلها أو توزيعها بدون إذن كتابي مسبق.<br>
+    <span style="color:rgba(255,255,255,0.22);">النسخة العربية هي المرجع الرسمي الوحيد المعتمد.</span>
+  </div>
 </footer>
 
-<!-- ═══════════════════════════════════════════
-     PARTICLES
-═══════════════════════════════════════════ -->
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="العودة للأعلى">↑</button>
+
+<div id="voice-status">
+  <div class="pulse-dot"></div>
+  <span id="voice-text">جارٍ التشغيل...</span>
+</div>
+
 <script>
-(function(){
-  var c=document.getElementById('pc'),x=c.getContext('2d');
-  var W,H,pts=[],N=115;
-  var COLS=['rgba(201,168,76,','rgba(232,201,122,','rgba(190,197,212,','rgba(232,234,246,','rgba(167,139,240,','rgba(255,215,100,','rgba(220,220,245,'];
-  function rnd(a,b){return a+Math.random()*(b-a)}
-  function rc(){return COLS[Math.floor(Math.random()*COLS.length)]}
-  function rs(){return W=c.width=innerWidth,H=c.height=innerHeight}
-  function mk(){
-    var col=rc();
-    return{x:rnd(0,W),y:rnd(0,H),r:rnd(.9,3.2),col:col,
-      a:rnd(.22,.82),vx:rnd(-.28,.28),vy:rnd(-.42,-.08),
-      ph:rnd(0,Math.PI*2),ps:rnd(.009,.026),
-      tw:Math.random()>.55,sh:Math.random()>.7?'d':'c'};
+'use strict';
+
+function getArabicDate() {
+  const now = new Date();
+  try {
+    return now.toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+  } catch(e) {
+    return now.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
   }
-  function dp(p){
-    p.ph+=p.ps;
-    var tf=p.tw?(.5+.5*Math.sin(p.ph)):1;
-    var a=p.a*tf;
-    x.save();x.globalAlpha=a;
-    if(p.sh==='d'){
-      var s=p.r*2.2;
-      x.beginPath();x.moveTo(p.x,p.y-s);x.lineTo(p.x+s*.55,p.y);
-      x.lineTo(p.x,p.y+s);x.lineTo(p.x-s*.55,p.y);x.closePath();
-      x.fillStyle=p.col+(a*.75)+')';x.fill();
-    } else {
-      var g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*3.8);
-      g.addColorStop(0,p.col+a+')');g.addColorStop(.45,p.col+(a*.45)+')');g.addColorStop(1,p.col+'0)');
-      x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle=p.col+a+')';x.fill();
-      x.beginPath();x.arc(p.x,p.y,p.r*3.8,0,Math.PI*2);x.fillStyle=g;x.fill();
-    }
-    x.restore();
-  }
-  function up(p){
-    p.x+=p.vx;p.y+=p.vy;
-    p.vx+=rnd(-.005,.005);
-    p.vx=Math.max(-.35,Math.min(.35,p.vx));
-    if(p.y<-20){p.y=H+10;p.x=rnd(0,W);}
-    if(p.x<-20)p.x=W+10;
-    if(p.x>W+20)p.x=-10;
-  }
-  function loop(){
-    x.clearRect(0,0,W,H);
-    pts.forEach(function(p){dp(p);up(p);});
-    requestAnimationFrame(loop);
-  }
-  function init(){rs();pts=[];for(var i=0;i<N;i++)pts.push(mk());loop();}
-  window.addEventListener('resize',rs);
-  window.addEventListener('click',function(e){
-    for(var i=0;i<14;i++){
-      var ang=(Math.PI*2/14)*i,sp=rnd(.8,3),p=mk();
-      p.x=e.clientX;p.y=e.clientY;p.vx=Math.cos(ang)*sp;p.vy=Math.sin(ang)*sp-1;
-      p.r=rnd(1.5,4.2);p.a=.9;pts.push(p);
-    }
-    if(pts.length>N+20)pts.splice(0,20);
+}
+
+function updateAllDates() {
+  const d = getArabicDate();
+  ['hero-date','amendments-date','closing-date','footer-date-display','header-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = d;
   });
-  init();
+}
+
+updateAllDates();
+
+const _now = new Date();
+const _msToMidnight = new Date(_now.getFullYear(), _now.getMonth(), _now.getDate()+1, 0,0,0) - _now;
+setTimeout(() => { updateAllDates(); setInterval(updateAllDates, 86400000); }, _msToMidnight);
+
+const canvas = document.getElementById('particles-canvas');
+const ctx    = canvas.getContext('2d');
+
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const P_COLORS = ['#e11d48','#fb7185','#fda4af','#FFD700','#F59E0B','#f9a8d4','#fecdd3','#fbbf24','#f472b6'];
+const P_COUNT  = window.innerWidth < 600 ? 45 : 90;
+const ptcls    = [];
+
+for (let i = 0; i < P_COUNT; i++) {
+  ptcls.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 3.8 + 0.9,
+    dx: (Math.random() - 0.5) * 0.65,
+    dy: (Math.random() - 0.5) * 0.65 - 0.15,
+    color: P_COLORS[Math.floor(Math.random() * P_COLORS.length)],
+    phase: Math.random() * Math.PI * 2
+  });
+}
+
+function animParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ptcls.forEach(p => {
+    p.phase += 0.035;
+    const alpha = 0.16 + 0.35 * Math.abs(Math.sin(p.phase));
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = alpha;
+    ctx.shadowBlur  = 7;
+    ctx.shadowColor = p.color;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur  = 0;
+    p.x += p.dx; p.y += p.dy;
+    if (p.x < -15) p.x = canvas.width + 15;
+    if (p.x > canvas.width + 15)  p.x = -15;
+    if (p.y < -15) p.y = canvas.height + 15;
+    if (p.y > canvas.height + 15) p.y = -15;
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+let gwTimer = null;
+let gwSecs  = 15;
+let gwDone  = false;
+
+(function createGwParticles() {
+  const wrap = document.getElementById('gw-particles');
+  if (!wrap) return;
+  for (let i = 0; i < 28; i++) {
+    const p   = document.createElement('div');
+    p.className = 'gw-p';
+    const sz  = Math.random() * 14 + 5;
+    const dur = Math.random() * 7 + 4;
+    const del = Math.random() * 7;
+    const hue = 330 + Math.floor(Math.random() * 40);
+    p.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;background:hsl(${hue},80%,65%);animation-duration:${dur}s;animation-delay:${del}s;`;
+    wrap.appendChild(p);
+  }
 })();
-</script>
 
-<!-- ═══════════════════════════════════════════
-     VOICE + INTERACTIONS
-═══════════════════════════════════════════ -->
-<script>
-(function(){
-  /* ── voice ── */
-  var vi=document.getElementById('vi'),vt=document.getElementById('vt');
-  var voice=null,navigating=false,pendHref=null;
-  function loadV(){
-    var vv=speechSynthesis.getVoices();
-    var order=[
-      function(v){return v.lang.startsWith('ar')&&(v.name.toLowerCase().includes('layla')||v.name.toLowerCase().includes('female'))},
-      function(v){return v.lang.startsWith('ar')},
-      function(v){return v.lang.includes('ar')}
-    ];
-    for(var i=0;i<order.length;i++){var m=vv.find(order[i]);if(m){voice=m;break;}}
-  }
-  if(speechSynthesis.onvoiceschanged!==undefined)speechSynthesis.onvoiceschanged=loadV;
-  loadV();
+function startGateway() {
+  playVoice('مرحباً بك في بوابة منظومة القرماني إكس. يُرجى الانتظار لقراءة سياسة حماية الأطفال أو الضغط على الزر للدخول الآن.');
+  const cEl  = document.getElementById('gw-count');
+  const c2El = document.getElementById('gw-count2');
+  const pEl  = document.getElementById('gw-progress');
+  gwTimer = setInterval(() => {
+    gwSecs--;
+    if (cEl)  cEl.textContent  = gwSecs;
+    if (c2El) c2El.textContent = gwSecs;
+    if (pEl)  pEl.style.width  = ((15 - gwSecs) / 15 * 100) + '%';
+    if (gwSecs <= 0) { clearInterval(gwTimer); enterSite(); }
+  }, 1000);
+}
 
-  function speak(txt,cb){
-    if(!window.speechSynthesis||!txt){if(cb)cb();return;}
-    speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(txt);
-    u.lang='ar-SA';u.rate=1.0;u.pitch=1.12;u.volume=1;
-    if(voice)u.voice=voice;
-    vt.textContent=txt;vi.classList.add('on');
-    u.onend=u.onerror=function(){vi.classList.remove('on');if(cb)cb();};
-    speechSynthesis.speak(u);
-  }
+function enterSite() {
+  if (gwDone) return;
+  gwDone = true;
+  clearInterval(gwTimer);
+  const gw = document.getElementById('gateway');
+  if (gw) { gw.classList.add('hidden'); setTimeout(() => gw.remove(), 900); }
+  playVoice('أهلاً وسهلاً بك في صفحة سياسة حماية الأطفال لمنظومة القرماني إكس. يمكنك الآن قراءة الوثيقة كاملةً.');
+}
+window.enterSite = enterSite;
 
-  /* ── nav with voice wait ── */
-  window.navTo=function(e,el){
+document.getElementById('gw-enter-btn')?.addEventListener('mouseenter', () => {
+  if (!isSpeaking) playVoice('اضغط لقراءة سياسة حماية الأطفال الآن.');
+});
+
+const scrollBtn = document.getElementById('scroll-top');
+window.addEventListener('scroll', () => {
+  scrollBtn.classList.toggle('visible', window.scrollY > 420);
+}, { passive: true });
+
+const synth = window.speechSynthesis;
+let arabicVoice = null;
+let isSpeaking  = false;
+let currentUtt  = null;
+
+function loadVoices() {
+  const vv = synth.getVoices();
+  arabicVoice =
+    vv.find(v => v.lang === 'ar-EG' && /fem|f/i.test(v.name)) ||
+    vv.find(v => v.lang.startsWith('ar') && /fem|f/i.test(v.name)) ||
+    vv.find(v => v.lang === 'ar-EG') ||
+    vv.find(v => v.lang.startsWith('ar')) ||
+    null;
+}
+loadVoices();
+synth.addEventListener('voiceschanged', loadVoices);
+
+function playVoice(text, onEnd) {
+  if (!text || !synth) return;
+  if (synth.speaking) synth.cancel();
+  const vsEl = document.getElementById('voice-status');
+  const vtEl = document.getElementById('voice-text');
+  currentUtt = new SpeechSynthesisUtterance(text);
+  currentUtt.lang   = 'ar-EG';
+  if (arabicVoice) currentUtt.voice = arabicVoice;
+  currentUtt.rate   = 0.9;
+  currentUtt.pitch  = 1.12;
+  currentUtt.volume = 1;
+  isSpeaking = true;
+  if (vsEl) vsEl.classList.add('active');
+  if (vtEl) vtEl.textContent = text.substring(0, 42) + (text.length > 42 ? '...' : '');
+  currentUtt.onend = () => {
+    isSpeaking = false;
+    if (vsEl) vsEl.classList.remove('active');
+    if (onEnd) onEnd();
+  };
+  currentUtt.onerror = () => {
+    isSpeaking = false;
+    if (vsEl) vsEl.classList.remove('active');
+  };
+  synth.speak(currentUtt);
+}
+
+document.querySelectorAll('.readable-text').forEach(el => {
+  el.addEventListener('click', function () {
+    const t = this.textContent.trim();
+    if (!t) return;
+    document.querySelectorAll('.readable-text.speaking').forEach(x => x.classList.remove('speaking'));
+    this.classList.add('speaking');
+    playVoice(t, () => this.classList.remove('speaking'));
+  });
+});
+
+document.querySelectorAll('.policy-link-tag').forEach(el => {
+  el.addEventListener('click', function (e) {
+    if (this.getAttribute('href') === '#') e.preventDefault();
+    playVoice('سيتم فتح: ' + this.textContent.trim());
+  });
+});
+
+document.querySelectorAll('.section-title').forEach(el => {
+  el.addEventListener('mouseenter', function () {
+    if (!isSpeaking) playVoice(this.textContent.trim());
+  });
+});
+
+document.querySelector('.footer-logo')?.addEventListener('mouseenter', () => {
+  if (!isSpeaking) playVoice('منظومة القرماني إكس — حيث الثقة تلتقي بالتكنولوجيا');
+});
+document.querySelector('.hero-title')?.addEventListener('mouseenter', () => {
+  if (!isSpeaking) playVoice('سياسة حماية الأطفال — منظومة القرماني إكس.');
+});
+document.querySelector('.hero-badge')?.addEventListener('mouseenter', () => {
+  if (!isSpeaking) playVoice('هذه وثيقة قانونية رسمية ملزمة.');
+});
+
+let secTriggered   = false;
+let devToolsCount  = 0;
+const MAX_DT_WARNS = 3;
+
+const SEC_PHRASES = [
+  '🔒 هذا النظام يراقب — لا مجال للتحايل على منظومة القرماني إكس',
+  '⛔ الاختراق الأمني موثّق ومُسجَّل — ستتحمل العواقب القانونية كاملة',
+  '🚨 بياناتك وجهازك مُعرَّفان — تم إرسال تقرير الانتهاك فوراً',
+  '🛡️ الأمن الرقمي لمنظومة AQX لا يُخترق — أنت الآن في السجل الأمني',
+  '⚡ محاولتك رُصدت وحُفظت — لا مهرب من منظومة القرماني إكس'
+];
+
+document.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  playVoice('تحذير! هذه الصفحة محمية. لا يُسمح بفحص الكود المصدري.');
+});
+
+document.addEventListener('keydown', e => {
+  const blocked =
+    e.key === 'F12' ||
+    (e.ctrlKey && e.shiftKey && ['I','J','C','K'].includes(e.key.toUpperCase())) ||
+    (e.ctrlKey && ['U','S'].includes(e.key.toUpperCase()));
+  if (blocked) {
     e.preventDefault();
-    if(navigating)return;
-    var href=el.getAttribute('href');
-    var txt=el.getAttribute('data-v')||el.textContent.trim().replace(/[←→↑↓]/g,'').trim();
-    if(!href||href==='#')return;
-    navigating=true;pendHref=href;
-    speak(txt,function(){navigating=false;window.location.href=pendHref;});
-  };
-
-  /* ── card click ── */
-  window.goCard=function(el,href){
-    if(navigating)return;
-    var txt=el.getAttribute('data-v')||el.querySelector('h4')?el.querySelector('h4').textContent:'';
-    navigating=true;
-    speak(txt,function(){navigating=false;if(href)window.location.href=href;});
-  };
-
-  /* ── tab switch ── */
-  window.swG=function(btn){
-    var txt=btn.getAttribute('data-v')||btn.textContent;
-    speak(txt);
-    document.querySelectorAll('.gt').forEach(function(t){t.classList.remove('on');t.setAttribute('aria-selected','false');});
-    btn.classList.add('on');btn.setAttribute('aria-selected','true');
-    var tgt=btn.getAttribute('data-t');
-    document.querySelectorAll('.gp').forEach(function(p){
-      if(p.id===tgt){p.removeAttribute('hidden');} else {p.setAttribute('hidden','');}
-    });
-  };
-
-  /* ── hover voice (stats + impact) ── */
-  function bindHov(sel){
-    document.querySelectorAll(sel).forEach(function(el){
-      var t;
-      el.addEventListener('mouseenter',function(){var v=this.getAttribute('data-v');if(v)t=setTimeout(function(){speak(v);},360);});
-      el.addEventListener('mouseleave',function(){clearTimeout(t);});
-    });
+    handleDevToolsAttempt();
   }
+});
 
-  /* ── impact counter ── */
-  function fmtN(n){
-    if(n>=1e6)return(n/1e6).toFixed(1).replace('.0','')+'M+';
-    if(n>=1000)return Math.round(n/1000)+'K+';
-    return n.toLocaleString('ar-EG');
+let devOpen = false;
+setInterval(() => {
+  const wDiff = window.outerWidth  - window.innerWidth;
+  const hDiff = window.outerHeight - window.innerHeight;
+  if ((wDiff > 160 || hDiff > 160) && !devOpen) {
+    devOpen = true;
+    handleDevToolsAttempt();
+  } else if (wDiff <= 160 && hDiff <= 160) {
+    devOpen = false;
   }
-  function animCount(){
-    document.querySelectorAll('.in[data-tg]').forEach(function(el){
-      var tg=parseInt(el.getAttribute('data-tg'),10),dur=2300,steps=65,cur=0,inc=tg/steps;
-      var tm=setInterval(function(){cur+=inc;if(cur>=tg){cur=tg;clearInterval(tm);}el.textContent=fmtN(Math.round(cur));},dur/steps);
-    });
-  }
-  var impEl=document.getElementById('impSec'),impDone=false;
-  if(impEl&&'IntersectionObserver' in window){
-    new IntersectionObserver(function(es){
-      if(es[0].isIntersecting&&!impDone){impDone=true;animCount();setTimeout(function(){speak('أرقام تتكلم من القلب — معاً صنعنا الفارق');},700);}
-    },{threshold:.28}).observe(impEl);
-  }
+}, 1000);
 
-  /* ── scroll reveal ── */
-  var revSt=document.createElement('style');
-  revSt.textContent='.rv{opacity:0;transform:translateY(26px);transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1)}.rv.vis{opacity:1!important;transform:translateY(0)!important}';
-  document.head.appendChild(revSt);
-  var rvEls=document.querySelectorAll('.sc,.cc,.wc,.ii,.gph,.sec-hd,.conv,.fcta-in');
-  rvEls.forEach(function(el,i){el.classList.add('rv');el.style.transitionDelay=(i%6)*.07+'s';});
-  if('IntersectionObserver' in window){
-    var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');ro.unobserve(e.target);}});},{threshold:.1,rootMargin:'0px 0px -35px 0px'});
-    rvEls.forEach(function(el){ro.observe(el);});
+function handleDevToolsAttempt() {
+  if (secTriggered) return;
+  devToolsCount++;
+  const remaining = MAX_DT_WARNS - devToolsCount;
+  if (devToolsCount < MAX_DT_WARNS) {
+    playVoice('تحذير أمني! هذه المحاولة رقم ' + devToolsCount + ' — تبقّى لك ' + remaining + ' محاولة قبل الطرد الفوري.');
+    const flash = document.createElement('div');
+    flash.style.cssText = 'position:fixed;inset:0;background:rgba(255,0,0,0.15);z-index:88888;pointer-events:none;';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 900);
   } else {
-    rvEls.forEach(function(el){el.classList.add('vis');});
+    triggerSecWarning('devtools');
   }
+}
 
-  /* ── mouse star trail ── */
-  var starSt=document.createElement('style');
-  starSt.textContent='@keyframes stFd{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,calc(-50% - 36px)) scale(.15)}}';
-  document.head.appendChild(starSt);
-  var stTh=false;
-  if(window.innerWidth>=768){
-    document.addEventListener('mousemove',function(e){
-      if(stTh)return;stTh=true;setTimeout(function(){stTh=false;},80);
-      if(Math.random()>.48)return;
-      var g=Math.random()>.5,sz=(Math.random()*5+2)|0;
-      var s=document.createElement('div');
-      s.style.cssText='position:fixed;left:'+e.clientX+'px;top:'+e.clientY+'px;width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:'+(g?'rgba(201,168,76,.88)':'rgba(200,205,235,.78)')+';pointer-events:none;z-index:9997;animation:stFd .95s ease-out forwards;transform:translate(-50%,-50%);box-shadow:0 0 '+(sz*2)+'px '+(g?'rgba(201,168,76,.5)':'rgba(180,190,220,.5)')+';';
-      document.body.appendChild(s);setTimeout(function(){s.remove();},1e3);
-    });
-  }
+function triggerSecWarning(reason) {
+  if (secTriggered) return;
+  secTriggered = true;
 
-  /* ── ripple on cards ── */
-  var ripSt=document.createElement('style');
-  ripSt.textContent='@keyframes ripA{to{transform:scale(1);opacity:0}}';
-  document.head.appendChild(ripSt);
-  document.addEventListener('click',function(e){
-    var tg=e.target.closest('.cc,.wc');
-    if(!tg)return;
-    var rp=document.createElement('span'),rc=tg.getBoundingClientRect(),sz=Math.max(rc.width,rc.height)*1.6;
-    rp.style.cssText='position:absolute;width:'+sz+'px;height:'+sz+'px;left:'+(e.clientX-rc.left-sz/2)+'px;top:'+(e.clientY-rc.top-sz/2)+'px;background:radial-gradient(circle,rgba(201,168,76,.22) 0%,transparent 70%);border-radius:50%;transform:scale(0);animation:ripA .65s ease-out forwards;pointer-events:none;z-index:10;';
-    tg.style.position='relative';tg.style.overflow='hidden';
-    tg.appendChild(rp);setTimeout(function(){rp.remove();},700);
-  });
+  const warn   = document.getElementById('security-warning');
+  const body   = document.getElementById('sec-body-text');
+  const phrase = document.getElementById('sec-phrase-text');
 
-  /* ── header 5 lines ── */
-  var hsp=document.getElementById('hsp');
-  if(hsp){
-    var ws=['170px','228px','290px','228px','170px'],ops=[.17,.27,.44,.27,.17];
-    var wrap=document.createElement('div');
-    wrap.style.cssText='display:flex;flex-direction:column;gap:11px;align-items:center;width:100%;';
-    ws.forEach(function(w,i){
-      var l=document.createElement('div');
-      l.style.cssText='width:'+w+';height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,'+ops[i]+'),transparent);border-radius:1px;';
-      wrap.appendChild(l);
-    });
-    hsp.appendChild(wrap);
-  }
-
-  /* ── keyboard tabs ── */
-  var tabs=document.querySelectorAll('.gt');
-  tabs.forEach(function(tb,i){
-    tb.addEventListener('keydown',function(e){
-      var nx;
-      if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();nx=tabs[(i+1)%tabs.length];}
-      else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();nx=tabs[(i-1+tabs.length)%tabs.length];}
-      if(nx){nx.focus();nx.click();}
-    });
-  });
-
-  /* ── subtle parallax ── */
-  if(!window.matchMedia('(prefers-reduced-motion:reduce)').matches){
-    var heroIn=document.querySelector('.hero-in'),ticking=false;
-    if(heroIn){
-      window.addEventListener('scroll',function(){
-        if(!ticking){requestAnimationFrame(function(){
-          if(scrollY<innerHeight*1.5)heroIn.style.transform='translateY('+(scrollY*.11)+'px)';
-          ticking=false;
-        });ticking=true;}
-      },{passive:true});
+  if (body) {
+    if (reason === 'devtools') {
+      body.innerHTML = '🚨 تم رصد محاولة فتح أدوات المطورين أو فحص الكود المصدري!<br><br><strong>هذا الفعل مخالف صريح لسياسة الأمان لمنظومة القرماني إكس AQX.</strong><br>تم توثيق هذه المحاولة وتسجيلها. سيتم إغلاق الجلسة فوراً.';
+    } else if (reason === 'new_tab') {
+      body.innerHTML = '🚨 محاولة فتح الرابط في تبويب أو متصفح جديد تم رصدها!<br><br><strong>هذه الصفحة محمية — لا يُسمح بفتحها خارج الجلسة الأصلية.</strong><br>تم توثيق هذه المحاولة. سيتم إغلاق الجلسة الآن.';
+    } else if (reason === 'idle') {
+      body.innerHTML = '⏰ انتهت جلستك بسبب عدم النشاط لمدة ثلاثين دقيقة متواصلة.<br><br><strong>لحماية أمانك، يتم إغلاق الجلسة تلقائياً.</strong><br>سيتم تحويلك إلى الصفحة الرئيسية.';
+    } else {
+      body.innerHTML = '🚨 محاولة وصول غير مصرح بها تم رصدها!<br><br><strong>هذه الصفحة محمية. تم توثيق هذه المحاولة.</strong><br>سيتم إغلاق الجلسة الآن.';
     }
   }
 
-  /* ── welcome voice ── */
-  bindHov('.sc');bindHov('.ii');
-  setTimeout(function(){speak('أهلاً بك في AQX القرمانى اكس — بوابة العطاء العالمي الشامل. تبرّعك اليوم يُغير حياة للأبد.');},1100);
+  if (phrase) {
+    phrase.textContent = SEC_PHRASES[Math.floor(Math.random() * SEC_PHRASES.length)];
+  }
 
-})();
+  if (warn) warn.classList.add('active');
+
+  playVoice('تحذير أمني خطير! تم رصد محاولة غير مصرح بها. سيتم طردك من الصفحة فوراً ولن تتمكن من العودة.');
+
+  let c = 5;
+  const cdEl = document.getElementById('sec-countdown');
+  const t = setInterval(() => {
+    c--;
+    if (cdEl) cdEl.textContent = c;
+    if (c <= 0) { clearInterval(t); redirectToMain(); }
+  }, 1000);
+
+  setTimeout(redirectToMain, 5600);
+}
+
+function redirectToMain() {
+  window.location.href = 'index.html';
+}
+
+const _aqxTabKey = 'aqx_page_open_' + window.location.pathname;
+const _aqxOpenAt = Date.now().toString();
+
+window.addEventListener('load', () => {
+  const existing = localStorage.getItem(_aqxTabKey);
+  if (existing && (Date.now() - parseInt(existing)) < 500) {
+    triggerSecWarning('new_tab');
+  }
+  localStorage.setItem(_aqxTabKey, _aqxOpenAt);
+});
+
+window.addEventListener('beforeunload', () => {
+  if (localStorage.getItem(_aqxTabKey) === _aqxOpenAt) {
+    localStorage.removeItem(_aqxTabKey);
+  }
+});
+
+window.addEventListener('aqxIdleExpired', () => {
+  playVoice('انتهت جلستك بسبب عدم النشاط لمدة ثلاثين دقيقة. سيتم تحويلك للصفحة الرئيسية.');
+  triggerSecWarning('idle');
+});
+
+window.addEventListener('aqxSecurityKick', () => {
+  playVoice('تحذير أمني! تم إغلاق الجلسة. سيتم تحويلك فوراً.');
+  triggerSecWarning('kick');
+});
+
+document.addEventListener('aqxUserReady', () => {
+  document.getElementById('auth-gate').classList.remove('active');
+});
+
+document.addEventListener('aqxUserNotAuth', () => {
+  const ag = document.getElementById('auth-gate');
+  ag.classList.add('active');
+  playVoice('يجب تسجيل الدخول للوصول إلى هذه الصفحة. سيتم تحويلك تلقائياً إلى الصفحة الرئيسية.');
+  let agCount = 5;
+  const agEl  = document.getElementById('ag-count');
+  const agInt = setInterval(() => {
+    agCount--;
+    if (agEl) agEl.textContent = agCount;
+    if (agCount <= 0) {
+      clearInterval(agInt);
+      window.location.href = 'index.html';
+    }
+  }, 1000);
+});
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('page-loader');
+    if (loader) {
+      loader.classList.add('fade-out');
+      setTimeout(() => loader.remove(), 520);
+    }
+    startGateway();
+  }, 1900);
+});
 </script>
 </body>
 </html>
+ENDOFFILE
+echo "Lines: $(wc -l < /home/claude/aqx-children-policy.html)"
+Output
+
+Lines: 1798
+Done

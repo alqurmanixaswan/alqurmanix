@@ -2,350 +2,1365 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AQX - جاري تجهيز التجربة</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AQX Me | منظومة القرماني إكس</title>
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none'">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+<!-- ============== USER DATA FILE (EDIT THIS PATH) ============== -->
+<!-- اكتب هنا اسم/مسار ملف بيانات المستخدم بصيغة JSON -->
+<!-- مثال للمحتوى المطلوب بداخل الملف: -->
+<!--
+{
+  "name": "اسم المستخدم",
+  "avatar": "https://example.com/avatar.jpg",
+  "createdAt": "2024-01-15",
+  "completion": 62
+}
+-->
+<script>
+window.AQX_USER_DATA_FILE = "user-data.json";
+</script>
+<!-- ================================================================ -->
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBICr62Oa_-69hATpfFrdTDfO9WV4bVVvU",
+  authDomain: "alqurmanix-d49f7.firebaseapp.com",
+  projectId: "alqurmanix-d49f7",
+  storageBucket: "alqurmanix-d49f7.firebasestorage.app",
+  messagingSenderId: "1017946245702",
+  appId: "1:1017946245702:web:575c425860c82166411847",
+  measurementId: "G-5XN1NMG997"
+};
+
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+const auth = getAuth(app);
+
+let monitorInterval = null;
+let failureCount = 0;
+const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
+let idleTimer = null;
+
+const handlePopState = () => { verifySessionWithEngine(); };
+
+function getTabId() {
+  let tabId = sessionStorage.getItem("active_tab_id");
+  if (!tabId) {
+    tabId = "tab_" + Math.random().toString(36).substr(2, 9);
+    sessionStorage.setItem("active_tab_id", tabId);
+  }
+  return tabId;
+}
+
+function resetIdleTimer() {
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    if (auth.currentUser) {
+      signOut(auth).then(() => {
+        window.dispatchEvent(new CustomEvent('aqxIdleExpired'));
+      });
+    }
+  }, IDLE_TIMEOUT_MS);
+}
+
+['mousemove','keydown','scroll','click','touchstart','touchmove'].forEach(ev => {
+  document.addEventListener(ev, resetIdleTimer, { passive: true });
+});
+
+async function verifySessionWithEngine() {
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    const token = await user.getIdToken(true);
+    const tabId = getTabId();
+    const pageId = window.location.pathname;
+    const response = await fetch("https://eo3phbvoihx4diw.m.pipedream.net", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+      body: JSON.stringify({ tabId, pageId })
+    });
+    const result = await response.json();
+    failureCount = 0;
+    if (result.status?.action === "REDIRECT") {
+      await signOut(auth);
+      window.dispatchEvent(new CustomEvent('aqxSecurityKick', { detail: 'engine_redirect' }));
+    } else if (result.status?.action === "WARN") {
+      console.warn("تحذير أمني: محاولات متبقية " + (3 - result.status.count));
+    }
+  } catch (error) {
+    failureCount++;
+    if (failureCount >= 3) {
+      await signOut(auth);
+      window.dispatchEvent(new CustomEvent('aqxSecurityKick', { detail: 'connection_failed' }));
+    }
+  }
+}
+
+function startSecurityMonitor() {
+  if (monitorInterval) return;
+  resetIdleTimer();
+  verifySessionWithEngine();
+  monitorInterval = setInterval(() => {
+    if (auth.currentUser) verifySessionWithEngine();
+  }, 4 * 60 * 1000);
+  window.addEventListener('popstate', handlePopState);
+  history.pushState(null, null, location.href);
+}
+
+function stopSecurityMonitor() {
+  if (monitorInterval) { clearInterval(monitorInterval); monitorInterval = null; }
+  if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
+  window.removeEventListener('popstate', handlePopState);
+  failureCount = 0;
+}
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    startSecurityMonitor();
+    window.aqxUser = user;
+    document.dispatchEvent(new CustomEvent('aqxUserReady', { detail: user }));
+  } else {
+    stopSecurityMonitor();
+    window.aqxUser = null;
+    document.dispatchEvent(new CustomEvent('aqxUserNotAuth'));
+  }
+});
+
+window.aqxAuth = auth;
+window.aqxSignOut = signOut;
+</script>
+
 <style>
-    /* ===== الإعدادات الأساسية ===== */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    /* ===== الخلفية المخملية (ليست سوداء وليست فاتحة) ===== */
-    body, html {
-        width: 100%;
-        height: 100%;
-        font-family: 'Cairo', sans-serif;
-        background: radial-gradient(circle at center, #2C5E5A 0%, #173836 100%);
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-    /* ===== الجزيئات المتطايرة (الكانفاس) ===== */
-    #particleCanvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        pointer-events: none;
-    }
+:root {
+  --bg-main: #efe9e2;
+  --bg-2: #e6ded3;
+  --bg-glass: rgba(255,255,255,0.55);
+  --ink: #2b241c;
+  --ink-soft: #5a4f40;
+  --ink-muted: rgba(43,36,28,0.55);
+  --neon1: #00f0ff;
+  --neon2: #ff00d4;
+  --neon3: #d4ff00;
+  --neon4: #ff7a00;
+  --gold: #d4af37;
+  --green-on: #19ff7a;
+  --font-main: 'Cairo', 'Tajawal', sans-serif;
+  --base-font: 18px;
+  --sidebar-w: min(86vw, 380px);
+}
 
-    /* ===== الحاوية الزجاجية الفخمة ===== */
-    .loader-container {
-        position: relative;
-        z-index: 10;
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(201, 168, 76, 0.2);
-        border-radius: 30px;
-        padding: 50px 40px;
-        text-align: center;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), inset 0 0 40px rgba(201, 168, 76, 0.05);
-        max-width: 90%;
-        width: 450px;
-        animation: floatContainer 6s ease-in-out infinite;
-    }
+html { scroll-behavior: smooth; font-size: var(--base-font); }
+html.dark {
+  --bg-main: #1b1f24;
+  --bg-2: #11141a;
+  --bg-glass: rgba(30,34,40,0.55);
+  --ink: #f1ede6;
+  --ink-soft: #cfc8ba;
+  --ink-muted: rgba(241,237,230,0.55);
+}
 
-    @keyframes floatContainer {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
+body {
+  font-family: var(--font-main);
+  background: var(--bg-main);
+  background-image:
+    radial-gradient(ellipse at 15% 15%, var(--bg-2) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 85%, var(--bg-2) 0%, transparent 55%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  direction: rtl;
+  text-align: right;
+  color: var(--ink);
+  transition: background 0.4s ease, color 0.4s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
 
-    /* ===== الحلقات الدائرية المبهرة ===== */
-    .rings-wrapper {
-        position: relative;
-        width: 160px;
-        height: 160px;
-        margin: 0 auto 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+/* ===================== SCREEN PROTECTION ===================== */
+.protected, img, .no-select { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; pointer-events: auto; }
+img { -webkit-user-drag: none; user-drag: none; }
 
-    .ring {
-        position: absolute;
-        border-radius: 50%;
-        border: 2px solid transparent;
-        border-top-color: #C9A84C; /* ذهبي */
-        border-bottom-color: #E0E0E0; /* فضي */
-        animation: spin 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-    }
+/* ===================== SECURITY WARNING ===================== */
+#security-warning {
+  display: none; position: fixed; inset: 0; z-index: 99999; background: #000;
+  flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px;
+}
+#security-warning.active { display: flex; }
+.sec-bg-anim { position: absolute; inset: 0; background: radial-gradient(ellipse at center, #7A0000 0%, #000 65%); animation: secPulse 0.55s ease-in-out infinite alternate; }
+@keyframes secPulse { from { opacity: 0.55; } to { opacity: 1; } }
+.sec-content { position: relative; z-index: 2; max-width: 700px; }
+.sec-icon { font-size: clamp(64px, 16vw, 110px); display: block; margin-bottom: 20px; animation: secIconFlash 0.45s linear infinite alternate; }
+@keyframes secIconFlash { from { filter: drop-shadow(0 0 12px #ff0000); transform: scale(0.94); } to { filter: drop-shadow(0 0 50px #ff3333) drop-shadow(0 0 90px #ff0000); transform: scale(1.06); } }
+.sec-title { font-size: clamp(26px, 7vw, 54px); font-weight: 900; color: #FF0000; margin-bottom: 18px; animation: neonRed 0.4s linear infinite alternate; }
+@keyframes neonRed { from { text-shadow: 0 0 12px #ff0000; } to { text-shadow: 0 0 24px #ff0000, 0 0 50px #ff0000, 0 0 80px #ff3333; } }
+.sec-body { font-size: clamp(16px, 3.8vw, 24px); color: #FFD700; font-weight: 700; line-height: 1.85; margin-bottom: 28px; }
+.sec-redirect { font-size: clamp(15px, 3vw, 20px); color: #aaa; margin-top: 18px; }
+.sec-countdown { font-size: clamp(24px, 6vw, 42px); color: #FF4444; font-weight: 900; display: block; margin-top: 12px; animation: neonRed 0.4s linear infinite alternate; }
+.sec-phrase { font-size: clamp(17px, 4vw, 26px); color: #ff6666; font-weight: 800; margin-top: 18px; line-height: 1.6; animation: neonRed 0.6s linear infinite alternate; }
 
-    .ring:nth-child(1) {
-        width: 100%;
-        height: 100%;
-        border-width: 3px;
-        border-left-color: #00C9C0;
-        animation-duration: 3s;
-    }
+/* ===================== AUTH GATE ===================== */
+#auth-gate {
+  display: none; position: fixed; inset: 0; z-index: 2000;
+  background: linear-gradient(135deg, #1a1410, #2e2417);
+  align-items: center; justify-content: center; flex-direction: column; padding: 30px; text-align: center;
+}
+#auth-gate.active { display: flex; }
+.ag-logo { font-size: clamp(36px, 10vw, 68px); font-weight: 900; color: #FFD700; text-shadow: 0 0 22px rgba(255,215,0,0.55); letter-spacing: 5px; margin-bottom: 22px; }
+.ag-title { font-size: clamp(22px, 5.5vw, 34px); font-weight: 800; color: #fff; margin-bottom: 14px; }
+.ag-desc { font-size: clamp(15px, 3.5vw, 20px); color: rgba(255,255,255,0.65); line-height: 1.9; max-width: 440px; margin-bottom: 10px; }
+.ag-redirect-note { font-size: clamp(13px, 2.8vw, 16px); color: rgba(255,215,0,0.78); margin-top: 14px; }
+.ag-countdown { font-weight: 900; color: #FFD700; font-size: 1.3em; display: inline-block; animation: neonGold 0.6s ease-in-out infinite alternate; }
+@keyframes neonGold { from { text-shadow: 0 0 6px #FFD700; } to { text-shadow: 0 0 18px #FFD700, 0 0 36px #F59E0B; } }
 
-    .ring:nth-child(2) {
-        width: 80%;
-        height: 80%;
-        border-width: 2px;
-        animation-direction: reverse;
-        animation-duration: 2s;
-    }
+/* ===================== PAGE LOADER ===================== */
+#page-loader { position: fixed; inset: 0; z-index: 9000; background: #1a1410; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 22px; transition: opacity 0.5s ease; }
+#page-loader.fade-out { opacity: 0; pointer-events: none; }
+.loader-logo { font-size: clamp(38px, 12vw, 80px); font-weight: 900; animation: neonColorCycle 2s linear infinite; letter-spacing: 5px; }
+.loader-bar-wrap { width: min(88vw, 300px); height: 5px; background: rgba(255,255,255,0.12); border-radius: 10px; overflow: hidden; }
+.loader-bar { height: 100%; background: linear-gradient(90deg, var(--neon1), var(--neon2), var(--neon3), var(--neon4)); border-radius: 10px; animation: loaderFill 1.9s ease-in-out forwards; }
+@keyframes loaderFill { from { width:0; } to { width:100%; } }
+.loader-text { font-size: clamp(12px, 2.8vw, 15px); color: rgba(255,255,255,0.45); }
 
-    .ring:nth-child(3) {
-        width: 60%;
-        height: 60%;
-        border-top-color: #00E5DC;
-        border-bottom-color: #C9A84C;
-        animation-duration: 1.5s;
-    }
+/* ===================== GATEWAY ===================== */
+#gateway {
+  position: fixed; inset: 0; z-index: 1500;
+  background: linear-gradient(135deg, #14100c 0%, #2e2417 35%, #443523 65%, #1a1410 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 0.8s ease, visibility 0.8s ease; overflow: hidden; padding: 24px;
+}
+#gateway.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.gw-particles-wrap { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.gw-p { position: absolute; border-radius: 50%; animation: gwFloat linear infinite; opacity: 0; }
+@keyframes gwFloat { 0% { transform: translateY(110vh) scale(0); opacity: 0; } 8% { opacity: 0.8; } 92% { opacity: 0.8; } 100% { transform: translateY(-60px) scale(1.2); opacity: 0; } }
+.gw-logo-wrap { position: relative; z-index: 2; margin-bottom: 22px; animation: logoFloat 3.2s ease-in-out infinite; }
+@keyframes logoFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+.gw-logo { font-size: clamp(50px, 14vw, 100px); font-weight: 900; letter-spacing: 8px; display: inline-block; }
+.gw-logo span { display: inline-block; animation: neonColorCycle 2.2s linear infinite; }
+.gw-logo span:nth-child(1){animation-delay:0s} .gw-logo span:nth-child(2){animation-delay:0.37s} .gw-logo span:nth-child(3){animation-delay:0.74s}
+@keyframes neonColorCycle {
+  0%   { color:var(--neon1); text-shadow:0 0 10px var(--neon1),0 0 24px var(--neon1); }
+  25%  { color:var(--neon2); text-shadow:0 0 10px var(--neon2),0 0 24px var(--neon2); }
+  50%  { color:var(--neon3); text-shadow:0 0 10px var(--neon3),0 0 24px var(--neon3); }
+  75%  { color:var(--neon4); text-shadow:0 0 10px var(--neon4),0 0 24px var(--neon4); }
+  100% { color:var(--neon1); text-shadow:0 0 10px var(--neon1),0 0 24px var(--neon1); }
+}
+.gw-subtitle { font-size: clamp(15px, 3.8vw, 26px); color: rgba(255,255,255,0.9); font-weight: 300; letter-spacing: 3px; text-align: center; margin-bottom: 10px; z-index: 2; position: relative; }
+.gw-tagline { font-size: clamp(18px, 4.8vw, 32px); font-weight: 800; color: #FFD700; text-shadow: 0 0 18px rgba(255,215,0,0.65); text-align: center; z-index: 2; position: relative; margin-bottom: 12px; line-height: 1.55; }
+.gw-desc { font-size: clamp(14px, 3.2vw, 20px); color: rgba(255,255,255,0.8); text-align: center; max-width: min(90vw, 520px); line-height: 2; z-index: 2; position: relative; margin-bottom: 32px; }
+.gw-progress-wrap { width: min(90vw, 440px); z-index: 2; position: relative; margin-bottom: 24px; }
+.gw-progress-labels { display: flex; justify-content: space-between; color: rgba(255,255,255,0.7); font-size: clamp(12px, 2.6vw, 16px); margin-bottom: 10px; }
+.gw-pbar-bg { width: 100%; height: 7px; background: rgba(255,255,255,0.16); border-radius: 10px; overflow: hidden; }
+.gw-pbar-fill { height: 100%; background: linear-gradient(90deg,var(--neon1),var(--neon2),var(--neon3),var(--neon4)); background-size: 200% 100%; border-radius: 10px; width: 0%; transition: width 0.35s ease; animation: progressShimmer 2.2s linear infinite; }
+@keyframes progressShimmer { 0% { background-position: 200% center; } 100% { background-position: 0% center; } }
+.gw-enter-btn { background: linear-gradient(135deg,#FFD700,#F59E0B,#D97706); border: none; padding: clamp(13px,3.2vw,20px) clamp(32px,8vw,65px); border-radius: 50px; font-size: clamp(16px,3.8vw,24px); font-weight: 900; color: #1a1410; cursor: pointer; z-index: 2; position: relative; box-shadow: 0 0 28px rgba(255,215,0,0.55), 0 8px 32px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 12px; letter-spacing: 1px; }
+.gw-enter-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 45px rgba(255,215,0,0.85), 0 14px 42px rgba(0,0,0,0.4); }
+.gw-enter-btn:active { transform: scale(0.97); }
+.gw-skip-hint { color: rgba(255,255,255,0.45); font-size: clamp(12px,2.5vw,15px); z-index: 2; position: relative; margin-top: 20px; text-align: center; }
+.gw-count-num { font-weight: 900; color: #FFD700; font-size: 1.25em; }
 
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+/* ===================== TOP HEADER ===================== */
+#main-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  background: rgba(43,36,28,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(212,175,55,0.25);
+  padding: 0 clamp(14px,4vw,32px);
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+html.dark #main-header { background: rgba(17,20,26,0.92); }
 
-    /* ===== شعار الشركة بالمنتصف ===== */
-    .aqx-logo {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 5;
-    }
+.header-left { display: flex; align-items: center; gap: 12px; }
+.status-dot-wrap { display: flex; align-items: center; gap: 8px; }
+.status-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: #0a3a1a; box-shadow: none;
+  animation: dotBlink 1.8s ease-in-out infinite;
+}
+@keyframes dotBlink {
+  0%,100% { background: var(--green-on); box-shadow: 0 0 6px var(--green-on), 0 0 14px var(--green-on); }
+  50%      { background: #0a3a1a; box-shadow: none; }
+}
+.status-text { font-size: clamp(12px,2.6vw,14px); color: #e9e3d8; font-weight: 700; }
 
-    .aqx-logo .main-text {
-        font-size: 2.2rem;
-        font-weight: 900;
-        background: linear-gradient(135deg, #C9A84C, #F0D060, #FFFFFF, #C9A84C);
-        background-size: 300% 300%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: goldShine 4s ease infinite;
-        line-height: 1;
-        letter-spacing: 2px;
-    }
+.header-logo {
+  font-size: clamp(20px,5vw,28px); font-weight: 900; letter-spacing: 3px;
+  animation: neonColorCycle 3s linear infinite, logoWiggle 4s ease-in-out infinite;
+}
+@keyframes logoWiggle { 0%,100% { transform: rotate(0deg) scale(1); } 25% { transform: rotate(-2deg) scale(1.03); } 75% { transform: rotate(2deg) scale(1.03); } }
 
-    .aqx-logo .sub-text {
-        font-size: 0.6rem;
-        color: #00E5DC;
-        letter-spacing: 4px;
-        font-weight: 700;
-        margin-top: 4px;
-        text-transform: uppercase;
-    }
+.hamburger-btn {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  cursor: pointer; transition: all 0.3s ease;
+}
+.hamburger-btn:hover { background: rgba(212,175,55,0.22); }
+.hamburger-btn span { width: 20px; height: 2px; background: var(--gold); border-radius: 2px; transition: all 0.3s ease; }
 
-    @keyframes goldShine {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
+/* ===================== SIDEBAR (DRAWER FROM RIGHT) ===================== */
+#sidebar-overlay {
+  position: fixed; inset: 0; z-index: 1700; background: rgba(0,0,0,0.5);
+  opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease;
+  backdrop-filter: blur(3px);
+}
+#sidebar-overlay.active { opacity: 1; visibility: visible; }
 
-    /* ===== النصوص الفخمة ===== */
-    .wait-title {
-        color: #F0D060;
-        font-size: 1.5rem;
-        font-weight: 900;
-        margin-bottom: 12px;
-        text-shadow: 0 0 20px rgba(201, 168, 76, 0.4);
-    }
+#sidebar {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: var(--sidebar-w);
+  max-width: 92vw;
+  z-index: 1800;
+  background: linear-gradient(165deg, #4a3826 0%, #3a2c1c 50%, #2e2317 100%);
+  transform: translateX(110%);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex; flex-direction: column;
+  box-shadow: -10px 0 50px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+#sidebar.open { transform: translateX(0); }
 
-    .wait-desc {
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 0.95rem;
-        line-height: 1.6;
-        font-weight: 600;
-    }
+.sidebar-scroll {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 18px 18px 24px;
+}
+.sidebar-scroll::-webkit-scrollbar { width: 7px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--neon1), var(--neon2), var(--neon3), var(--neon4));
+  background-size: 100% 300%;
+  border-radius: 10px;
+  animation: scrollNeon 4s linear infinite;
+}
+@keyframes scrollNeon { 0% { background-position: 0 0%; } 100% { background-position: 0 300%; } }
 
-    /* ===== نبضات الضوء السفلية ===== */
-    .pulse-glow {
-        position: absolute;
-        bottom: -50px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 200px;
-        height: 50px;
-        background: radial-gradient(ellipse, rgba(0, 201, 192, 0.4) 0%, transparent 70%);
-        filter: blur(20px);
-        animation: pulseOpacity 2s infinite alternate;
-        z-index: 0;
-    }
+.sidebar-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 14px; margin-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
 
-    @keyframes pulseOpacity {
-        0% { opacity: 0.3; transform: translateX(-50%) scale(0.8); }
-        100% { opacity: 1; transform: translateX(-50%) scale(1.2); }
-    }
+.sb-close-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 900; cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, var(--neon1), var(--neon2));
+  animation: closeColorCycle 2.4s linear infinite;
+  transition: transform 0.3s ease;
+}
+.sb-close-btn:hover { transform: rotate(90deg) scale(1.1); }
+@keyframes closeColorCycle {
+  0%   { background: linear-gradient(135deg, var(--neon1), var(--neon2)); }
+  33%  { background: linear-gradient(135deg, var(--neon2), var(--neon3)); }
+  66%  { background: linear-gradient(135deg, var(--neon3), var(--neon4)); }
+  100% { background: linear-gradient(135deg, var(--neon4), var(--neon1)); }
+}
 
+.sb-aqx-title {
+  font-size: clamp(22px,5.5vw,28px); font-weight: 900; letter-spacing: 4px;
+  animation: neonColorCycle 2.6s linear infinite;
+}
+
+/* Country / flag block */
+.sb-country {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+.sb-country-flag { font-size: 26px; line-height: 1; }
+.sb-country-text { display: flex; flex-direction: column; }
+.sb-country-label { font-size: 11px; color: rgba(255,255,255,0.45); }
+.sb-country-name { font-size: 14px; color: #f1ede6; font-weight: 700; }
+
+/* Search box with water animation */
+.sb-search-wrap {
+  position: relative;
+  border-radius: 50px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  border: 1px solid rgba(212,175,55,0.4);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+}
+.sb-water {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(120deg, rgba(0,200,255,0.18) 0%, rgba(0,140,255,0.1) 50%, rgba(0,200,255,0.18) 100%);
+  background-size: 200% 200%;
+  animation: waterMove 4s ease-in-out infinite;
+}
+@keyframes waterMove {
+  0%,100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+.sb-water::before, .sb-water::after {
+  content: '';
+  position: absolute;
+  width: 200%; height: 200%;
+  top: -50%; left: -50%;
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 8px);
+  animation: waterRipple 6s linear infinite;
+}
+.sb-water::after { animation-duration: 9s; opacity: 0.5; }
+@keyframes waterRipple { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.sb-search-input {
+  position: relative; z-index: 2;
+  width: 100%;
+  background: rgba(20,16,12,0.55);
+  border: none;
+  outline: none;
+  padding: 13px 46px 13px 16px;
+  font-family: var(--font-main);
+  font-size: 14px;
+  color: #fff;
+}
+.sb-search-input::placeholder { color: rgba(255,255,255,0.55); }
+.sb-search-icon {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  z-index: 3; color: rgba(255,255,255,0.6); font-size: 16px; pointer-events: none;
+}
+
+/* Nav list */
+.sb-nav { list-style: none; display: flex; flex-direction: column; gap: 5px; margin-bottom: 18px; }
+.sb-nav-link {
+  display: flex; align-items: center; gap: 13px;
+  padding: 12px 14px; border-radius: 13px;
+  color: #efe9e2; text-decoration: none;
+  font-size: 15px; font-weight: 600;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+}
+.sb-nav-link:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(212,175,55,0.3);
+  transform: translateX(-4px);
+}
+.sb-nav-icon { font-size: 19px; width: 24px; text-align: center; flex-shrink: 0; }
+
+.sb-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 14px 0; }
+
+/* Completion bar */
+.sb-completion-box {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 16px;
+  padding: 16px;
+}
+.sb-completion-title {
+  font-size: 14px; font-weight: 800; color: #fff;
+  display: flex; align-items: center; gap: 7px;
+  margin-bottom: 10px;
+}
+.sb-completion-bar-bg {
+  width: 100%; height: 10px; border-radius: 10px;
+  background: rgba(0,0,0,0.3); overflow: hidden;
+  margin-bottom: 8px;
+}
+.sb-completion-bar-fill {
+  height: 100%; border-radius: 10px; width: 0%;
+  background: linear-gradient(90deg, var(--neon1), var(--neon2), var(--neon3));
+  background-size: 200% 100%;
+  animation: progressShimmer 2.2s linear infinite;
+  transition: width 0.8s ease;
+}
+.sb-completion-percent { font-size: 13px; color: rgba(255,255,255,0.7); text-align: left; font-weight: 700; }
+
+/* Theme toggle row */
+.sb-theme-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+.sb-theme-label { font-size: 13px; color: #efe9e2; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.sb-theme-switch {
+  width: 46px; height: 26px; border-radius: 30px;
+  background: rgba(255,255,255,0.18);
+  position: relative; cursor: pointer; transition: background 0.3s ease;
+}
+.sb-theme-switch.on { background: linear-gradient(90deg, var(--neon1), var(--neon2)); }
+.sb-theme-switch-knob {
+  position: absolute; top: 3px; right: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; transition: transform 0.3s ease;
+}
+.sb-theme-switch.on .sb-theme-switch-knob { transform: translateX(-20px); }
+
+/* ===================== MAIN CONTENT ===================== */
+#main-content { padding-top: 64px; min-height: 100vh; position: relative; z-index: 1; }
+.top-space { height: clamp(50px,7vw,80px); width: 100%; }
+
+#particles-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+/* ===================== HERO PROFILE ===================== */
+.aqx-hero {
+  padding: clamp(30px,7vw,60px) clamp(18px,5vw,60px);
+  text-align: center;
+  position: relative;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.35);
+  padding: 8px 20px; border-radius: 50px;
+  font-size: clamp(12px,2.6vw,15px); color: var(--ink-soft);
+  margin-bottom: 24px; font-weight: 700;
+}
+
+.avatar-wrap {
+  position: relative; width: clamp(96px,22vw,140px); height: clamp(96px,22vw,140px);
+  margin: 0 auto 18px;
+}
+.avatar-ring {
+  position: absolute; inset: -6px; border-radius: 50%;
+  background: conic-gradient(var(--neon1), var(--neon2), var(--neon3), var(--neon4), var(--neon1));
+  animation: ringSpin 4s linear infinite;
+}
+@keyframes ringSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.avatar-img {
+  position: relative; width: 100%; height: 100%; border-radius: 50%;
+  object-fit: cover; border: 4px solid var(--bg-main);
+  background: linear-gradient(135deg,#888,#bbb);
+  display: block;
+}
+.avatar-skeleton {
+  position: relative; width: 100%; height: 100%; border-radius: 50%;
+  background: linear-gradient(90deg, #d8d2c8 25%, #ece7df 37%, #d8d2c8 63%);
+  background-size: 400% 100%;
+  animation: skeletonShine 1.4s ease infinite;
+  border: 4px solid var(--bg-main);
+}
+html.dark .avatar-skeleton { background: linear-gradient(90deg, #2a2e35 25%, #353a42 37%, #2a2e35 63%); background-size: 400% 100%; }
+@keyframes skeletonShine { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+.hero-name { font-size: clamp(24px,6vw,38px); font-weight: 900; color: var(--ink); margin-bottom: 8px; }
+.hero-name.skeleton-text { width: 180px; height: 30px; margin: 0 auto 8px; border-radius: 8px; background: linear-gradient(90deg, #d8d2c8 25%, #ece7df 37%, #d8d2c8 63%); background-size: 400% 100%; animation: skeletonShine 1.4s ease infinite; }
+html.dark .hero-name.skeleton-text { background: linear-gradient(90deg, #2a2e35 25%, #353a42 37%, #2a2e35 63%); background-size: 400% 100%; }
+
+.hero-created { font-size: clamp(13px,2.8vw,16px); color: var(--ink-muted); margin-bottom: 4px; }
+.hero-tagline { font-size: clamp(15px,3.2vw,19px); color: var(--ink-soft); font-weight: 600; margin-top: 14px; max-width: 560px; margin-left: auto; margin-right: auto; line-height: 1.8; }
+
+/* ===================== CONTENT SECTIONS GRID ===================== */
+.content-wrap { max-width: 1100px; margin: 0 auto; padding: 0 clamp(14px,5vw,50px) 70px; }
+
+.section-intro { text-align: center; margin: 40px 0 26px; }
+.section-intro h2 { font-size: clamp(20px,5vw,30px); font-weight: 900; color: var(--ink); }
+.section-intro p { font-size: clamp(13px,2.8vw,16px); color: var(--ink-muted); margin-top: 8px; }
+
+.aqx-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%,250px),1fr));
+  gap: 18px;
+}
+
+.aqx-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(212,175,55,0.18);
+  border-radius: 20px;
+  padding: 26px 22px;
+  text-decoration: none;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: all 0.35s ease;
+  position: relative; overflow: hidden;
+}
+.aqx-card::before {
+  content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%;
+  background: linear-gradient(180deg, var(--neon1), var(--neon2));
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.aqx-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(212,175,55,0.18);
+  border-color: rgba(212,175,55,0.4);
+}
+.aqx-card:hover::before { opacity: 1; }
+
+.aqx-card-icon {
+  width: 52px; height: 52px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  background: linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06));
+}
+.aqx-card-title { font-size: clamp(16px,3.4vw,19px); font-weight: 800; color: var(--ink); }
+.aqx-card-desc { font-size: clamp(12.5px,2.8vw,14.5px); color: var(--ink-muted); line-height: 1.65; }
+
+/* ===================== AQX SIGNATURE FOOTER ===================== */
+.aqx-signature {
+  text-align: center;
+  padding: clamp(50px,10vw,90px) 24px;
+  position: relative;
+}
+.sig-text {
+  font-size: clamp(20px,5vw,32px); font-weight: 800; color: var(--ink);
+  line-height: 1.7; margin-bottom: 22px;
+}
+.sig-logo {
+  font-size: clamp(34px,9vw,56px); font-weight: 900; letter-spacing: 5px;
+  animation: neonColorCycle 3s linear infinite;
+}
+.sig-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, rgba(212,175,55,0.12), transparent 60%);
+}
+
+/* ===================== SCROLL TOP (FLIP STYLE) ===================== */
+#scroll-top {
+  position: fixed; bottom: 28px; left: 24px;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--neon1), var(--neon2));
+  border: none; color: #fff; font-size: 22px; cursor: pointer;
+  box-shadow: 0 4px 22px rgba(0,0,0,0.25);
+  z-index: 250; opacity: 0; transform: translateY(20px) rotateX(0deg);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  display: flex; align-items: center; justify-content: center;
+}
+#scroll-top.visible { opacity: 1; transform: translateY(0) rotateX(0deg); }
+#scroll-top.flip { animation: flipUp 0.6s ease; }
+@keyframes flipUp { 0% { transform: rotateX(0deg); } 50% { transform: rotateX(180deg); } 100% { transform: rotateX(360deg); } }
+
+/* ===================== BACK BUTTON ===================== */
+#back-btn {
+  position: fixed; bottom: 28px; right: 24px;
+  height: 48px; padding: 0 18px; border-radius: 50px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(212,175,55,0.3);
+  color: var(--ink); font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; z-index: 250;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+  transition: all 0.3s ease;
+}
+#back-btn:hover { transform: translateX(-4px); }
+
+/* ===================== VOICE STATUS ===================== */
+#voice-status {
+  position: fixed; bottom: 90px; right: clamp(16px,5vw,44px);
+  background: rgba(43,36,28,0.94);
+  border: 1px solid rgba(212,175,55,0.5);
+  border-radius: 50px; padding: 9px 20px;
+  font-size: clamp(12px,2.5vw,14px); color: #f5d576;
+  display: flex; align-items: center; gap: 9px;
+  z-index: 250; opacity: 0; transition: opacity 0.3s ease;
+  max-width: 260px; pointer-events: none;
+}
+#voice-status.active { opacity: 1; }
+#voice-status .pulse-dot { width: 9px; height: 9px; border-radius: 50%; background: #f5d576; animation: pulseDot 1s ease-in-out infinite; flex-shrink: 0; }
+@keyframes pulseDot { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.55); opacity:0.45; } }
+
+/* ===================== Block during voice ===================== */
+#voice-block-overlay {
+  position: fixed; inset: 0; z-index: 1600;
+  background: transparent;
+  display: none;
+}
+#voice-block-overlay.active { display: block; cursor: not-allowed; }
+
+@media (max-width:480px) {
+  #back-btn span.back-text { display: none; }
+  #back-btn { padding: 0 14px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after { animation-duration:0.01ms !important; transition-duration:0.1ms !important; }
+}
 </style>
 </head>
 <body>
 
-    <!-- خلفية الجزيئات المتطايرة -->
-    <canvas id="particleCanvas"></canvas>
+<div id="page-loader">
+  <div class="loader-logo">AQX</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-text">جارٍ تحميل منظومة القرماني إكس...</div>
+</div>
 
-    <div class="pulse-glow"></div>
+<div id="security-warning">
+  <div class="sec-bg-anim"></div>
+  <div class="sec-content">
+    <span class="sec-icon">🚨</span>
+    <div class="sec-title">⚠️ تحذير أمني خطير ⚠️</div>
+    <div class="sec-body" id="sec-body-text">
+      تم رصد محاولة غير مصرح بها!<br>
+      هذه الصفحة محمية بأنظمة الأمن الرقمي لمنظومة القرماني إكس AQX.<br>
+      <strong>محظورة تمامًا وتُعدّ انتهاكًا أمنيًا موثّقًا.</strong>
+    </div>
+    <div class="sec-phrase" id="sec-phrase-text">🔒 هذا النظام يراقب — لا مجال للتحايل على منظومة القرماني إكس</div>
+    <div class="sec-redirect">
+      سيتم تحويلك فوراً إلى الصفحة الرئيسية...<br>
+      <span class="sec-countdown" id="sec-countdown">5</span>
+    </div>
+  </div>
+</div>
 
-    <!-- الصندوق الفخم -->
-    <div class="loader-container">
-        <div class="rings-wrapper">
-            <div class="ring"></div>
-            <div class="ring"></div>
-            <div class="ring"></div>
-            
-            <div class="aqx-logo">
-                <span class="main-text">AQX</span>
-                <span class="sub-text">Alqarmani X</span>
-            </div>
-        </div>
+<div id="auth-gate">
+  <div class="ag-logo">AQX</div>
+  <div class="ag-title">🔐 هذا المحتوى مقيّد</div>
+  <div class="ag-desc">يجب تسجيل الدخول إلى منظومة القرماني إكس للوصول إلى هذه الصفحة.<br>سيتم تحويلك تلقائيًا إلى الصفحة الرئيسية.</div>
+  <div class="ag-redirect-note">التحويل التلقائي خلال <span class="ag-countdown" id="ag-count">5</span> ثوانٍ...</div>
+</div>
 
-        <h1 class="wait-title">نصنع لك الفخامة...</h1>
-        <p class="wait-desc">جاري تهيئة تجربة بصرية ورقمية استثنائية تليق بك. يرجى الانتظار للحظات.</p>
+<canvas id="particles-canvas"></canvas>
+
+<div id="gateway">
+  <div class="gw-particles-wrap" id="gw-particles"></div>
+  <div class="gw-logo-wrap"><div class="gw-logo"><span>A</span><span>Q</span><span>X</span></div></div>
+  <div class="gw-subtitle">منظومة القرماني إكس</div>
+  <div class="gw-tagline">🥇 هويتك الرقمية تبدأ من هنا 🥇</div>
+  <div class="gw-desc">مرحباً بك في AQX Me — مركزك الشخصي داخل منظومة القرماني إكس.<br><em>سيتم تفعيل المرشد الصوتي تلقائياً بعد الدخول.</em></div>
+  <div class="gw-progress-wrap">
+    <div class="gw-progress-labels"><span>سيتم الدخول تلقائياً خلال</span><span><span id="gw-count" class="gw-count-num">15</span> ثانية</span></div>
+    <div class="gw-pbar-bg"><div class="gw-pbar-fill" id="gw-progress"></div></div>
+  </div>
+  <button class="gw-enter-btn" id="gw-enter-btn" onclick="enterSite()"><span>🥇</span><span>الدخول إلى AQX Me الآن</span></button>
+  <div class="gw-skip-hint">أو انتظر <span class="gw-count-num" id="gw-count2">15</span> ثانية للدخول التلقائي</div>
+</div>
+
+<!-- VOICE BLOCKING OVERLAY -->
+<div id="voice-block-overlay"></div>
+
+<!-- HEADER -->
+<header id="main-header">
+  <div class="header-left">
+    <div class="hamburger-btn" id="hamburger-btn" aria-label="فتح القائمة">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="status-dot-wrap">
+      <div class="status-dot"></div>
+      <span class="status-text">متصل</span>
+    </div>
+  </div>
+  <div class="header-logo">AQX</div>
+</header>
+
+<!-- SIDEBAR OVERLAY -->
+<div id="sidebar-overlay"></div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sidebar-scroll">
+
+    <div class="sidebar-top">
+      <div class="sb-close-btn" id="sb-close-btn">✕</div>
+      <div class="sb-aqx-title">AQX</div>
     </div>
 
+    <div class="sb-country" id="sb-country">
+      <span class="sb-country-flag" id="sb-country-flag">🌍</span>
+      <div class="sb-country-text">
+        <span class="sb-country-label">موقعك الحالي</span>
+        <span class="sb-country-name" id="sb-country-name">جارٍ التحديد...</span>
+      </div>
+    </div>
+
+    <div class="sb-search-wrap">
+      <div class="sb-water"></div>
+      <span class="sb-search-icon">🔍</span>
+      <input type="text" class="sb-search-input" id="sb-search-input" placeholder="ابحث في AQX">
+    </div>
+
+    <ul class="sb-nav">
+      <li><a href="#" class="sb-nav-link"><span class="sb-nav-icon">🏠</span><span>الصفحة الرئيسية</span></a></li>
+      <li><a href="#" class="sb-nav-link"><span class="sb-nav-icon">⚙️</span><span>الإعدادات</span></a></li>
+      <li><a href="#" class="sb-nav-link"><span class="sb-nav-icon">📄</span><span>CV</span></a></li>
+      <li><a href="#" class="sb-nav-link"><span class="sb-nav-icon">🪪</span><span>بطاقتي الرقمية</span></a></li>
+      <li><a href="#" class="sb-nav-link"><span class="sb-nav-icon">🏆</span><span>ألبوماتي</span></a></li>
+      <li><a href="#" class="sb-nav-link"><span class="sb-nav-icon">💼</span><span>فرص</span></a></li>
+      <li><a href="#" class="sb-nav-link"><span class="sb-nav-icon">🎭</span><span>شخصياتي</span></a></li>
+      <li><a href="#" class="sb-nav-link"><span class="sb-nav-icon">👤</span><span>بروفايلي</span></a></li>
+      <li><a href="#" class="sb-nav-link"><span class="sb-nav-icon">⬆️</span><span>مركز التحميلات</span></a></li>
+      <li><a href="#" class="sb-nav-link"><span class="sb-nav-icon">⬇️</span><span>مركز التنزيلات</span></a></li>
+    </ul>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-theme-row">
+      <span class="sb-theme-label">🌗 الوضع الداكن</span>
+      <div class="sb-theme-switch" id="sb-theme-switch"><div class="sb-theme-switch-knob"></div></div>
+    </div>
+
+    <div class="sb-completion-box">
+      <div class="sb-completion-title">🥇 AQX Me</div>
+      <div class="sb-completion-bar-bg"><div class="sb-completion-bar-fill" id="sb-completion-fill"></div></div>
+      <div class="sb-completion-percent"><span id="sb-completion-percent">0</span>% مكتمل</div>
+    </div>
+
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main id="main-content">
+
+  <div class="top-space"></div>
+
+  <section class="aqx-hero">
+    <div class="hero-badge">🥇 هويتك الرقمية داخل AQX</div>
+
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <div class="avatar-skeleton" id="avatar-skeleton"></div>
+      <img class="avatar-img" id="avatar-img" style="display:none;" alt="صورة المستخدم">
+    </div>
+
+    <div class="hero-name skeleton-text" id="hero-name"></div>
+    <div class="hero-created" id="hero-created">جارٍ تحميل بيانات الحساب...</div>
+
+    <p class="hero-tagline">صمم صفحة AQX Me لتكون هويتك الرقمية ومركزك الشخصي الذي تبدأ منه كل رحلتك داخل منظومة القرماني إكس.</p>
+  </section>
+
+  <div class="content-wrap">
+
+    <div class="section-intro">
+      <h2>مركز AQX Me</h2>
+      <p>كل ما يخصك في مكان واحد فاخر وسريع</p>
+    </div>
+
+    <div class="aqx-cards-grid">
+      <a href="#" class="aqx-card" data-voice="الملف الشخصي">
+        <div class="aqx-card-icon">👤</div>
+        <div class="aqx-card-title">الملف الشخصي</div>
+        <div class="aqx-card-desc">إدارة بياناتك الأساسية وهويتك داخل AQX</div>
+      </a>
+      <a href="#" class="aqx-card" data-voice="هوياتي">
+        <div class="aqx-card-icon">🪪</div>
+        <div class="aqx-card-title">هوياتي</div>
+        <div class="aqx-card-desc">جميع هوياتك ووثائقك الرقمية الموثقة</div>
+      </a>
+      <a href="#" class="aqx-card" data-voice="دليل علاقاتي">
+        <div class="aqx-card-icon">📇</div>
+        <div class="aqx-card-title">دليل علاقاتي</div>
+        <div class="aqx-card-desc">شبكة جهات الاتصال والعلاقات الخاصة بك</div>
+      </a>
+      <a href="#" class="aqx-card" data-voice="ملفاتي">
+        <div class="aqx-card-icon">📂</div>
+        <div class="aqx-card-title">ملفاتي</div>
+        <div class="aqx-card-desc">مساحتك الشخصية لتخزين وتنظيم ملفاتك</div>
+      </a>
+      <a href="#" class="aqx-card" data-voice="مواعيدي">
+        <div class="aqx-card-icon">📅</div>
+        <div class="aqx-card-title">مواعيدي</div>
+        <div class="aqx-card-desc">جدولك الزمني ومواعيدك القادمة</div>
+      </a>
+      <a href="#" class="aqx-card" data-voice="ملاحظاتي">
+        <div class="aqx-card-icon">📝</div>
+        <div class="aqx-card-title">ملاحظاتي</div>
+        <div class="aqx-card-desc">دوّن أفكارك وملاحظاتك الخاصة بأمان</div>
+      </a>
+      <a href="#" class="aqx-card" data-voice="الصندوق الأسود">
+        <div class="aqx-card-icon">⚫</div>
+        <div class="aqx-card-title">الصندوق الأسود</div>
+        <div class="aqx-card-desc">منطقة محمية بأقصى درجات السرية والأمان</div>
+      </a>
+    </div>
+
+  </div>
+
+  <section class="aqx-signature">
+    <div class="sig-glow"></div>
+    <div class="sig-text">أنت جزء من <strong>مستقبل AQX</strong>.</div>
+    <div class="sig-logo">AQX</div>
+  </section>
+
+</main>
+
+<button id="scroll-top" onclick="scrollToTopFlip()" aria-label="العودة للأعلى">↑</button>
+<button id="back-btn" onclick="goBackSmart()"><span>→</span><span class="back-text">رجوع</span></button>
+
+<div id="voice-status">
+  <div class="pulse-dot"></div>
+  <span id="voice-text">جارٍ التشغيل...</span>
+</div>
+
 <script>
-    /* =========================================
-       1. نظام الجزيئات الذهبية والفضية المتطايرة
-    ========================================= */
-    const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
-    let width, height, particles = [];
+'use strict';
 
-    // ألوان فخمة: ذهبي وفضي
-    const colors = ['#C9A84C', '#F0D060', '#E0E0E0', '#FFFFFF', '#D4AF37'];
+/* ===================== SCREEN PROTECTION (no copy / no screenshot best-effort) ===================== */
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
+document.addEventListener('selectstart', e => e.preventDefault());
+document.addEventListener('dragstart', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (e.key === 'PrintScreen') {
+    navigator.clipboard?.writeText('');
+    playVoice('تحذير! التقاط الشاشة غير مسموح به في منظومة القرماني إكس.');
+  }
+});
+window.addEventListener('blur', () => {
+  document.title = '🔒 محمي — AQX';
+});
+window.addEventListener('focus', () => {
+  document.title = 'AQX Me | منظومة القرماني إكس';
+});
 
-    function resizeCanvas() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
+/* ===================== USER DATA LOADING ===================== */
+async function loadUserData() {
+  const filePath = window.AQX_USER_DATA_FILE || 'user-data.json';
+  try {
+    const res = await fetch(filePath, { cache: 'no-store' });
+    if (!res.ok) throw new Error('file not found');
+    const data = await res.json();
+    applyUserData(data);
+  } catch (err) {
+    console.warn('تعذر تحميل ملف بيانات المستخدم:', filePath, err);
+    applyUserData({ name: 'مستخدم AQX', avatar: '', createdAt: '', completion: 0 });
+  }
+}
+
+function applyUserData(data) {
+  const nameEl   = document.getElementById('hero-name');
+  const createdEl = document.getElementById('hero-created');
+  const imgEl    = document.getElementById('avatar-img');
+  const skelEl   = document.getElementById('avatar-skeleton');
+  const fillEl   = document.getElementById('sb-completion-fill');
+  const pctEl    = document.getElementById('sb-completion-percent');
+
+  nameEl.classList.remove('skeleton-text');
+  nameEl.textContent = data.name || 'مستخدم AQX';
+
+  if (data.createdAt) {
+    try {
+      const d = new Date(data.createdAt);
+      const formatted = d.toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' });
+      createdEl.textContent = '📅 عضو منذ ' + formatted;
+    } catch(e) {
+      createdEl.textContent = '📅 عضو منذ ' + data.createdAt;
     }
+  } else {
+    createdEl.textContent = '';
+  }
 
-    class Particle {
-        constructor() {
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            this.radius = Math.random() * 2 + 0.5; // أحجام متفاوتة
-            this.color = colors[Math.floor(Math.random() * colors.length)];
-            this.speedX = (Math.random() - 0.5) * 1.2; // سرعة أفقية عشوائية
-            this.speedY = (Math.random() - 0.5) * 1.2; // سرعة عمودية عشوائية
-            this.alpha = Math.random() * 0.8 + 0.2;
-            this.alphaChange = (Math.random() * 0.02) - 0.01;
-        }
-
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-
-            // تأثير الوميض
-            this.alpha += this.alphaChange;
-            if (this.alpha <= 0.1 || this.alpha >= 1) this.alphaChange *= -1;
-
-            // إرجاع الجزيئات عند خروجها من الشاشة
-            if (this.x < 0) this.x = width;
-            if (this.x > width) this.x = 0;
-            if (this.y < 0) this.y = height;
-            if (this.y > height) this.y = 0;
-        }
-
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = this.color;
-            ctx.globalAlpha = this.alpha;
-            // إضافة توهج خفيف للجزيئات
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = this.color;
-            ctx.fill();
-            ctx.globalAlpha = 1;
-            ctx.shadowBlur = 0;
-        }
-    }
-
-    function initParticles() {
-        particles = [];
-        let numberOfParticles = (window.innerWidth * window.innerHeight) / 10000;
-        for (let i = 0; i < numberOfParticles; i++) {
-            particles.push(new Particle());
-        }
-    }
-
-    function animateParticles() {
-        ctx.clearRect(0, 0, width, height);
-        particles.forEach(p => {
-            p.update();
-            p.draw();
-        });
-        requestAnimationFrame(animateParticles);
-    }
-
-    window.addEventListener('resize', () => {
-        resizeCanvas();
-        initParticles();
-    });
-
-    resizeCanvas();
-    initParticles();
-    animateParticles();
-
-    /* =========================================
-       2. التفاعل الصوتي الأنثوي الآلي
-    ========================================= */
-    function speakLuxuriousWelcome() {
-        if (!('speechSynthesis' in window)) return;
-        
-        // النص المراد نطقه
-        const textToSpeak = "أهلاً بك في عالم القرماني إكس... جاري تهيئة تجربة استثنائية تليق بك.";
-        const utterance = new SpeechSynthesisUtterance(textToSpeak);
-        
-        utterance.lang = 'ar-SA';
-        utterance.rate = 0.85; // إبطاء بسيط لمزيد من الفخامة والهدوء
-        utterance.pitch = 1.2; // طبقة صوت أعلى قليلاً لإعطاء طابع أنثوي ناعم
-
-        // البحث عن صوت أنثوي عربي
-        function setVoice() {
-            const voices = window.speechSynthesis.getVoices();
-            const arabicFemale = voices.find(voice => 
-                voice.lang.includes('ar') && 
-                (voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('laila') || voice.name.toLowerCase().includes('zira'))
-            );
-            
-            // إذا لم يجد صوت أنثوي صريح، يختار أي صوت عربي متاح
-            const fallbackVoice = voices.find(voice => voice.lang.includes('ar'));
-            
-            utterance.voice = arabicFemale || fallbackVoice;
-            window.speechSynthesis.speak(utterance);
-        }
-
-        // معالجة تحميل الأصوات في المتصفح
-        if (speechSynthesis.getVoices().length !== 0) {
-            setVoice();
-        } else {
-            speechSynthesis.onvoiceschanged = setVoice;
-        }
-    }
-
-    // تفعيل الصوت بمجرد دخول المستخدم للصفحة
-    window.onload = () => {
-        // يتم وضع مهلة ثانية واحدة قبل التحدث لضمان استقرار الصفحة
-        setTimeout(speakLuxuriousWelcome, 1000);
+  if (data.avatar) {
+    const tmp = new Image();
+    tmp.onload = () => {
+      imgEl.src = data.avatar;
+      imgEl.style.display = 'block';
+      skelEl.style.display = 'none';
     };
+    tmp.onerror = () => { skelEl.style.display = 'block'; };
+    tmp.src = data.avatar;
+  } else {
+    skelEl.style.display = 'block';
+  }
 
-    // كإجراء احتياطي إذا منع المتصفح التشغيل التلقائي للصوت، يتم تشغيله عند أول لمسة
-    document.addEventListener('click', () => {
-        if (!window.speechSynthesis.speaking) speakLuxuriousWelcome();
-    }, { once: true });
+  const pct = Math.max(0, Math.min(100, parseInt(data.completion) || 0));
+  setTimeout(() => {
+    fillEl.style.width = pct + '%';
+    let cur = 0;
+    const step = setInterval(() => {
+      cur++;
+      pctEl.textContent = cur;
+      if (cur >= pct) clearInterval(step);
+    }, Math.max(8, 600/Math.max(pct,1)));
+  }, 400);
+}
 
+document.addEventListener('aqxUserReady', loadUserData);
 
-    /* =========================================
-       3. الرجوع التلقائي بعد 13 ثانية
-    ========================================= */
-    setTimeout(() => {
-        // التحقق مما إذا كان هناك صفحة سابقة في السجل
-        if (window.history.length > 1) {
-            window.history.back(); // العودة للصفحة التي جاء منها
-        } else {
-            // إذا تم فتح الصفحة مباشرة في تبويب جديد (إجراء احتياطي)
-            window.location.href = 'index.html'; 
-        }
-    }, 13000); // 13000 ملي ثانية = 13 ثانية
+/* ===================== DARK / LIGHT MODE ===================== */
+const themeSwitch = document.getElementById('sb-theme-switch');
+function applyTheme(isDark) {
+  document.documentElement.classList.toggle('dark', isDark);
+  themeSwitch.classList.toggle('on', isDark);
+  try { localStorage.setItem('aqx_theme', isDark ? 'dark' : 'light'); } catch(e) {}
+}
+(function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem('aqx_theme'); } catch(e) {}
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved ? saved === 'dark' : prefersDark);
+})();
+themeSwitch.addEventListener('click', () => {
+  applyTheme(!document.documentElement.classList.contains('dark'));
+  playVoice(document.documentElement.classList.contains('dark') ? 'تم تفعيل الوضع الداكن.' : 'تم تفعيل الوضع الفاتح.');
+});
 
+/* ===================== COUNTRY / FLAG DETECTION ===================== */
+const COUNTRY_FLAGS = {
+  'EG':'🇪🇬','SA':'🇸🇦','AE':'🇦🇪','KW':'🇰🇼','QA':'🇶🇦','BH':'🇧🇭','OM':'🇴🇲',
+  'JO':'🇯🇴','LB':'🇱🇧','SY':'🇸🇾','IQ':'🇮🇶','PS':'🇵🇸','YE':'🇾🇪','LY':'🇱🇾',
+  'TN':'🇹🇳','DZ':'🇩🇿','MA':'🇲🇦','SD':'🇸🇩','SO':'🇸🇴','US':'🇺🇸','GB':'🇬🇧',
+  'FR':'🇫🇷','DE':'🇩🇪','TR':'🇹🇷','IN':'🇮🇳','CA':'🇨🇦'
+};
+const COUNTRY_NAMES_AR = {
+  'EG':'مصر','SA':'السعودية','AE':'الإمارات','KW':'الكويت','QA':'قطر','BH':'البحرين','OM':'عُمان',
+  'JO':'الأردن','LB':'لبنان','SY':'سوريا','IQ':'العراق','PS':'فلسطين','YE':'اليمن','LY':'ليبيا',
+  'TN':'تونس','DZ':'الجزائر','MA':'المغرب','SD':'السودان','SO':'الصومال','US':'الولايات المتحدة',
+  'GB':'المملكة المتحدة','FR':'فرنسا','DE':'ألمانيا','TR':'تركيا','IN':'الهند','CA':'كندا'
+};
+
+async function detectCountry() {
+  const flagEl = document.getElementById('sb-country-flag');
+  const nameEl = document.getElementById('sb-country-name');
+  try {
+    const res = await fetch('https://ipapi.co/json/');
+    const data = await res.json();
+    const code = data.country_code;
+    flagEl.textContent = COUNTRY_FLAGS[code] || '🌍';
+    nameEl.textContent = COUNTRY_NAMES_AR[code] || data.country_name || 'غير معروف';
+  } catch (err) {
+    flagEl.textContent = '🌍';
+    nameEl.textContent = 'تعذر تحديد الموقع';
+  }
+}
+detectCountry();
+
+/* ===================== SIDEBAR DRAWER ===================== */
+const hamburgerBtn = document.getElementById('hamburger-btn');
+const sidebar       = document.getElementById('sidebar');
+const sidebarOverlay= document.getElementById('sidebar-overlay');
+const sbCloseBtn    = document.getElementById('sb-close-btn');
+
+function openSidebar() {
+  sidebar.classList.add('open');
+  sidebarOverlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  playVoice('تم فتح قائمة AQX الجانبية.');
+}
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  sidebarOverlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+hamburgerBtn.addEventListener('click', () => {
+  sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+});
+sbCloseBtn.addEventListener('click', closeSidebar);
+sidebarOverlay.addEventListener('click', closeSidebar);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+
+document.querySelectorAll('.sb-nav-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const label = this.querySelector('span:last-child').textContent.trim();
+    speakThenNavigate(label, this.getAttribute('href'));
+  });
+});
+
+/* ===================== SCROLL TOP (FLIP) ===================== */
+const scrollBtn = document.getElementById('scroll-top');
+window.addEventListener('scroll', () => {
+  scrollBtn.classList.toggle('visible', window.scrollY > 420);
+}, { passive: true });
+function scrollToTopFlip() {
+  scrollBtn.classList.add('flip');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => scrollBtn.classList.remove('flip'), 650);
+}
+
+/* ===================== SMART BACK BUTTON ===================== */
+function goBackSmart() {
+  playVoice('جارٍ الرجوع إلى الصفحة السابقة.');
+  setTimeout(() => {
+    if (document.referrer && document.referrer !== window.location.href) {
+      window.history.back();
+    } else {
+      window.location.href = 'index.html';
+    }
+  }, 350);
+}
+
+/* ===================== VOICE SYSTEM (FEMALE ARABIC GUIDE) ===================== */
+const synth = window.speechSynthesis;
+let arabicVoice = null;
+let isSpeaking  = false;
+let currentUtt  = null;
+const voiceOverlay = document.getElementById('voice-block-overlay');
+
+function loadVoices() {
+  const vv = synth.getVoices();
+  arabicVoice =
+    vv.find(v => v.lang === 'ar-EG' && /fem|f/i.test(v.name)) ||
+    vv.find(v => v.lang.startsWith('ar') && /fem|f/i.test(v.name)) ||
+    vv.find(v => v.lang === 'ar-EG') ||
+    vv.find(v => v.lang.startsWith('ar')) ||
+    null;
+}
+loadVoices();
+synth.addEventListener('voiceschanged', loadVoices);
+
+function playVoice(text, onEnd) {
+  if (!text || !synth) { if (onEnd) onEnd(); return; }
+  if (synth.speaking) synth.cancel();
+  const vsEl = document.getElementById('voice-status');
+  const vtEl = document.getElementById('voice-text');
+  currentUtt = new SpeechSynthesisUtterance(text);
+  currentUtt.lang   = 'ar-EG';
+  if (arabicVoice) currentUtt.voice = arabicVoice;
+  currentUtt.rate   = 0.92;
+  currentUtt.pitch  = 1.18;
+  currentUtt.volume = 1;
+
+  isSpeaking = true;
+  voiceOverlay.classList.add('active');
+  if (vsEl) vsEl.classList.add('active');
+  if (vtEl) vtEl.textContent = text.substring(0, 42) + (text.length > 42 ? '...' : '');
+
+  currentUtt.onend = () => {
+    isSpeaking = false;
+    voiceOverlay.classList.remove('active');
+    if (vsEl) vsEl.classList.remove('active');
+    if (onEnd) onEnd();
+  };
+  currentUtt.onerror = () => {
+    isSpeaking = false;
+    voiceOverlay.classList.remove('active');
+    if (vsEl) vsEl.classList.remove('active');
+    if (onEnd) onEnd();
+  };
+  synth.speak(currentUtt);
+}
+
+function speakThenNavigate(label, href) {
+  playVoice('جارٍ فتح: ' + label, () => {
+    // navigation disabled until voice finished — placeholder link only
+  });
+}
+
+document.querySelectorAll('.aqx-card').forEach(card => {
+  card.addEventListener('click', function(e) {
+    e.preventDefault();
+    const label = this.getAttribute('data-voice') || this.querySelector('.aqx-card-title').textContent.trim();
+    speakThenNavigate(label, this.getAttribute('href'));
+  });
+  card.addEventListener('mouseenter', function() {
+    if (!isSpeaking) {
+      const label = this.getAttribute('data-voice') || this.querySelector('.aqx-card-title').textContent.trim();
+      playVoice(label);
+    }
+  });
+});
+
+document.getElementById('gw-enter-btn')?.addEventListener('mouseenter', () => {
+  if (!isSpeaking) playVoice('اضغط للدخول إلى صفحتك الشخصية الآن.');
+});
+
+/* ===================== GOLD PARTICLES BACKGROUND ===================== */
+const canvas = document.getElementById('particles-canvas');
+const ctx    = canvas.getContext('2d');
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const P_COLORS = ['#d4af37','#f5d576','#ffe9a8','#b8860b','#e8c766'];
+const P_COUNT  = window.innerWidth < 600 ? 35 : 70;
+const ptcls = [];
+for (let i = 0; i < P_COUNT; i++) {
+  ptcls.push({
+    x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight,
+    r: Math.random()*3.2+0.8, dx:(Math.random()-0.5)*0.5, dy:(Math.random()-0.5)*0.5-0.12,
+    color: P_COLORS[Math.floor(Math.random()*P_COLORS.length)], phase: Math.random()*Math.PI*2
+  });
+}
+function animParticles() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ptcls.forEach(p => {
+    p.phase += 0.03;
+    const alpha = 0.14 + 0.28*Math.abs(Math.sin(p.phase));
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = p.color; ctx.globalAlpha = alpha;
+    ctx.shadowBlur = 6; ctx.shadowColor = p.color; ctx.fill();
+    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+    p.x += p.dx; p.y += p.dy;
+    if (p.x < -10) p.x = canvas.width+10; if (p.x > canvas.width+10) p.x = -10;
+    if (p.y < -10) p.y = canvas.height+10; if (p.y > canvas.height+10) p.y = -10;
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+/* ===================== GATEWAY ===================== */
+let gwTimer = null, gwSecs = 15, gwDone = false;
+(function createGwParticles() {
+  const wrap = document.getElementById('gw-particles');
+  if (!wrap) return;
+  for (let i=0;i<26;i++) {
+    const p = document.createElement('div');
+    p.className = 'gw-p';
+    const sz = Math.random()*12+4, dur = Math.random()*7+4, del = Math.random()*7;
+    const hue = Math.floor(Math.random()*360);
+    p.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;background:hsl(${hue},85%,62%);animation-duration:${dur}s;animation-delay:${del}s;`;
+    wrap.appendChild(p);
+  }
+})();
+function startGateway() {
+  playVoice('مرحباً بك في منظومة القرماني إكس. سيتم نقلك إلى AQX Me، مركزك الشخصي.');
+  const cEl=document.getElementById('gw-count'), c2El=document.getElementById('gw-count2'), pEl=document.getElementById('gw-progress');
+  gwTimer = setInterval(() => {
+    gwSecs--;
+    if (cEl) cEl.textContent = gwSecs; if (c2El) c2El.textContent = gwSecs;
+    if (pEl) pEl.style.width = ((15-gwSecs)/15*100)+'%';
+    if (gwSecs <= 0) { clearInterval(gwTimer); enterSite(); }
+  }, 1000);
+}
+function enterSite() {
+  if (gwDone) return; gwDone = true; clearInterval(gwTimer);
+  const gw = document.getElementById('gateway');
+  if (gw) { gw.classList.add('hidden'); setTimeout(()=>gw.remove(), 900); }
+  playVoice('أهلاً بك في AQX Me. هذه هويتك الرقمية ومركزك الشخصي داخل المنظومة.');
+}
+window.enterSite = enterSite;
+
+/* ===================== SECURITY SYSTEM ===================== */
+let secTriggered = false, devToolsCount = 0;
+const MAX_DT_WARNS = 3;
+const SEC_PHRASES = [
+  '🔒 هذا النظام يراقب — لا مجال للتحايل على منظومة القرماني إكس',
+  '⛔ الاختراق الأمني موثّق ومُسجَّل — ستتحمل العواقب القانونية كاملة',
+  '🚨 بياناتك وجهازك مُعرَّفان — تم إرسال تقرير الانتهاك فوراً',
+  '🛡️ الأمن الرقمي لمنظومة AQX لا يُخترق — أنت الآن في السجل الأمني',
+  '⚡ محاولتك رُصدت وحُفظت — لا مهرب من منظومة القرماني إكس'
+];
+
+function ringAlarmBell() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const actx = new AudioCtx();
+    [0,0.18,0.36].forEach(t => {
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = 1200;
+      gain.gain.setValueAtTime(0.18, actx.currentTime + t);
+      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + t + 0.16);
+      osc.connect(gain); gain.connect(actx.destination);
+      osc.start(actx.currentTime + t);
+      osc.stop(actx.currentTime + t + 0.16);
+    });
+  } catch(e) {}
+}
+
+document.addEventListener('keydown', e => {
+  const blocked =
+    e.key === 'F12' ||
+    (e.ctrlKey && e.shiftKey && ['I','J','C','K'].includes(e.key.toUpperCase())) ||
+    (e.ctrlKey && ['U','S','P'].includes(e.key.toUpperCase()));
+  if (blocked) { e.preventDefault(); handleDevToolsAttempt(); }
+});
+
+let devOpen = false;
+setInterval(() => {
+  const wDiff = window.outerWidth - window.innerWidth;
+  const hDiff = window.outerHeight - window.innerHeight;
+  if ((wDiff > 160 || hDiff > 160) && !devOpen) { devOpen = true; handleDevToolsAttempt(); }
+  else if (wDiff <= 160 && hDiff <= 160) { devOpen = false; }
+}, 1000);
+
+function handleDevToolsAttempt() {
+  if (secTriggered) return;
+  devToolsCount++;
+  const remaining = MAX_DT_WARNS - devToolsCount;
+  ringAlarmBell();
+  if (devToolsCount < MAX_DT_WARNS) {
+    playVoice('تحذير أمني! هذه المحاولة رقم ' + devToolsCount + ' — تبقّى لك ' + remaining + ' محاولة قبل الطرد الفوري.');
+    const flash = document.createElement('div');
+    flash.style.cssText = 'position:fixed;inset:0;background:rgba(255,0,0,0.18);z-index:88888;pointer-events:none;';
+    document.body.appendChild(flash);
+    setTimeout(()=>flash.remove(), 900);
+  } else {
+    triggerSecWarning('devtools');
+  }
+}
+
+function triggerSecWarning(reason) {
+  if (secTriggered) return;
+  secTriggered = true;
+  ringAlarmBell();
+  const warn = document.getElementById('security-warning');
+  const body = document.getElementById('sec-body-text');
+  const phrase = document.getElementById('sec-phrase-text');
+
+  if (body) {
+    if (reason === 'devtools') {
+      body.innerHTML = '🚨 تم رصد محاولة فتح أدوات المطورين أو فحص الكود المصدري!<br><br><strong>هذا الفعل مخالف صريح لسياسة الأمان لمنظومة القرماني إكس AQX.</strong><br>تم توثيق هذه المحاولة. سيتم إغلاق الجلسة فوراً.';
+    } else if (reason === 'new_tab') {
+      body.innerHTML = '🚨 محاولة فتح الرابط في تبويب أو متصفح جديد تم رصدها!<br><br><strong>هذه الصفحة محمية — لا يُسمح بفتحها خارج الجلسة الأصلية.</strong><br>سيتم إغلاق الجلسة الآن.';
+    } else if (reason === 'idle') {
+      body.innerHTML = '⏰ انتهت جلستك بسبب عدم النشاط لمدة ثلاثين دقيقة متواصلة.<br><br><strong>لحماية أمانك، يتم إغلاق الجلسة تلقائياً.</strong>';
+    } else if (reason === 'suspicious') {
+      body.innerHTML = '🚨 تم رصد سلوك مشبوه أو محاولة هجوم على هذه الصفحة!<br><br><strong>تم توثيق وتسجيل هذا النشاط فوراً.</strong><br>سيتم إغلاق الجلسة الآن.';
+    } else {
+      body.innerHTML = '🚨 محاولة وصول غير مصرح بها تم رصدها!<br><br><strong>هذه الصفحة محمية. تم توثيق هذه المحاولة.</strong><br>سيتم إغلاق الجلسة الآن.';
+    }
+  }
+  if (phrase) phrase.textContent = SEC_PHRASES[Math.floor(Math.random()*SEC_PHRASES.length)];
+  if (warn) warn.classList.add('active');
+
+  playVoice('تحذير أمني خطير! تم رصد محاولة غير مصرح بها. سيتم طردك من الصفحة فوراً ولن تتمكن من العودة.');
+
+  let c = 5;
+  const cdEl = document.getElementById('sec-countdown');
+  const t = setInterval(() => { c--; if (cdEl) cdEl.textContent = c; if (c<=0){clearInterval(t); redirectToMain();} }, 1000);
+  setTimeout(redirectToMain, 5600);
+}
+
+function redirectToMain() { window.location.href = 'index.html'; }
+
+/* New tab / new browser detection */
+const _aqxTabKey = 'aqx_page_open_' + window.location.pathname;
+const _aqxOpenAt = Date.now().toString();
+window.addEventListener('load', () => {
+  const existing = localStorage.getItem(_aqxTabKey);
+  if (existing && (Date.now() - parseInt(existing)) < 500) triggerSecWarning('new_tab');
+  localStorage.setItem(_aqxTabKey, _aqxOpenAt);
+});
+window.addEventListener('beforeunload', () => {
+  if (localStorage.getItem(_aqxTabKey) === _aqxOpenAt) localStorage.removeItem(_aqxTabKey);
+});
+
+/* Suspicious behavior heuristic: rapid repeated failed requests / many key blocks */
+let suspiciousScore = 0;
+document.addEventListener('keydown', () => {
+  suspiciousScore += 0;
+});
+window.addEventListener('error', () => { suspiciousScore++; if (suspiciousScore > 12) triggerSecWarning('suspicious'); });
+
+window.addEventListener('aqxIdleExpired', () => {
+  playVoice('انتهت جلستك بسبب عدم النشاط لمدة ثلاثين دقيقة. سيتم تحويلك للصفحة الرئيسية.');
+  triggerSecWarning('idle');
+});
+window.addEventListener('aqxSecurityKick', () => {
+  playVoice('تحذير أمني! تم إغلاق الجلسة. سيتم تحويلك فوراً.');
+  triggerSecWarning('kick');
+});
+
+document.addEventListener('aqxUserNotAuth', () => {
+  const ag = document.getElementById('auth-gate');
+  ag.classList.add('active');
+  playVoice('يجب تسجيل الدخول للوصول إلى هذه الصفحة. سيتم تحويلك تلقائياً إلى الصفحة الرئيسية.');
+  let agCount = 5;
+  const agEl = document.getElementById('ag-count');
+  const agInt = setInterval(() => {
+    agCount--; if (agEl) agEl.textContent = agCount;
+    if (agCount <= 0) { clearInterval(agInt); window.location.href = 'index.html'; }
+  }, 1000);
+});
+document.addEventListener('aqxUserReady', () => {
+  document.getElementById('auth-gate').classList.remove('active');
+});
+
+/* ===================== PAGE LOAD ===================== */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('page-loader');
+    if (loader) { loader.classList.add('fade-out'); setTimeout(()=>loader.remove(), 520); }
+    startGateway();
+  }, 1700);
+});
 </script>
 </body>
 </html>

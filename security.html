@@ -2,359 +2,296 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>مركز أمان AQX</title>
-<meta name="robots" content="noindex, nofollow">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
-
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-/* =========================================================
-   AQX SECURITY CENTER — DESIGN TOKENS
-   الخلفية: درجة تيل/نيلي غامقة (ليست سوداء) + نيون ذهبي وسيان
-   ========================================================= */
+/* ===== TOKENS ===== */
 :root{
-  --bg-0:#0F2B36;         /* خلفية أساسية: تيل غامق */
-  --bg-1:#123344;         /* لوحات */
-  --bg-2:#16404F;         /* لوحات فاتحة قليلاً */
-  --line:#23566A;
-  --gold:#F0C05A;
-  --gold-2:#FFE7A8;
-  --cyan:#33E1D6;
-  --violet:#9E7CFF;
-  --danger:#FF3B5C;
-  --danger-2:#FF7A90;
-  --ok:#43E97B;
-  --text-0:#EAF6F5;
-  --text-1:#B7D2D3;
-  --text-2:#7FA0A3;
-  --radius:16px;
-  --shadow-gold: 0 0 24px rgba(240,192,90,.35);
-  --shadow-cyan: 0 0 24px rgba(51,225,214,.35);
-  font-size: 16px;
+  --bg:       #1A0A2E;   /* بنفسجي غامق عميق — ليس أسود */
+  --bg1:      #241242;
+  --bg2:      #2E1855;
+  --bg3:      #3A2068;
+  --line:     rgba(160,100,255,.2);
+  --gold:     #FFD166;
+  --gold2:    #FFF0B3;
+  --purple:   #A855F7;
+  --violet:   #7C3AED;
+  --cyan:     #06EFC5;
+  --pink:     #F72585;
+  --ok:       #06EFC5;
+  --warn:     #FFD166;
+  --danger:   #FF2D55;
+  --hi:       #FF6B35;
+  --r:        16px;
+  --glow-p:   0 0 30px rgba(168,85,247,.5);
+  --glow-c:   0 0 30px rgba(6,239,197,.5);
+  --glow-g:   0 0 30px rgba(255,209,102,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Cairo',sans-serif;background:var(--bg);color:#EEE7FF;overflow-x:hidden}
+body{-webkit-user-select:none;user-select:none;background:
+  radial-gradient(ellipse 120% 60% at 20% -10%,rgba(124,58,237,.35) 0%,transparent 60%),
+  radial-gradient(ellipse 80% 80% at 90% 100%,rgba(6,239,197,.12) 0%,transparent 55%),
+  linear-gradient(170deg,#1A0A2E 0%,#0E0620 100%)
 }
 
-*{box-sizing:border-box; margin:0; padding:0;}
-html,body{height:100%;}
-body{
-  background: radial-gradient(1200px 800px at 15% -10%, #163B48 0%, var(--bg-0) 55%) fixed,
-              linear-gradient(180deg, var(--bg-0), #0B222B) fixed;
-  color:var(--text-0);
-  font-family:'Tajawal', sans-serif;
-  overflow-x:hidden;
-  -webkit-user-select:none;
-  user-select:none; /* حماية تصميمية بسيطة — ليست حماية فعلية ضد النسخ */
-  min-height:100vh;
-  position:relative;
-}
-::selection{background:var(--gold); color:#111;}
-img{-webkit-user-drag:none;}
+/* CANVAS */
+#canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
 
-h1,h2,h3,.brand{font-family:'Almarai', sans-serif;}
+/* OVERLAYS */
+.ov{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:30px;backdrop-filter:blur(4px)}
+.ov.off{display:none!important}
+#authGate{background:rgba(26,10,46,.97)}
+#voiceGate{background:rgba(26,10,46,.97)}
+#killScreen{background:radial-gradient(circle at 50% 40%,#3B000D,#100006 80%)}
+#focusShield{position:fixed;inset:0;z-index:200;display:none;backdrop-filter:blur(24px);background:rgba(26,10,46,.88);align-items:center;justify-content:center}
+#focusShield.on{display:flex}
 
-a{color:inherit; text-decoration:none;}
-button{font-family:inherit; cursor:pointer;}
+/* loading spinner */
+.spin{width:52px;height:52px;border-radius:50%;border:3px solid rgba(168,85,247,.25);border-top-color:var(--purple);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
 
-/* ============ خلفية جسيمات ذهبية ============ */
-#particles-bg{
-  position:fixed; inset:0; z-index:0; pointer-events:none;
-}
+/* auth text */
+.ov h2{font-family:'Almarai',sans-serif;font-size:1.3rem;color:var(--gold2);text-shadow:0 0 16px var(--gold)}
+.ov p{font-size:.88rem;color:rgba(220,200,255,.75);max-width:420px;line-height:1.8}
 
-/* ============ الهيدر ============ */
-header.aqx-header{
-  position:sticky; top:0; z-index:40;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 22px;
-  background:linear-gradient(180deg, rgba(15,43,54,.92), rgba(15,43,54,.75));
-  backdrop-filter: blur(10px);
-  border-bottom:1px solid var(--line);
-}
-.header-side{display:flex; align-items:center; gap:12px;}
+/* voice gate orb */
+.v-orb{width:100px;height:100px;border-radius:50%;
+  background:radial-gradient(circle at 38% 32%,#FFE88A,#FFD166 55%,#B8860B);
+  box-shadow:0 0 60px rgba(255,209,102,.7),0 0 120px rgba(255,209,102,.3);
+  animation:ob 1.8s ease-in-out infinite}
+@keyframes ob{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+.v-waves{display:flex;gap:6px;align-items:center;height:32px}
+.v-waves span{display:block;width:4px;border-radius:4px;background:var(--gold);
+  animation:wv 1.2s ease-in-out infinite}
+.v-waves span:nth-child(1){height:14px;animation-delay:0s}
+.v-waves span:nth-child(2){height:26px;animation-delay:.15s}
+.v-waves span:nth-child(3){height:20px;animation-delay:.3s}
+.v-waves span:nth-child(4){height:30px;animation-delay:.45s}
+.v-waves span:nth-child(5){height:16px;animation-delay:.6s}
+@keyframes wv{0%,100%{transform:scaleY(1);opacity:.7}50%{transform:scaleY(1.6);opacity:1}}
+#voiceSkipBtn{display:none;padding:10px 28px;border-radius:30px;border:1.5px solid var(--gold);
+  background:transparent;color:var(--gold2);font-size:.9rem;font-weight:700;cursor:pointer;margin-top:8px}
 
-/* لمبة الاتصال (أقصى الشمال بصفحة RTL = بداية الهيدر) */
-.status-lamp{display:flex; align-items:center; gap:8px; font-size:.85rem; color:var(--text-1);}
-.lamp-dot{
-  width:12px; height:12px; border-radius:50%;
-  background:#2c4a44;
-  box-shadow:none;
-  transition:.4s;
-}
-.lamp-dot.on{
-  background:var(--ok);
-  box-shadow:0 0 8px var(--ok), 0 0 22px var(--ok);
-  animation:lamp-pulse 1.8s ease-in-out infinite;
-}
-@keyframes lamp-pulse{
-  0%,100%{opacity:1;}
-  50%{opacity:.45;}
-}
+/* KILL SCREEN */
+#killScreen h2{font-family:'Almarai',sans-serif;font-size:2.2rem;color:var(--danger);
+  text-shadow:0 0 30px var(--danger),0 0 60px rgba(255,45,85,.4);
+  animation:flk 1.1s ease-in-out infinite}
+@keyframes flk{0%,100%{opacity:1}45%{opacity:.5}55%{opacity:.9}}
+#killScreen p{color:#FFB3C1}
+.k-ring{width:120px;height:120px;border-radius:50%;border:4px solid var(--danger);
+  box-shadow:0 0 40px var(--danger),0 0 80px rgba(255,45,85,.3),inset 0 0 30px rgba(255,45,85,.3);
+  display:flex;align-items:center;justify-content:center;font-size:3.5rem;
+  animation:kp 1.1s ease-in-out infinite}
+@keyframes kp{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.k-bars{display:flex;gap:10px;margin-top:4px}
+.k-bar{width:5px;height:36px;border-radius:4px;background:var(--danger);
+  box-shadow:0 0 10px var(--danger);animation:kb 0.7s ease-in-out infinite}
+.k-bar:nth-child(1){animation-delay:0s}
+.k-bar:nth-child(2){animation-delay:.1s}
+.k-bar:nth-child(3){animation-delay:.2s}
+.k-bar:nth-child(4){animation-delay:.3s}
+.k-bar:nth-child(5){animation-delay:.4s}
+@keyframes kb{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
 
-/* لوجو النيون المتحرك */
-.brand{
-  font-size:1.35rem; font-weight:800; letter-spacing:.5px;
-  display:flex; align-items:center; gap:10px;
-}
-.brand .mark{
-  font-size:1.5rem;
-  animation: neon-cycle 6s linear infinite;
-}
-.brand .aqx-word{
-  background:linear-gradient(90deg, var(--gold), var(--cyan), var(--violet), var(--gold));
-  background-size:300% 100%;
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  animation: neon-shift 6s linear infinite;
-  text-shadow:0 0 18px rgba(240,192,90,.25);
-}
-@keyframes neon-shift{
-  0%{background-position:0% 50%;}
-  100%{background-position:300% 50%;}
-}
-@keyframes neon-cycle{
-  0%,100%{filter:drop-shadow(0 0 6px var(--gold));}
-  33%{filter:drop-shadow(0 0 6px var(--cyan));}
-  66%{filter:drop-shadow(0 0 6px var(--violet));}
-}
+/* HEADER */
+header{position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 24px;
+  background:linear-gradient(180deg,rgba(26,10,46,.96),rgba(26,10,46,.75));
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.h-side{display:flex;align-items:center;gap:14px}
 
-/* أيقونة اللوحة الرئيسية */
-.dashboard-link{
-  display:flex; align-items:center; justify-content:center;
-  width:42px; height:42px; border-radius:12px;
-  background:var(--bg-1); border:1px solid var(--line);
-  transition:.25s;
-}
-.dashboard-link:hover{
-  border-color:var(--gold); box-shadow:var(--shadow-gold); transform:translateY(-2px);
-}
-.dashboard-link svg{width:22px; height:22px; stroke:var(--gold-2);}
+/* lamp */
+.lamp{display:flex;align-items:center;gap:8px;font-size:.82rem;color:rgba(200,180,255,.8)}
+.lamp-dot{width:12px;height:12px;border-radius:50%;background:rgba(6,239,197,.2);transition:.4s}
+.lamp-dot.on{background:var(--ok);box-shadow:0 0 8px var(--ok),0 0 24px rgba(6,239,197,.6);animation:lp 1.8s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ============ لوحة المؤشرات (الأمان + التهديد) ============ */
-.gauges-wrap{
-  max-width:1100px; margin:26px auto 10px; padding:0 20px;
-  display:grid; grid-template-columns:1fr 1fr; gap:18px;
-  position:relative; z-index:2;
-}
-@media(max-width:720px){.gauges-wrap{grid-template-columns:1fr;}}
+/* brand */
+.brand{display:flex;align-items:center;gap:10px;font-family:'Almarai',sans-serif;font-size:1.25rem;font-weight:800}
+.brand-icon{font-size:1.5rem;animation:bi 4s ease-in-out infinite}
+@keyframes bi{0%,100%{filter:drop-shadow(0 0 8px var(--gold))}33%{filter:drop-shadow(0 0 8px var(--cyan))}66%{filter:drop-shadow(0 0 8px var(--purple))}}
+.brand-text{
+  background:linear-gradient(90deg,var(--gold),var(--purple),var(--cyan),var(--gold));
+  background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:bs 5s linear infinite}
+@keyframes bs{0%{background-position:0%}100%{background-position:300%}}
 
-.gauge-card{
-  background:linear-gradient(160deg, var(--bg-1), var(--bg-2));
-  border:1px solid var(--line); border-radius:var(--radius);
-  padding:20px; display:flex; align-items:center; gap:18px;
-  position:relative; overflow:hidden;
-}
-.gauge-card::after{
-  content:''; position:absolute; inset:0;
-  background:radial-gradient(200px 120px at 90% 0%, rgba(240,192,90,.08), transparent 70%);
-  pointer-events:none;
-}
-.gauge-card h3{font-size:.95rem; color:var(--text-1); font-weight:700; margin-bottom:6px;}
-.gauge-card .val{font-size:1.6rem; font-weight:800;}
-.gauge-card .sub{font-size:.78rem; color:var(--text-2);}
+/* dashboard link */
+.dash-btn{display:flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:12px;border:1.5px solid rgba(160,100,255,.35);
+  background:rgba(124,58,237,.15);transition:.25s}
+.dash-btn:hover{border-color:var(--gold);box-shadow:var(--glow-g);transform:translateY(-2px)}
+.dash-btn svg{width:22px;height:22px;stroke:var(--gold2)}
 
-svg.ring{transform:rotate(-90deg); flex-shrink:0;}
-.ring-bg{fill:none; stroke:rgba(255,255,255,.08); stroke-width:10;}
-.ring-fg{fill:none; stroke:var(--gold); stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset 1.2s ease, stroke .4s;}
+/* CONTENT WRAP */
+.wrap{max-width:1140px;margin:0 auto;padding:0 20px;position:relative;z-index:2}
 
-.threat-scale{display:flex; flex-direction:column; gap:8px; width:100%;}
-.threat-bar{display:flex; gap:4px; height:10px; border-radius:6px; overflow:hidden;}
-.threat-bar span{flex:1; background:rgba(255,255,255,.08);}
-.threat-bar span.filled.low{background:var(--ok);}
-.threat-bar span.filled.mid{background:var(--gold);}
-.threat-bar span.filled.high{background:#FF9A4D;}
-.threat-bar span.filled.crit{background:var(--danger);}
-.threat-label{font-weight:800; font-size:1.1rem;}
-.threat-label.low{color:var(--ok);}
-.threat-label.mid{color:var(--gold);}
-.threat-label.high{color:#FF9A4D;}
-.threat-label.crit{color:var(--danger);}
+/* GAUGES */
+.gauges{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:28px auto;max-width:1140px;padding:0 20px;position:relative;z-index:2}
+@media(max-width:700px){.gauges{grid-template-columns:1fr}}
+.g-card{
+  background:linear-gradient(145deg,rgba(46,24,85,.9),rgba(58,32,104,.8));
+  border:1.5px solid rgba(168,85,247,.25);border-radius:20px;
+  padding:22px 24px;display:flex;align-items:center;gap:20px;
+  box-shadow:0 8px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+  position:relative;overflow:hidden;transition:.3s}
+.g-card::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(160px 100px at 85% 10%,rgba(168,85,247,.1),transparent 70%);pointer-events:none}
+.g-card:hover{border-color:rgba(168,85,247,.55);box-shadow:0 8px 50px rgba(168,85,247,.2)}
+.g-card h3{font-size:.88rem;font-weight:600;color:rgba(210,190,255,.75);margin-bottom:6px;letter-spacing:.5px}
 
-/* ============ شبكة البنود ============ */
-.section-title{
-  max-width:1100px; margin:34px auto 14px; padding:0 20px;
-  display:flex; align-items:center; gap:10px; position:relative; z-index:2;
-}
-.section-title h2{font-size:1.05rem; color:var(--text-1); font-weight:700;}
-.section-title::after{content:''; flex:1; height:1px; background:var(--line);}
+/* score ring */
+.ring-wrap{position:relative;flex-shrink:0;width:88px;height:88px}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.07);stroke-width:9}
+.ring-fg{fill:none;stroke:var(--gold);stroke-width:9;stroke-linecap:round;
+  stroke-dasharray:251.33;stroke-dashoffset:251.33;transition:stroke-dashoffset 1.4s ease,stroke .4s}
+.ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-num{font-size:.95rem;font-weight:900;font-family:'Almarai',sans-serif;line-height:1}
+.ring-max{font-size:.58rem;color:rgba(200,180,255,.5)}
 
-.grid{
-  max-width:1100px; margin:0 auto 60px; padding:0 20px;
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px;
-  position:relative; z-index:2;
-}
+.score-val{font-size:1.9rem;font-weight:900;font-family:'Almarai',sans-serif;line-height:1}
+.score-lv{font-size:.82rem;font-weight:700;margin-top:4px}
+.score-src{font-size:.68rem;color:rgba(200,180,255,.45);margin-top:6px}
+.lv-green{color:var(--ok);text-shadow:0 0 12px var(--ok)}
+.lv-yellow{color:var(--warn);text-shadow:0 0 12px var(--warn)}
+.lv-red{color:var(--danger);text-shadow:0 0 12px var(--danger)}
+
+/* threat gauge */
+.threat-icon{font-size:2.2rem;flex-shrink:0;animation:ti 3s ease-in-out infinite}
+@keyframes ti{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.threat-label{font-size:1.7rem;font-weight:900;font-family:'Almarai',sans-serif}
+.tl-low{color:var(--ok);text-shadow:0 0 16px var(--ok)}
+.tl-mid{color:var(--warn);text-shadow:0 0 16px var(--warn)}
+.tl-high{color:var(--hi);text-shadow:0 0 16px var(--hi)}
+.tl-crit{color:var(--danger);text-shadow:0 0 16px var(--danger)}
+
+.t-bar{display:flex;gap:5px;height:10px;margin-top:10px;border-radius:6px;overflow:hidden}
+.t-bar span{flex:1;border-radius:4px;background:rgba(255,255,255,.07);transition:.4s}
+span.tb-fill-low{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+span.tb-fill-mid{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+span.tb-fill-high{background:var(--hi);box-shadow:0 0 8px var(--hi)}
+span.tb-fill-crit{background:var(--danger);box-shadow:0 0 8px var(--danger)}
+.threat-src{font-size:.68rem;color:rgba(200,180,255,.45);margin-top:8px}
+
+/* SECTION TITLE */
+.sec-hd{max-width:1140px;margin:36px auto 16px;padding:0 20px;
+  display:flex;align-items:center;gap:12px;position:relative;z-index:2}
+.sec-hd h2{font-family:'Almarai',sans-serif;font-size:1rem;font-weight:700;color:rgba(210,190,255,.7);white-space:nowrap}
+.sec-hd::after{content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(168,85,247,.4),transparent)}
+
+/* GRID */
+.grid{max-width:1140px;margin:0 auto 80px;padding:0 20px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:13px;
+  position:relative;z-index:2}
+@media(max-width:500px){.grid{grid-template-columns:repeat(2,1fr)}}
+
 .card{
-  background:linear-gradient(160deg, var(--bg-1), var(--bg-2));
-  border:1px solid var(--line); border-radius:14px;
-  padding:16px; text-align:center; cursor:pointer;
-  transition:.25s; position:relative; overflow:hidden;
-}
-.card:hover{
-  transform:translateY(-4px);
-  border-color:var(--gold);
-  box-shadow:var(--shadow-gold);
-}
-.card .ic{font-size:1.6rem; display:block; margin-bottom:8px;}
-.card .ti{font-size:.85rem; font-weight:700; color:var(--text-0);}
-.card .st{font-size:.68rem; color:var(--text-2); margin-top:6px;}
-.card .st.on{color:var(--ok);}
+  background:linear-gradient(160deg,rgba(36,18,66,.9),rgba(46,24,85,.8));
+  border:1.5px solid rgba(168,85,247,.18);border-radius:15px;
+  padding:18px 14px;text-align:center;cursor:pointer;
+  position:relative;overflow:hidden;transition:.25s}
+.card::before{content:'';position:absolute;inset:0;opacity:0;
+  background:radial-gradient(100px 100px at 50% 0%,rgba(255,209,102,.1),transparent 70%);
+  transition:.3s}
+.card:hover{transform:translateY(-5px);border-color:rgba(255,209,102,.5);
+  box-shadow:0 10px 40px rgba(168,85,247,.3),var(--glow-g)}
+.card:hover::before{opacity:1}
+.card .ic{font-size:1.9rem;display:block;margin-bottom:9px;
+  filter:drop-shadow(0 0 6px rgba(168,85,247,.6));transition:.25s}
+.card:hover .ic{filter:drop-shadow(0 0 12px var(--gold))}
+.card .ti{font-size:.8rem;font-weight:700;color:#E0D4FF;line-height:1.4}
+.card .st{font-size:.66rem;color:rgba(200,180,255,.45);margin-top:7px}
+.card .st.active{color:var(--ok);text-shadow:0 0 8px var(--ok)}
+.card .st.inactive{color:rgba(200,180,255,.35)}
 
-/* ============ زر السهم لأعلى ============ */
-#toTop{
-  position:fixed; bottom:26px; left:26px; z-index:50;
-  width:50px; height:50px; border-radius:50%;
-  background:var(--bg-1); border:1px solid var(--gold);
-  display:flex; align-items:center; justify-content:center;
-  box-shadow:var(--shadow-gold);
-  opacity:0; pointer-events:none; transform:translateY(20px) rotate(0deg);
-  transition:.35s;
-}
-#toTop.show{opacity:1; pointer-events:auto; transform:translateY(0) rotate(0deg);}
-#toTop svg{width:22px; height:22px; stroke:var(--gold-2);}
-#toTop.flip{animation:flipUp .6s ease;}
-@keyframes flipUp{
-  0%{transform:rotate(0deg);}
-  60%{transform:rotate(360deg) translateY(-6px);}
-  100%{transform:rotate(360deg) translateY(0);}
-}
+/* SCROLL TO TOP */
+#top-btn{position:fixed;bottom:28px;left:28px;z-index:60;
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--violet),var(--purple));
+  border:2px solid rgba(255,209,102,.4);
+  box-shadow:0 0 20px rgba(124,58,237,.5);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  opacity:0;pointer-events:none;transform:translateY(20px);transition:.35s}
+#top-btn.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+#top-btn svg{width:22px;height:22px;stroke:var(--gold2)}
+#top-btn.flipping{animation:fl .55s ease}
+@keyframes fl{0%{transform:rotate(0)translateY(0)}50%{transform:rotate(200deg)translateY(-8px)}100%{transform:rotate(360deg)translateY(0)}}
 
-/* ============ حواجز/شاشات علوية ============ */
-.overlay{
-  position:fixed; inset:0; z-index:200;
-  display:flex; align-items:center; justify-content:center;
-  flex-direction:column; gap:16px; text-align:center; padding:30px;
-  background:rgba(11,34,43,.97);
-}
-.overlay.hidden{display:none;}
-.overlay .spinner{
-  width:46px; height:46px; border-radius:50%;
-  border:3px solid rgba(240,192,90,.25); border-top-color:var(--gold);
-  animation:spin 1s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg);}}
-.overlay h2{font-size:1.2rem; color:var(--gold-2);}
-.overlay p{color:var(--text-1); font-size:.9rem; max-width:420px;}
+/* MODAL */
+#modal{z-index:280}
+.m-box{
+  background:linear-gradient(160deg,rgba(36,18,66,.98),rgba(46,24,85,.96));
+  border:1.5px solid rgba(255,209,102,.4);border-radius:20px;
+  padding:30px;max-width:440px;width:92%;
+  box-shadow:0 20px 60px rgba(0,0,0,.5),var(--glow-g)}
+.m-box .m-ic{font-size:3rem;margin-bottom:10px;
+  filter:drop-shadow(0 0 16px var(--gold))}
+.m-box h2{font-family:'Almarai',sans-serif;font-size:1.15rem;color:var(--gold2);margin-bottom:8px}
+.m-box p{font-size:.83rem;color:rgba(220,200,255,.75);line-height:1.8}
+.m-box .m-st{font-size:.7rem;color:rgba(200,180,255,.4);margin-top:10px}
+.m-close{margin-top:18px;padding:9px 26px;border-radius:24px;
+  border:1.5px solid rgba(168,85,247,.5);background:rgba(124,58,237,.2);
+  color:#E0D4FF;font-size:.85rem;font-weight:700;cursor:pointer;transition:.2s}
+.m-close:hover{background:rgba(124,58,237,.45);border-color:var(--gold)}
 
-#voiceGate{gap:22px;}
-#voiceGate .voice-orb{
-  width:90px; height:90px; border-radius:50%;
-  background:radial-gradient(circle at 35% 30%, var(--gold-2), var(--gold) 60%, #a97b1c 100%);
-  box-shadow:0 0 40px rgba(240,192,90,.55);
-  animation:orb-breathe 1.6s ease-in-out infinite;
-}
-@keyframes orb-breathe{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.12);}
-}
-#voiceGate button{
-  margin-top:10px; padding:10px 26px; border-radius:30px; border:1px solid var(--gold);
-  background:transparent; color:var(--gold-2); font-weight:700;
-}
+footer{text-align:center;padding:22px 20px;font-size:.7rem;color:rgba(200,180,255,.3);position:relative;z-index:2}
 
-/* شاشة الطرد الأمنية الحمراء */
-#killScreen{
-  background:radial-gradient(circle at 50% 40%, #3a0410, #16020a 70%);
-}
-#killScreen h2{color:var(--danger-2); font-size:2rem; text-shadow:0 0 20px var(--danger); animation:danger-flicker 1s infinite;}
-#killScreen p{color:#ffc9d3;}
-@keyframes danger-flicker{
-  0%,100%{opacity:1;}
-  45%{opacity:.7;}
-  50%{opacity:1;}
-  55%{opacity:.5;}
-}
-.danger-ring{
-  width:110px; height:110px; border-radius:50%;
-  border:4px solid var(--danger);
-  box-shadow:0 0 30px var(--danger), inset 0 0 20px rgba(255,59,92,.4);
-  display:flex; align-items:center; justify-content:center;
-  animation:ring-pulse 1.1s ease-in-out infinite;
-}
-@keyframes ring-pulse{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.08);}
-}
-.danger-ring svg{width:52px; height:52px; stroke:var(--danger-2);}
-
-/* حماية عند فقدان تركيز النافذة (محاولة تعتيم — ليست منعاً فعلياً لالتقاط الشاشة) */
-#focusShield{
-  position:fixed; inset:0; z-index:150; backdrop-filter:blur(18px);
-  background:rgba(11,34,43,.9); display:none;
-  align-items:center; justify-content:center; text-align:center; padding:30px;
-}
-#focusShield.show{display:flex;}
-#focusShield p{color:var(--text-1); max-width:360px;}
-
-/* مودال بيانات البند */
-#itemModal{z-index:180;}
-.modal-box{
-  background:linear-gradient(160deg, var(--bg-1), var(--bg-2));
-  border:1px solid var(--gold); border-radius:16px;
-  padding:26px; max-width:420px; width:90%;
-  box-shadow:var(--shadow-gold);
-}
-.modal-box .close-btn{
-  margin-top:18px; padding:8px 20px; border-radius:20px;
-  border:1px solid var(--line); background:var(--bg-0); color:var(--text-0);
-}
-
-footer{
-  text-align:center; padding:26px; color:var(--text-2); font-size:.75rem;
-  position:relative; z-index:2;
-}
-
-@media (prefers-reduced-motion: reduce){
-  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
-}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
 </style>
 </head>
 <body>
 
-<canvas id="particles-bg"></canvas>
+<canvas id="canvas"></canvas>
 
-<!-- ============ 1) حاجز تسجيل الدخول الفعلي (Firebase) ============ -->
-<div id="authGate" class="overlay">
-  <div class="spinner"></div>
-  <h2>جاري التحقق من هوية الدخول…</h2>
-  <p>مركز أمان AQX يتطلب تسجيل دخول فعلي وصالح. لن تتمكن من المتابعة بدون جلسة مُوثّقة عبر محرك الأمان.</p>
+<!-- ===== OVERLAYS ===== -->
+<div id="authGate" class="ov">
+  <div class="spin"></div>
+  <h2>🔐 جاري التحقق من الهوية…</h2>
+  <p>نظام AQX يتحقق من جلستك الآن لضمان سلامة حسابك.</p>
 </div>
 
-<!-- ============ 2) حاجز الترحيب الصوتي (يمنع أي تفاعل قبل انتهائه) ============ -->
-<div id="voiceGate" class="overlay hidden">
-  <div class="voice-orb"></div>
-  <h2>مرحباً بك في مركز أمان AQX</h2>
-  <p id="voiceGateText">جاري تشغيل المرافقة الصوتية… الرجاء الانتظار حتى تنتهي قبل استخدام الصفحة.</p>
-  <button id="voiceSkip" style="display:none;">متابعة</button>
+<div id="voiceGate" class="ov off">
+  <div class="v-orb"></div>
+  <div class="v-waves"><span></span><span></span><span></span><span></span><span></span></div>
+  <h2>مرحباً في مركز أمان AQX</h2>
+  <p id="vGateMsg">مرافقتك الصوتية تُحيّيك. يرجى الانتظار…</p>
+  <button id="voiceSkipBtn">تخطّي</button>
 </div>
 
-<!-- ============ 3) شاشة الطرد الأمنية (نيون أحمر) ============ -->
-<div id="killScreen" class="overlay hidden">
-  <div class="danger-ring">
-    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.18 14.18A2 2 0 0 0 3.82 21h16.36a2 2 0 0 0 1.71-2.96L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>
-  </div>
-  <h2>⚠ تم رصد نشاط أمني مشبوه</h2>
-  <p id="killMsg">تم إنهاء الجلسة فوراً لحماية حسابك. سيتم تحويلك إلى الصفحة الرئيسية خلال لحظات…</p>
+<div id="killScreen" class="ov off">
+  <div class="k-ring">⛔</div>
+  <div class="k-bars"><span class="k-bar"></span><span class="k-bar"></span><span class="k-bar"></span><span class="k-bar"></span><span class="k-bar"></span></div>
+  <h2>🚨 تهديد أمني حرج</h2>
+  <p id="killMsg">تم رصد نشاط مشبوه. سيتم إنهاء جلستك فوراً.</p>
 </div>
 
-<!-- ============ 4) حاجز فقدان التركيز (تعتيم عند تبديل النافذة) ============ -->
 <div id="focusShield">
-  <p>🔒 تم تعتيم الشاشة مؤقتاً لحماية بياناتك أثناء مغادرة النافذة.</p>
+  <p style="color:rgba(220,200,255,.7);font-size:.9rem">🔒 تم تعتيم الشاشة لحماية بياناتك أثناء مغادرة النافذة.</p>
 </div>
 
-<!-- ============ الهيدر ============ -->
-<header class="aqx-header">
-  <div class="header-side">
-    <div class="status-lamp">
+<!-- ===== HEADER ===== -->
+<header>
+  <!-- أقصى الشمال = أقصى يسار الـ RTL = اليمين في الترتيب المرئي لمتصفح -->
+  <div class="h-side">
+    <div class="lamp">
       <span class="lamp-dot" id="lampDot"></span>
-      <span id="lampText">غير متصل</span>
+      <span id="lampTxt">جاري الاتصال…</span>
     </div>
   </div>
 
   <div class="brand">
-    <span class="mark">🛡️</span>
-    <span class="aqx-word">مركز أمان AQX</span>
+    <span class="brand-icon">🛡️</span>
+    <span class="brand-text">مركز أمان AQX</span>
   </div>
 
-  <div class="header-side">
-    <a href="dashboard.html" class="dashboard-link" title="اللوحة الرئيسية" id="dashboardLink">
+  <div class="h-side">
+    <a href="dashboard.html" class="dash-btn" title="اللوحة الرئيسية">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V9.5Z"/>
       </svg>
@@ -362,378 +299,319 @@ footer{
   </div>
 </header>
 
-<!-- ============ مؤشرا الأمان والتهديد ============ -->
-<section class="gauges-wrap">
-  <div class="gauge-card">
-    <svg class="ring" width="90" height="90" viewBox="0 0 90 90">
-      <circle class="ring-bg" cx="45" cy="45" r="38"></circle>
-      <circle class="ring-fg" id="scoreRing" cx="45" cy="45" r="38" stroke-dasharray="238.76" stroke-dashoffset="238.76"></circle>
-    </svg>
+<!-- ===== GAUGES ===== -->
+<div class="gauges">
+  <!-- مؤشر الأمان -->
+  <div class="g-card">
+    <div class="ring-wrap">
+      <svg width="88" height="88" viewBox="0 0 88 88">
+        <circle class="ring-bg" cx="44" cy="44" r="40"/>
+        <circle class="ring-fg" id="scoreRing" cx="44" cy="44" r="40"/>
+      </svg>
+      <div class="ring-label">
+        <span class="ring-num" id="ringNum">—</span>
+        <span class="ring-max">/1000</span>
+      </div>
+    </div>
     <div>
       <h3>مؤشر أمان AQX</h3>
-      <div class="val"><span id="scoreVal">—</span> / 1000</div>
-      <div class="sub" id="scoreSub">جاري السحب من data/aqx-score.json…</div>
+      <div class="score-val" id="scoreVal">—</div>
+      <div class="score-lv" id="scoreLv">جاري التحميل…</div>
+      <div class="score-src">المصدر: data/aqx-score.json</div>
     </div>
   </div>
 
-  <div class="gauge-card">
-    <div style="font-size:1.8rem;">🌡️</div>
-    <div class="threat-scale">
-      <h3>مؤشر التهديد</h3>
+  <!-- مؤشر التهديد -->
+  <div class="g-card">
+    <div class="threat-icon" id="threatIcon">🌡️</div>
+    <div style="flex:1">
+      <h3>مؤشر التهديد اللحظي</h3>
       <div class="threat-label" id="threatLabel">—</div>
-      <div class="threat-bar">
+      <div class="t-bar">
         <span id="tb1"></span><span id="tb2"></span><span id="tb3"></span><span id="tb4"></span>
       </div>
-      <div class="sub" id="threatSub">جاري السحب من data/aqx-threat.json…</div>
+      <div class="threat-src">المصدر: data/aqx-threat.json</div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ============ شبكة البنود ============ -->
-<div class="section-title"><h2>بنود الحماية والتحكم</h2></div>
+<!-- ===== GRID ===== -->
+<div class="sec-hd"><h2>⚙ بنود الحماية والتحكم</h2></div>
 <div class="grid" id="featureGrid"></div>
 
-<button id="toTop" title="العودة للأعلى">
+<!-- ===== SCROLL TOP ===== -->
+<button id="top-btn" title="الأعلى">
   <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 19V5M5 12l7-7 7 7"/>
   </svg>
 </button>
 
-<!-- ============ مودال تفاصيل البند ============ -->
-<div id="itemModal" class="overlay hidden">
-  <div class="modal-box">
-    <div style="font-size:2rem;" id="modalIcon">🛡️</div>
-    <h2 id="modalTitle" style="margin:10px 0 6px;"></h2>
-    <p id="modalDesc" style="color:var(--text-1); font-size:.85rem;"></p>
-    <p class="sub" id="modalStatus" style="margin-top:10px; font-size:.75rem; color:var(--text-2);"></p>
-    <button class="close-btn" id="modalClose">إغلاق</button>
+<!-- ===== MODAL ===== -->
+<div id="modal" class="ov off">
+  <div class="m-box">
+    <div class="m-ic" id="mIc">🛡️</div>
+    <h2 id="mTitle"></h2>
+    <p id="mDesc"></p>
+    <div class="m-st" id="mSt"></div>
+    <button class="m-close" id="mClose">إغلاق</button>
   </div>
 </div>
 
-<footer>AQX Security Center · جلسة محمية بمهلة خمول 30 دقيقة · جميع الحقوق محفوظة</footer>
+<footer>AQX Security Center · الجلسة تنتهي تلقائياً بعد 30 دقيقة خمول · جميع الحقوق محفوظة لنظام AQX</footer>
 
 <!--
-=====================================================================
-  ملفات البيانات المرتبطة (خارج الكود، كما طُلب):
+═══════════════════════════════════════════════════════════════
+  📂 ملفات البيانات المرتبطة (خارج الكود)
+═══════════════════════════════════════════════════════════════
 
-  مؤشر الأمان        → data/aqx-score.json      { score, max, label }
-  مؤشر التهديد        → data/aqx-threat.json     { level: منخفض|متوسط|مرتفع|حرج }
+  data/aqx-score.json          ← مؤشر أمان AQX (score/max/label)
+  data/aqx-threat.json         ← مؤشر التهديد اللحظي (level)
 
-  كل بند من بنود الشبكة له ملف JSON مستقل تحت data/features/
-  اسم الملف = خاصية data-file على كل بطاقة (انظر featuresList في JS بالأسفل).
-  مثال: data/features/account-protection.json لبند "🔐 حماية الحساب"
-
-  استبدل محتوى هذه الملفات ببيانات حقيقية قادمة من محركك/قاعدتك الخلفية،
-  أو عدّل fetch() في الأسفل لتوجيهه إلى واجهة API فعلية بدلاً من ملفات ثابتة.
-=====================================================================
+  data/features/
+  ├── account-protection.json        🔐 حماية الحساب
+  ├── login.json                     👤 تسجيل الدخول
+  ├── instant-protection.json        🚨 الحماية الفورية
+  ├── biometric-auth.json            🧬 المصادقة البيومترية
+  ├── security-monitoring.json       👁️ مراقبة الأمان
+  ├── account-identity.json          🧬 هوية الحساب
+  ├── access-keys.json               🔑 مفاتيح الوصول
+  ├── aqx-shield.json                🛡️ درع AQX
+  ├── security-log.json              📜 سجل الأمان
+  ├── access-permissions.json        ⚖️ صلاحيات الوصول
+  ├── global-security.json           🌍 الأمان العالمي
+  ├── ai-security.json               🤖 أمن الذكاء الاصطناعي
+  ├── behavioral-security.json       🧠 الأمن السلوكي
+  ├── account-pulse.json             🫀 نبض الحساب
+  ├── ghost-mode.json                🕳️ الوضع الشبح
+  ├── decoy-account.json             🎭 الحساب الوهمي
+  ├── smart-wipe.json                🧨 التدمير الذكي
+  ├── account-dna.json               🧬 الحمض النووي للحساب
+  ├── country-wall.json              🌍 جدار الدول
+  ├── travel-mode.json               🚀 وضع السفر
+  ├── security-radar.json            🛰️ الرادار الأمني
+  ├── aqx-eye.json                   👁️ عين AQX
+  ├── smart-lock.json                ⚡ القفل الذكي
+  ├── adaptive-shield.json           🛡️ الدرع المتغير
+  ├── cold-room.json                 🧊 الغرفة الباردة
+  ├── sandbox-env.json               🧪 بيئة معزولة
+  ├── device-radar.json              📡 رادار الأجهزة
+  ├── third-eye.json                 🧿 العين الثالثة
+  ├── risk-mirror.json               🪞 مرآة المخاطر
+  ├── hurricane-mode.json            🌪️ وضع الإعصار
+  ├── watch-tower.json               🛰️ برج المراقبة
+  ├── cosmic-shield.json             🌌 الدرع الكوني
+  ├── kill-switch.json               🔥 زر النهاية
+  ├── secrets-vault.json             📦 صندوق الأسرار
+  ├── security-timer.json            🕰️ مؤقت الأمان
+  ├── evidence-center.json           📋 مركز الأدلة
+  ├── preventive-isolation.json      🛡️ العزل الوقائي
+  ├── smart-security-rules.json      🧬 قوانين الأمان الذكية
+  ├── incident-file.json             📜 ملف الحوادث
+  ├── silence-protocol.json          🔒 بروتوكول الصمت
+  ├── ban-zone.json                  ⛔ منطقة الحظر
+  ├── emergency-center.json          🚨 مركز الطوارئ
+  ├── anti-impersonation-center.json 🕵️ مركز مكافحة الانتحال
+  ├── survival-capsule.json          📦 كبسولة النجاة
+  ├── adaptive-defense.json          🛰️ الدرع المتكيف
+  ├── security-delay.json            ⏳ التأخير الأمني
+  ├── hostage-mode.json              🎭 وضع الرهينة
+  ├── deceptive-identity.json        🎭 الهوية الخادعة
+  ├── early-warning-center.json      📡 مركز الإنذار المبكر
+  ├── attack-simulation-center.json  🎬 مركز محاكاة الهجوم
+  ├── digital-twin.json              🧬 التوأم الرقمي
+  ├── security-command-tower.json    🛰️ برج القيادة الأمنية
+  └── programmable-security-constitution.json  🧠 دستور الأمان
+═══════════════════════════════════════════════════════════════
 -->
 
-<!-- Firebase (module) -->
 <script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* ============================================================
-   1) إعدادات Firebase — بيانات مشروعك الفعلي
-   ============================================================ */
-const firebaseConfig = {
-  apiKey: "AIzaSyBICr62Oa_-69hATpfFrdTDfO9WV4bVVvU",
-  authDomain: "alqurmanix-d49f7.firebaseapp.com",
-  projectId: "alqurmanix-d49f7",
-  storageBucket: "alqurmanix-d49f7.firebasestorage.app",
-  messagingSenderId: "1017946245702",
-  appId: "1:1017946245702:web:575c425860c82166411847",
-  measurementId: "G-5XN1NMG997"
+/* ─── Firebase ─── */
+const cfg={
+  apiKey:"AIzaSyBICr62Oa_-69hATpfFrdTDfO9WV4bVVvU",
+  authDomain:"alqurmanix-d49f7.firebaseapp.com",
+  projectId:"alqurmanix-d49f7",
+  storageBucket:"alqurmanix-d49f7.firebasestorage.app",
+  messagingSenderId:"1017946245702",
+  appId:"1:1017946245702:web:575c425860c82166411847",
+  measurementId:"G-5XN1NMG997"
 };
+const app=!getApps().length?initializeApp(cfg):getApps()[0];
+const auth=getAuth(app);
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
-const auth = getAuth(app);
+const ENGINE="https://eo3phbvoihx4diw.m.pipedream.net";
+const LOGIN="/login.html";
+const HOME="/index.html";
+const IDLE_MS=30*60*1000;
+const TAB_KEY="aqx_tab_lock";
 
-/* رابط محرك التحقق الأمني الفعلي (Pipedream endpoint المرسل من المستخدم) */
-const SECURITY_ENGINE_URL = "https://eo3phbvoihx4diw.m.pipedream.net";
-/* صفحة تسجيل الدخول وصفحة الطرد الرئيسية */
-const LOGIN_PAGE   = "/login.html";
-const HOME_PAGE    = "/index.html";
-const INACTIVITY_LIMIT_MS = 30 * 60 * 1000; // 30 دقيقة خمول
+let monitorInterval=null,failureCount=0,idleTimer=null,unlocked=false;
+let warnings=parseInt(sessionStorage.getItem("aqx_w")||"0",10);
 
-let monitorInterval = null;
-let failureCount = 0;
-let inactivityTimer = null;
-let voiceUnlocked = false;
-
-/* ---------- أدوات مساعدة للجلسة/التبويب ---------- */
+/* ─── TAB LOCK ─── */
 function getTabId(){
-  let id = sessionStorage.getItem("aqx_tab_id");
-  if(!id){ id = "tab_" + Math.random().toString(36).slice(2,11); sessionStorage.setItem("aqx_tab_id", id); }
+  let id=sessionStorage.getItem("aqx_tid");
+  if(!id){id="t_"+Math.random().toString(36).slice(2,11);sessionStorage.setItem("aqx_tid",id);}
   return id;
 }
-
-/* منع فتح أكثر من جلسة نشطة واحدة لنفس الحساب على نفس الجهاز (قفل عبر localStorage + heartbeat) */
-const TAB_LOCK_KEY = "aqx_active_tab_lock";
-function claimSingleActiveTab(){
-  const myId = getTabId();
-  const now = Date.now();
-  const raw = localStorage.getItem(TAB_LOCK_KEY);
-  if(raw){
-    try{
-      const lock = JSON.parse(raw);
-      // لو فيه قفل حديث (آخر نبضة أقل من 10 ثوانٍ) لتبويب مختلف => هذا تبويب مكرر
-      if(lock.tabId !== myId && (now - lock.ts) < 10000){
-        triggerKillScreen("تم رصد فتح الجلسة في أكثر من نافذة/تبويب في نفس الوقت.");
-        return;
-      }
-    }catch(e){}
-  }
-  localStorage.setItem(TAB_LOCK_KEY, JSON.stringify({tabId:myId, ts:now}));
-  setInterval(()=>{
-    localStorage.setItem(TAB_LOCK_KEY, JSON.stringify({tabId:myId, ts:Date.now()}));
-  }, 4000);
-}
-
-/* ---------- التحقق الفعلي مع محرك الأمان ---------- */
-async function verifySessionWithEngine(){
-  const user = auth.currentUser;
-  if(!user) return;
+function claimTab(){
+  const me=getTabId(),now=Date.now();
   try{
-    const token = await user.getIdToken(true);
-    const tabId = getTabId();
-    const pageId = window.location.pathname;
+    const raw=localStorage.getItem(TAB_KEY);
+    if(raw){const l=JSON.parse(raw);if(l.id!==me&&now-l.ts<10000){kill("تم رصد فتح الصفحة في أكثر من نافذة في نفس الوقت.");return;}}
+  }catch(e){}
+  localStorage.setItem(TAB_KEY,JSON.stringify({id:me,ts:now}));
+  setInterval(()=>localStorage.setItem(TAB_KEY,JSON.stringify({id:me,ts:Date.now()})),4000);
+}
 
-    const response = await fetch(SECURITY_ENGINE_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-      body: JSON.stringify({ tabId, pageId })
-    });
-    const result = await response.json();
-    failureCount = 0;
-    setConnectionStatus(true);
-
-    if(result.status?.action === "REDIRECT"){
-      await signOut(auth);
-      triggerKillScreen("تم إغلاق الجلسة من محرك الأمان لأسباب استثنائية.");
-    } else if(result.status?.action === "WARN"){
-      console.warn("تحذير أمني من المحرك، محاولات متبقية:", 3 - result.status.count);
-    }
-  }catch(err){
-    failureCount++;
-    setConnectionStatus(false);
-    console.error("فشل الاتصال بمحرك الأمان (محاولة " + failureCount + ")", err);
-    if(failureCount >= 3){
-      await signOut(auth);
-      window.location.href = LOGIN_PAGE;
-    }
+/* ─── ENGINE ─── */
+async function verify(){
+  const user=auth.currentUser;if(!user)return;
+  try{
+    const tok=await user.getIdToken(true);
+    const r=await fetch(ENGINE,{method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+tok},
+      body:JSON.stringify({tabId:getTabId(),pageId:location.pathname})});
+    const d=await r.json();failureCount=0;setLamp(true);
+    if(d.status?.action==="REDIRECT"){await signOut(auth);kill("أمرت المحرك الأمني بإنهاء جلستك.");}
+    else if(d.status?.action==="WARN"){console.warn("تحذير من المحرك");}
+  }catch(e){
+    failureCount++;setLamp(false);
+    if(failureCount>=3){await signOut(auth);location.href=LOGIN;}
   }
 }
-
-function startSecurityMonitor(){
-  if(monitorInterval) return;
-  verifySessionWithEngine();
-  monitorInterval = setInterval(()=>{ if(auth.currentUser) verifySessionWithEngine(); }, 4*60*1000);
-  window.addEventListener('popstate', verifySessionWithEngine);
-  history.pushState(null, null, location.href);
+function startMonitor(){
+  if(monitorInterval)return;
+  verify();
+  monitorInterval=setInterval(()=>{if(auth.currentUser)verify();},4*60*1000);
+  window.addEventListener("popstate",verify);
+  history.pushState(null,"",location.href);
 }
-function stopSecurityMonitor(){
-  if(monitorInterval){ clearInterval(monitorInterval); monitorInterval = null; }
-  window.removeEventListener('popstate', verifySessionWithEngine);
-  failureCount = 0;
-}
-
-/* ---------- مهلة الخمول: 30 دقيقة ---------- */
-function resetInactivityTimer(){
-  clearTimeout(inactivityTimer);
-  inactivityTimer = setTimeout(async ()=>{
-    await signOut(auth);
-    window.location.href = LOGIN_PAGE + "?reason=timeout";
-  }, INACTIVITY_LIMIT_MS);
-}
-["mousemove","keydown","click","scroll","touchstart"].forEach(evt=>{
-  window.addEventListener(evt, ()=>{ if(voiceUnlocked) resetInactivityTimer(); }, {passive:true});
-});
-
-/* ---------- حالة الاتصال (اللمبة) ---------- */
-function setConnectionStatus(online){
-  const dot = document.getElementById("lampDot");
-  const txt = document.getElementById("lampText");
-  if(online){ dot.classList.add("on"); txt.textContent = "متصل"; }
-  else{ dot.classList.remove("on"); txt.textContent = "غير متصل"; }
+function stopMonitor(){
+  clearInterval(monitorInterval);monitorInterval=null;
+  window.removeEventListener("popstate",verify);
+  failureCount=0;
 }
 
-/* ---------- بوابة الدخول الفعلي ---------- */
-onAuthStateChanged(auth, (user)=>{
-  const gate = document.getElementById("authGate");
-  if(user){
-    gate.classList.add("hidden");
-    setConnectionStatus(true);
-    claimSingleActiveTab();
-    startSecurityMonitor();
-    resetInactivityTimer();
-    startVoiceIntro(); // يبدأ الترحيب الصوتي ويقفل التفاعل حتى ينتهي
-  }else{
-    stopSecurityMonitor();
-    setConnectionStatus(false);
-    // لا استمرار بدون تسجيل دخول فعلي
-    window.location.href = LOGIN_PAGE;
-  }
-});
+/* ─── IDLE ─── */
+function resetIdle(){
+  if(!unlocked)return;
+  clearTimeout(idleTimer);
+  idleTimer=setTimeout(async()=>{await signOut(auth);location.href=LOGIN+"?r=timeout";},IDLE_MS);
+}
+["mousemove","keydown","click","scroll","touchstart"].forEach(e=>window.addEventListener(e,resetIdle,{passive:true}));
 
-/* لو ضغط المستخدم على "خروج" من مكان آخر بالتطبيق تقدر تستدعي: */
-window.__aqxSignOut = async ()=>{ await signOut(auth); window.location.href = LOGIN_PAGE; };
+/* ─── LAMP ─── */
+function setLamp(on){
+  document.getElementById("lampDot").classList.toggle("on",on);
+  document.getElementById("lampTxt").textContent=on?"متصل":"غير متصل";
+}
 
-/* ---------- الطرد الأمني ---------- */
-window.triggerKillScreen = function(message){
-  document.getElementById("killMsg").textContent = message || "تم رصد نشاط أمني مشبوه. سيتم إنهاء الجلسة.";
-  document.getElementById("killScreen").classList.remove("hidden");
-  document.body.style.overflow = "hidden";
-  speak("تحذير أمني. تم رصد نشاط مشبوه. جاري إنهاء الجلسة الآن وتحويلك إلى الصفحة الرئيسية.");
+/* ─── KILL SCREEN ─── */
+window.__kill=function(msg){
+  ["authGate","voiceGate","modal"].forEach(id=>show(id,false));
+  document.getElementById("killMsg").textContent=msg||"تم رصد نشاط مشبوه.";
+  show("killScreen",true);document.body.style.overflow="hidden";
+  speak("تحذير أمني. تم رصد نشاط مشبوه. جاري إنهاء الجلسة والخروج الفوري.");
   signOut(auth).catch(()=>{});
-  setTimeout(()=>{ window.location.href = HOME_PAGE; }, 4200);
+  setTimeout(()=>location.href=HOME,4500);
 };
-function triggerKillScreen(msg){ window.triggerKillScreen(msg); }
+function kill(m){window.__kill(m);}
 
-/* ---------- الترحيب الصوتي (يقفل التفاعل حتى ينتهي) ---------- */
+/* ─── VOICE ─── */
 function speak(text){
-  return new Promise((resolve)=>{
-    if(!('speechSynthesis' in window)){ resolve(); return; }
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "ar-SA";
-    u.rate = 1;
-    u.pitch = 1.15; // صوت أقرب لنبرة أنثوية
-    const pickVoice = ()=>{
-      const voices = speechSynthesis.getVoices();
-      const female = voices.find(v => /ar/i.test(v.lang) && /female|أنثى|woman/i.test(v.name)) ||
-                      voices.find(v => /ar/i.test(v.lang)) ||
-                      voices.find(v => /female|woman/i.test(v.name));
-      if(female) u.voice = female;
+  return new Promise(res=>{
+    if(!("speechSynthesis"in window)){res();return;}
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang="ar-SA";u.rate=1;u.pitch=1.2;
+    const pick=()=>{
+      const vs=speechSynthesis.getVoices();
+      const f=vs.find(v=>/ar/i.test(v.lang)&&/female|woman|أنثى/i.test(v.name))||vs.find(v=>/ar/i.test(v.lang));
+      if(f)u.voice=f;
     };
-    pickVoice();
-    if(speechSynthesis.getVoices().length === 0){
-      speechSynthesis.onvoiceschanged = ()=>{ pickVoice(); speechSynthesis.speak(u); };
-    } else {
-      speechSynthesis.speak(u);
-    }
-    u.onend = resolve;
-    u.onerror = resolve;
-    // شبكة أمان: لو الصوت اتعطل لأي سبب، افتح بعد 6 ثوانٍ بدل ما يعلّق المستخدم للأبد
-    setTimeout(resolve, 9000);
+    if(speechSynthesis.getVoices().length)pick();
+    else speechSynthesis.onvoiceschanged=pick;
+    speechSynthesis.speak(u);
+    u.onend=res;u.onerror=res;
+    setTimeout(res,10000);
   });
 }
 
-async function startVoiceIntro(){
-  const gate = document.getElementById("voiceGate");
-  gate.classList.remove("hidden");
-  document.getElementById("voiceGateText").textContent = "جاري تشغيل المرافقة الصوتية… الرجاء الانتظار حتى تنتهي.";
-  await speak("أهلاً بك في مركز أمان إيه كيو إكس. أنا مرافقتك الصوتية، وسأرافقك في كل خطوة داخل هذه الصفحة. جميع بيانات حسابك محمية الآن. يمكنك المتابعة.");
-  voiceUnlocked = true;
-  gate.classList.add("hidden");
-  resetInactivityTimer();
+async function startVoice(){
+  show("voiceGate",true);
+  await speak("مرحباً بك في مركز أمان إيه كيو إكس. أنا رفيقتك الرقمية، وسأكون معك في كل لحظة داخل هذا المركز. حسابك محمي الآن. يمكنك البدء.");
+  finishVoice();
+}
+function finishVoice(){
+  unlocked=true;show("voiceGate",false);resetIdle();
+  loadGauges();loadGrid();
 }
 
-/* زر تخطي احتياطي بعد 10 ثوانٍ في حال عدم دعم الصوت بالمتصفح */
+/* SKIP btn fallback after 11s */
 setTimeout(()=>{
-  const btn = document.getElementById("voiceSkip");
-  const gate = document.getElementById("voiceGate");
-  if(!gate.classList.contains("hidden")){
-    btn.style.display = "inline-block";
-    btn.onclick = ()=>{ voiceUnlocked = true; gate.classList.add("hidden"); resetInactivityTimer(); };
+  if(!unlocked){
+    const b=document.getElementById("voiceSkipBtn");
+    b.style.display="inline-block";
+    b.onclick=finishVoice;
   }
-}, 10000);
+},11000);
 
-/* ---------- تعتيم عند فقدان تركيز النافذة (محاولة حماية بصرية) ---------- */
-document.addEventListener("visibilitychange", ()=>{
-  document.getElementById("focusShield").classList.toggle("show", document.hidden);
+/* ─── HELPERS ─── */
+function show(id,on){document.getElementById(id).classList.toggle("off",!on);}
+
+/* ─── AUTH ─── */
+onAuthStateChanged(auth,user=>{
+  if(user){
+    show("authGate",false);setLamp(true);
+    claimTab();startMonitor();
+    startVoice();
+  }else{
+    stopMonitor();
+    location.href=LOGIN;
+  }
 });
-</script>
 
-<!-- ============ منطق عام: جسيمات، سهم الصعود، الشبكة، الحماية من الفحص ============ -->
-<script>
-/* ============ 1) جسيمات ذهبية عائمة ============ */
-(function(){
-  const canvas = document.getElementById('particles-bg');
-  const ctx = canvas.getContext('2d');
-  let particles = [];
-  function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
-  window.addEventListener('resize', resize); resize();
+/* ─── GAUGES ─── */
+function loadGauges(){
+  /* Score */
+  fetch("data/aqx-score.json").then(r=>r.json()).then(d=>{
+    const v=d.score||0,mx=d.max||1000,pct=v/mx;
+    const circ=251.33;
+    const ring=document.getElementById("scoreRing");
+    ring.style.strokeDashoffset=circ-(pct*circ);
+    document.getElementById("ringNum").textContent=v;
+    document.getElementById("scoreVal").textContent=v+"/"+mx;
+    let cls,lv;
+    if(pct>=.9){cls="lv-green";lv="🟢 حصن رقمي";}
+    else if(pct>=.6){cls="lv-yellow";lv="🟡 جيد";}
+    else{cls="lv-red";lv="🔴 معرض للخطر";}
+    ring.style.stroke=pct>=.9?"var(--ok)":pct>=.6?"var(--warn)":"var(--danger)";
+    const el=document.getElementById("scoreLv");
+    el.textContent=lv+" — "+( d.label||"");el.className="score-lv "+cls;
+  }).catch(()=>document.getElementById("scoreLv").textContent="تعذّر تحميل data/aqx-score.json");
 
-  function makeParticle(){
-    return {
-      x: Math.random()*canvas.width,
-      y: Math.random()*canvas.height,
-      r: Math.random()*2 + 0.6,
-      vy: -(Math.random()*0.4 + 0.15),
-      vx: (Math.random()-0.5)*0.25,
-      a: Math.random()*0.6 + 0.2
-    };
-  }
-  const COUNT = Math.min(70, Math.floor(innerWidth/16));
-  for(let i=0;i<COUNT;i++) particles.push(makeParticle());
-
-  function tick(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p=>{
-      p.y += p.vy; p.x += p.vx;
-      if(p.y < -10){ Object.assign(p, makeParticle()); p.y = canvas.height + 10; }
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(240,192,90,${p.a})`;
-      ctx.shadowColor = 'rgba(240,192,90,0.8)';
-      ctx.shadowBlur = 6;
-      ctx.fill();
-    });
-    requestAnimationFrame(tick);
-  }
-  tick();
-})();
-
-/* ============ 2) زر العودة للأعلى ============ */
-(function(){
-  const btn = document.getElementById('toTop');
-  window.addEventListener('scroll', ()=>{
-    btn.classList.toggle('show', window.scrollY > 320);
-  });
-  btn.addEventListener('click', ()=>{
-    btn.classList.add('flip');
-    window.scrollTo({top:0, behavior:'smooth'});
-    setTimeout(()=>btn.classList.remove('flip'), 650);
-  });
-})();
-
-/* ============ 3) بيانات مؤشر الأمان والتهديد ============ */
-(function(){
-  fetch('data/aqx-score.json').then(r=>r.json()).then(d=>{
-    const max = d.max || 1000;
-    const val = d.score || 0;
-    const circumference = 238.76;
-    const offset = circumference - (val/max)*circumference;
-    const ring = document.getElementById('scoreRing');
-    ring.style.strokeDashoffset = offset;
-    if(val/max < 0.4) ring.style.stroke = 'var(--danger)';
-    else if(val/max < 0.7) ring.style.stroke = '#FF9A4D';
-    else ring.style.stroke = 'var(--gold)';
-    document.getElementById('scoreVal').textContent = val;
-    document.getElementById('scoreSub').textContent = (d.label ? 'الحالة: '+d.label+' · ' : '') + 'آخر تحديث: ' + (d.updated_at || '—');
-  }).catch(()=>{
-    document.getElementById('scoreSub').textContent = 'تعذّر تحميل data/aqx-score.json';
-  });
-
-  fetch('data/aqx-threat.json').then(r=>r.json()).then(d=>{
-    const levels = ['منخفض','متوسط','مرتفع','حرج'];
-    const classes = ['low','mid','high','crit'];
-    const idx = Math.max(0, levels.indexOf(d.level));
-    const label = document.getElementById('threatLabel');
-    label.textContent = d.level || '—';
-    label.className = 'threat-label ' + classes[idx];
+  /* Threat */
+  fetch("data/aqx-threat.json").then(r=>r.json()).then(d=>{
+    const map={منخفض:{c:"tl-low",cls:"tb-fill-low",bars:1,ic:"🟢"},
+               متوسط:{c:"tl-mid",cls:"tb-fill-mid",bars:2,ic:"🟡"},
+               مرتفع:{c:"tl-high",cls:"tb-fill-high",bars:3,ic:"🟠"},
+               حرج:{c:"tl-crit",cls:"tb-fill-crit",bars:4,ic:"🔴"}};
+    const m=map[d.level]||map["منخفض"];
+    const lbl=document.getElementById("threatLabel");
+    lbl.textContent=d.level;lbl.className="threat-label "+m.c;
+    document.getElementById("threatIcon").textContent=m.ic;
     for(let i=1;i<=4;i++){
-      const bar = document.getElementById('tb'+i);
-      bar.className = i-1 <= idx ? 'filled ' + classes[idx] : '';
+      const el=document.getElementById("tb"+i);
+      el.className=i<=m.bars?m.cls:"";
     }
-    document.getElementById('threatSub').textContent = 'آخر تحديث: ' + (d.updated_at || '—');
-  }).catch(()=>{
-    document.getElementById('threatSub').textContent = 'تعذّر تحميل data/aqx-threat.json';
-  });
-})();
+  }).catch(()=>{});
+}
 
-/* ============ 4) شبكة البنود (كل بند مربوط بملف JSON خارجي) ============ */
-const featuresList = [
+/* ─── FEATURES GRID ─── */
+const features=[
   ["🔐","حماية الحساب","account-protection"],
   ["👤","تسجيل الدخول","login"],
   ["🚨","الحماية الفورية","instant-protection"],
@@ -776,89 +654,119 @@ const featuresList = [
   ["🔒","بروتوكول الصمت","silence-protocol"],
   ["⛔","منطقة الحظر","ban-zone"],
   ["🚨","مركز الطوارئ","emergency-center"],
-  ["🕵️","مركز مكافحة الانتحال","anti-impersonation-center"],
+  ["🕵️","مكافحة الانتحال","anti-impersonation-center"],
   ["📦","كبسولة النجاة","survival-capsule"],
   ["🛰️","الدرع المتكيف","adaptive-defense"],
   ["⏳","التأخير الأمني","security-delay"],
   ["🎭","وضع الرهينة","hostage-mode"],
   ["🎭","الهوية الخادعة","deceptive-identity"],
-  ["📡","مركز الإنذار المبكر","early-warning-center"],
-  ["🎬","مركز محاكاة الهجوم","attack-simulation-center"],
+  ["📡","الإنذار المبكر","early-warning-center"],
+  ["🎬","محاكاة الهجوم","attack-simulation-center"],
   ["🧬","التوأم الرقمي","digital-twin"],
   ["🛰️","برج القيادة الأمنية","security-command-tower"],
-  ["🧠","دستور الأمان القابل للبرمجة","programmable-security-constitution"]
+  ["🧠","دستور الأمان","programmable-security-constitution"]
 ];
 
-const grid = document.getElementById('featureGrid');
-featuresList.forEach(([icon, title, file])=>{
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.dataset.file = `data/features/${file}.json`;
-  card.innerHTML = `<span class="ic">${icon}</span><div class="ti">${title}</div><div class="st">جاري التحميل…</div>`;
-  grid.appendChild(card);
+function loadGrid(){
+  const grid=document.getElementById("featureGrid");
+  features.forEach(([ic,ti,file])=>{
+    const c=document.createElement("div");c.className="card";
+    c.innerHTML=`<span class="ic">${ic}</span><div class="ti">${ti}</div><div class="st">جاري التحميل…</div>`;
+    grid.appendChild(c);
+    const f=`data/features/${file}.json`;c.dataset.f=f;
+    fetch(f).then(r=>r.json()).then(d=>{
+      const s=c.querySelector(".st");
+      s.textContent=d.status||"غير معروف";
+      s.className="st "+(d.status==="مُفعّل"?"active":"inactive");
+      c.dataset.desc=d.description||"";
+      c.dataset.upd=d.updated_at||"";
+    }).catch(()=>{c.querySelector(".st").textContent="—";});
 
-  fetch(card.dataset.file).then(r=>r.json()).then(d=>{
-    const st = card.querySelector('.st');
-    st.textContent = d.status || 'غير معروف';
-    st.classList.toggle('on', d.status === 'مُفعّل');
-    card.dataset.desc = d.description || '';
-    card.dataset.updated = d.updated_at || '';
-  }).catch(()=>{
-    card.querySelector('.st').textContent = 'تعذّر تحميل الملف';
+    c.addEventListener("click",()=>{
+      if(!unlocked)return;
+      document.getElementById("mIc").textContent=ic;
+      document.getElementById("mTitle").textContent=ti;
+      document.getElementById("mDesc").textContent=c.dataset.desc||"لا توجد بيانات إضافية بعد.";
+      document.getElementById("mSt").textContent="الملف: "+c.dataset.f+" · آخر تحديث: "+(c.dataset.upd||"—");
+      show("modal",true);
+      speak(ti+" · "+( c.dataset.desc?.slice(0,60)||""));
+    });
   });
+}
 
-  card.addEventListener('click', ()=>{
-    document.getElementById('modalIcon').textContent = icon;
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalDesc').textContent = card.dataset.desc || 'لا توجد بيانات إضافية.';
-    document.getElementById('modalStatus').textContent = 'آخر تحديث: ' + (card.dataset.updated || '—') + ' · الملف: ' + card.dataset.file;
-    document.getElementById('itemModal').classList.remove('hidden');
-  });
-});
-document.getElementById('modalClose').addEventListener('click', ()=>{
-  document.getElementById('itemModal').classList.add('hidden');
+/* ─── MODAL CLOSE ─── */
+document.getElementById("mClose").addEventListener("click",()=>show("modal",false));
+
+/* ─── FOCUS SHIELD ─── */
+document.addEventListener("visibilitychange",()=>{
+  document.getElementById("focusShield").classList.toggle("on",document.hidden);
 });
 
-/* ============ 5) حماية من فتح أدوات المطوّر — أفضل جهد فقط ============
-   ملاحظة صريحة: هذه الحماية تصميمية/رادعة وليست حماية فعلية 100%،
-   لأن أي متصفح يمنح المستخدم صلاحية كاملة على الكود المُرسَل له.
-   الحماية الحقيقية للبيانات الحساسة يجب أن تكون من جهة الخادم/القواعد.
-*/
-(function(){
-  let warnings = parseInt(sessionStorage.getItem('aqx_warnings') || '0', 10);
-
-  function warnOrKill(reason){
-    warnings++;
-    sessionStorage.setItem('aqx_warnings', warnings);
-    if(warnings >= 3){
-      window.triggerKillScreen ? window.triggerKillScreen('محاولات متكررة للوصول إلى كود الصفحة (' + reason + '). تم إنهاء الجلسة.') :
-        (window.location.href = '/index.html');
-    } else {
-      alert('⚠ تحذير أمني (' + warnings + '/3): محاولة الوصول لكود الصفحة غير مسموحة. سيتم إنهاء الجلسة تلقائياً عند التكرار.');
+/* ─── DEVTOOLS / CODE PROTECTION ─── */
+(()=>{
+  function warn(reason){
+    warnings++;sessionStorage.setItem("aqx_w",warnings);
+    if(warnings>=3){kill("ثلاث محاولات للوصول للكود — طرد أمني فوري. السبب: "+reason);}
+    else{
+      speak("تحذير أمني رقم "+warnings+". الوصول للكود ممنوع نهائياً.");
+      alert("⚠ تحذير أمني ("+ warnings+"/3): "+"الوصول لكود الصفحة ممنوع نهائياً. في حالة التكرار ستُطرد فوراً.");
     }
   }
-
-  document.addEventListener('contextmenu', e=>{ e.preventDefault(); warnOrKill('كليك يمين'); });
-  document.addEventListener('keydown', e=>{
-    const k = e.key?.toLowerCase();
-    const blocked =
-      k === 'f12' ||
-      (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)) ||
-      (e.ctrlKey && k === 'u') ||
-      (e.metaKey && e.altKey && ['i','j','c'].includes(k));
-    if(blocked){ e.preventDefault(); warnOrKill('اختصار فحص الكود'); }
+  document.addEventListener("contextmenu",e=>{e.preventDefault();warn("كليك يمين");});
+  document.addEventListener("keydown",e=>{
+    const k=e.key?.toLowerCase();
+    const bad=k==="f12"||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))||(e.ctrlKey&&k==="u")||(e.metaKey&&e.altKey&&["i","j","c"].includes(k));
+    if(bad){e.preventDefault();warn("اختصار فحص");}
   });
-
-  // كشف تقريبي لفتح أدوات المطوّر عبر فرق أبعاد النافذة (أفضل جهد، غير مضمون 100%)
-  let devtoolsOpen = false;
+  let dt=false;
   setInterval(()=>{
-    const threshold = 160;
-    const isOpen = (window.outerWidth - window.innerWidth > threshold) || (window.outerHeight - window.innerHeight > threshold);
-    if(isOpen && !devtoolsOpen){ devtoolsOpen = true; warnOrKill('اكتشاف أدوات مطوّر مفتوحة'); }
-    if(!isOpen) devtoolsOpen = false;
-  }, 1500);
+    const open=window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160;
+    if(open&&!dt){dt=true;warn("أدوات مطوّر");}
+    if(!open)dt=false;
+  },1500);
 })();
 </script>
 
+<!-- ─── PARTICLES + SCROLL BTN (non-module) ─── -->
+<script>
+/* PARTICLES */
+(()=>{
+  const cv=document.getElementById("canvas");
+  const ctx=cv.getContext("2d");
+  const resize=()=>{cv.width=innerWidth;cv.height=innerHeight;};
+  window.addEventListener("resize",resize);resize();
+  const N=Math.min(80,Math.floor(innerWidth/14));
+  const pts=Array.from({length:N},()=>({
+    x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+    vx:(Math.random()-.5)*.3,vy:-(Math.random()*.5+.1),
+    r:Math.random()*2.2+.5,a:Math.random()*.55+.15
+  }));
+  function tick(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.y<-10){p.y=cv.height+10;p.x=Math.random()*cv.width;}
+      if(p.x<-10)p.x=cv.width+10;if(p.x>cv.width+10)p.x=-10;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,209,102,${p.a})`;
+      ctx.shadowColor="rgba(255,209,102,.9)";ctx.shadowBlur=8;
+      ctx.fill();
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+/* SCROLL TO TOP */
+(()=>{
+  const btn=document.getElementById("top-btn");
+  window.addEventListener("scroll",()=>btn.classList.toggle("show",scrollY>300));
+  btn.addEventListener("click",()=>{
+    btn.classList.add("flipping");
+    scrollTo({top:0,behavior:"smooth"});
+    setTimeout(()=>btn.classList.remove("flipping"),580);
+  });
+})();
+</script>
 </body>
 </html>

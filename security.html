@@ -1,3 +1,4 @@
+cat > /tmp/aqx_new.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -7,240 +8,299 @@
 <meta name="robots" content="noindex,nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-/* ===== TOKENS ===== */
 :root{
-  --bg:       #1A0A2E;   /* بنفسجي غامق عميق — ليس أسود */
-  --bg1:      #241242;
-  --bg2:      #2E1855;
-  --bg3:      #3A2068;
-  --line:     rgba(160,100,255,.2);
+  --bg:       #0E6E6E;
+  --bg1:      #0A5858;
+  --bg2:      #126666;
+  --bg3:      #1A7A7A;
+  --bg4:      #0C5555;
+  --line:     rgba(0,255,220,.2);
   --gold:     #FFD166;
   --gold2:    #FFF0B3;
-  --purple:   #A855F7;
-  --violet:   #7C3AED;
-  --cyan:     #06EFC5;
-  --pink:     #F72585;
-  --ok:       #06EFC5;
+  --silver:   #C8E6E6;
+  --silver2:  #E8F8F8;
+  --teal:     #00FFDD;
+  --teal2:    #7FFFEF;
+  --purple:   #B48EFF;
+  --cyan:     #00E5CC;
+  --ok:       #00FFB2;
   --warn:     #FFD166;
-  --danger:   #FF2D55;
-  --hi:       #FF6B35;
+  --danger:   #FF3B5C;
+  --hi:       #FF8C42;
   --r:        16px;
-  --glow-p:   0 0 30px rgba(168,85,247,.5);
-  --glow-c:   0 0 30px rgba(6,239,197,.5);
-  --glow-g:   0 0 30px rgba(255,209,102,.5);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:'Cairo',sans-serif;background:var(--bg);color:#EEE7FF;overflow-x:hidden}
-body{-webkit-user-select:none;user-select:none;background:
-  radial-gradient(ellipse 120% 60% at 20% -10%,rgba(124,58,237,.35) 0%,transparent 60%),
-  radial-gradient(ellipse 80% 80% at 90% 100%,rgba(6,239,197,.12) 0%,transparent 55%),
-  linear-gradient(170deg,#1A0A2E 0%,#0E0620 100%)
+html,body{height:100%;font-family:'Cairo',sans-serif;color:#E8FFFE;overflow-x:hidden}
+body{
+  -webkit-user-select:none;user-select:none;
+  background:
+    radial-gradient(ellipse 100% 70% at 0% 0%,rgba(0,180,160,.45),transparent 55%),
+    radial-gradient(ellipse 80% 60% at 100% 100%,rgba(0,120,110,.5),transparent 55%),
+    radial-gradient(ellipse 60% 40% at 50% 50%,rgba(10,110,100,.3),transparent 70%),
+    linear-gradient(160deg,#0B6060 0%,#0E7474 40%,#0A5A5A 70%,#0D6868 100%);
 }
 
-/* CANVAS */
+/* CANVAS PARTICLES */
 #canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
 
-/* OVERLAYS */
-.ov{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:30px;backdrop-filter:blur(4px)}
+/* ===== OVERLAYS ===== */
+.ov{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:20px;
+  text-align:center;padding:30px;backdrop-filter:blur(6px)}
 .ov.off{display:none!important}
-#authGate{background:rgba(26,10,46,.97)}
-#voiceGate{background:rgba(26,10,46,.97)}
-#killScreen{background:radial-gradient(circle at 50% 40%,#3B000D,#100006 80%)}
-#focusShield{position:fixed;inset:0;z-index:200;display:none;backdrop-filter:blur(24px);background:rgba(26,10,46,.88);align-items:center;justify-content:center}
+#authGate{background:rgba(8,50,50,.97)}
+#voiceGate{background:rgba(8,50,50,.97)}
+#killScreen{background:radial-gradient(circle at 50% 35%,#3B0010,#0E0005 80%)}
+#focusShield{position:fixed;inset:0;z-index:200;display:none;
+  backdrop-filter:blur(28px);background:rgba(8,50,50,.92);
+  align-items:center;justify-content:center;text-align:center;padding:20px}
 #focusShield.on{display:flex}
 
-/* loading spinner */
-.spin{width:52px;height:52px;border-radius:50%;border:3px solid rgba(168,85,247,.25);border-top-color:var(--purple);animation:sp 1s linear infinite}
+.spin{width:56px;height:56px;border-radius:50%;
+  border:3px solid rgba(0,255,220,.2);border-top-color:var(--teal);
+  animation:sp 1s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
+.ov h2{font-family:'Almarai',sans-serif;font-size:1.4rem;color:var(--gold2);
+  text-shadow:0 0 20px var(--gold)}
+.ov p{font-size:.9rem;color:rgba(200,255,250,.7);max-width:440px;line-height:1.9}
 
-/* auth text */
-.ov h2{font-family:'Almarai',sans-serif;font-size:1.3rem;color:var(--gold2);text-shadow:0 0 16px var(--gold)}
-.ov p{font-size:.88rem;color:rgba(220,200,255,.75);max-width:420px;line-height:1.8}
-
-/* voice gate orb */
-.v-orb{width:100px;height:100px;border-radius:50%;
-  background:radial-gradient(circle at 38% 32%,#FFE88A,#FFD166 55%,#B8860B);
-  box-shadow:0 0 60px rgba(255,209,102,.7),0 0 120px rgba(255,209,102,.3);
-  animation:ob 1.8s ease-in-out infinite}
-@keyframes ob{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
-.v-waves{display:flex;gap:6px;align-items:center;height:32px}
-.v-waves span{display:block;width:4px;border-radius:4px;background:var(--gold);
-  animation:wv 1.2s ease-in-out infinite}
+/* voice orb */
+.v-orb{width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#FFE88A,#FFD166 55%,#A8760A);
+  box-shadow:0 0 70px rgba(255,209,102,.8),0 0 140px rgba(255,209,102,.3);
+  animation:ob 1.9s ease-in-out infinite}
+@keyframes ob{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.v-waves{display:flex;gap:6px;align-items:center;height:36px}
+.v-waves span{display:block;width:5px;border-radius:5px;background:var(--teal);
+  animation:wv 1.1s ease-in-out infinite}
 .v-waves span:nth-child(1){height:14px;animation-delay:0s}
-.v-waves span:nth-child(2){height:26px;animation-delay:.15s}
+.v-waves span:nth-child(2){height:28px;animation-delay:.15s}
 .v-waves span:nth-child(3){height:20px;animation-delay:.3s}
-.v-waves span:nth-child(4){height:30px;animation-delay:.45s}
+.v-waves span:nth-child(4){height:32px;animation-delay:.45s}
 .v-waves span:nth-child(5){height:16px;animation-delay:.6s}
-@keyframes wv{0%,100%{transform:scaleY(1);opacity:.7}50%{transform:scaleY(1.6);opacity:1}}
-#voiceSkipBtn{display:none;padding:10px 28px;border-radius:30px;border:1.5px solid var(--gold);
-  background:transparent;color:var(--gold2);font-size:.9rem;font-weight:700;cursor:pointer;margin-top:8px}
+@keyframes wv{0%,100%{transform:scaleY(.5);opacity:.6}50%{transform:scaleY(1.5);opacity:1}}
+#voiceSkipBtn{display:none;padding:11px 30px;border-radius:30px;
+  border:1.5px solid var(--teal);background:rgba(0,200,180,.15);
+  color:var(--teal2);font-size:.92rem;font-weight:700;cursor:pointer;margin-top:6px;
+  transition:.2s}
+#voiceSkipBtn:hover{background:rgba(0,200,180,.3)}
 
-/* KILL SCREEN */
-#killScreen h2{font-family:'Almarai',sans-serif;font-size:2.2rem;color:var(--danger);
-  text-shadow:0 0 30px var(--danger),0 0 60px rgba(255,45,85,.4);
-  animation:flk 1.1s ease-in-out infinite}
-@keyframes flk{0%,100%{opacity:1}45%{opacity:.5}55%{opacity:.9}}
-#killScreen p{color:#FFB3C1}
-.k-ring{width:120px;height:120px;border-radius:50%;border:4px solid var(--danger);
-  box-shadow:0 0 40px var(--danger),0 0 80px rgba(255,45,85,.3),inset 0 0 30px rgba(255,45,85,.3);
-  display:flex;align-items:center;justify-content:center;font-size:3.5rem;
-  animation:kp 1.1s ease-in-out infinite}
-@keyframes kp{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-.k-bars{display:flex;gap:10px;margin-top:4px}
-.k-bar{width:5px;height:36px;border-radius:4px;background:var(--danger);
-  box-shadow:0 0 10px var(--danger);animation:kb 0.7s ease-in-out infinite}
-.k-bar:nth-child(1){animation-delay:0s}
-.k-bar:nth-child(2){animation-delay:.1s}
-.k-bar:nth-child(3){animation-delay:.2s}
-.k-bar:nth-child(4){animation-delay:.3s}
-.k-bar:nth-child(5){animation-delay:.4s}
-@keyframes kb{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+/* kill screen */
+#killScreen h2{font-family:'Almarai',sans-serif;font-size:2.4rem;color:var(--danger);
+  text-shadow:0 0 30px var(--danger),0 0 70px rgba(255,59,92,.4);
+  animation:flk 1s ease-in-out infinite}
+@keyframes flk{0%,100%{opacity:1}45%{opacity:.4}55%{opacity:.85}}
+#killScreen p{color:#FFB3C1;font-size:1rem}
+.k-ring{width:130px;height:130px;border-radius:50%;
+  border:4px solid var(--danger);
+  box-shadow:0 0 50px var(--danger),0 0 100px rgba(255,59,92,.3),inset 0 0 40px rgba(255,59,92,.25);
+  display:flex;align-items:center;justify-content:center;font-size:3.8rem;
+  animation:kp 1s ease-in-out infinite}
+@keyframes kp{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.k-bars{display:flex;gap:9px;margin-top:8px;align-items:flex-end;height:44px}
+.k-bar{width:6px;border-radius:5px;background:var(--danger);
+  box-shadow:0 0 12px var(--danger);animation:kb .65s ease-in-out infinite}
+.k-bar:nth-child(1){height:40%;animation-delay:0s}
+.k-bar:nth-child(2){height:70%;animation-delay:.1s}
+.k-bar:nth-child(3){height:100%;animation-delay:.2s}
+.k-bar:nth-child(4){height:70%;animation-delay:.3s}
+.k-bar:nth-child(5){height:40%;animation-delay:.4s}
+@keyframes kb{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
 
-/* HEADER */
-header{position:sticky;top:0;z-index:50;
+/* ===== HEADER ===== */
+header{
+  position:sticky;top:0;z-index:50;
   display:flex;align-items:center;justify-content:space-between;
-  padding:13px 24px;
-  background:linear-gradient(180deg,rgba(26,10,46,.96),rgba(26,10,46,.75));
-  backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  padding:14px 26px;
+  background:linear-gradient(180deg,rgba(8,55,55,.97),rgba(8,55,55,.8));
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(0,255,220,.18);
+  box-shadow:0 2px 30px rgba(0,0,0,.3)}
 .h-side{display:flex;align-items:center;gap:14px}
 
-/* lamp */
-.lamp{display:flex;align-items:center;gap:8px;font-size:.82rem;color:rgba(200,180,255,.8)}
-.lamp-dot{width:12px;height:12px;border-radius:50%;background:rgba(6,239,197,.2);transition:.4s}
-.lamp-dot.on{background:var(--ok);box-shadow:0 0 8px var(--ok),0 0 24px rgba(6,239,197,.6);animation:lp 1.8s ease-in-out infinite}
-@keyframes lp{0%,100%{opacity:1}50%{opacity:.3}}
+/* ── نيون الاتصال ── */
+.lamp{display:flex;align-items:center;gap:9px;font-size:.85rem;font-weight:600;
+  color:rgba(200,255,250,.85);letter-spacing:.5px}
+.lamp-dot{
+  width:14px;height:14px;border-radius:50%;
+  background:rgba(0,255,180,.15);
+  box-shadow:none;
+  transition:background .4s,box-shadow .4s}
+.lamp-dot.on{
+  background:var(--ok);
+  box-shadow:0 0 6px var(--ok),0 0 18px rgba(0,255,178,.7),0 0 40px rgba(0,255,178,.35);
+  animation:lp 1.6s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:1;box-shadow:0 0 6px var(--ok),0 0 18px rgba(0,255,178,.7),0 0 40px rgba(0,255,178,.35)}
+  50%{opacity:.2;box-shadow:0 0 2px var(--ok),0 0 6px rgba(0,255,178,.3)}}
+#lampTxt{transition:.4s}
 
-/* brand */
-.brand{display:flex;align-items:center;gap:10px;font-family:'Almarai',sans-serif;font-size:1.25rem;font-weight:800}
-.brand-icon{font-size:1.5rem;animation:bi 4s ease-in-out infinite}
-@keyframes bi{0%,100%{filter:drop-shadow(0 0 8px var(--gold))}33%{filter:drop-shadow(0 0 8px var(--cyan))}66%{filter:drop-shadow(0 0 8px var(--purple))}}
+/* ── برند ── */
+.brand{display:flex;align-items:center;gap:11px;font-family:'Almarai',sans-serif;
+  font-size:1.3rem;font-weight:800;letter-spacing:.5px}
+.brand-icon{font-size:1.6rem;animation:bi 5s ease-in-out infinite}
+@keyframes bi{
+  0%,100%{filter:drop-shadow(0 0 10px var(--gold))}
+  33%{filter:drop-shadow(0 0 10px var(--teal))}
+  66%{filter:drop-shadow(0 0 10px var(--purple))}}
 .brand-text{
-  background:linear-gradient(90deg,var(--gold),var(--purple),var(--cyan),var(--gold));
-  background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
-  animation:bs 5s linear infinite}
-@keyframes bs{0%{background-position:0%}100%{background-position:300%}}
+  background:linear-gradient(90deg,var(--gold),var(--teal),var(--purple),var(--gold2),var(--teal));
+  background-size:400% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:bs 6s linear infinite;
+  filter:drop-shadow(0 0 8px rgba(0,255,220,.3))}
+@keyframes bs{0%{background-position:0%}100%{background-position:400%}}
 
-/* dashboard link */
+/* ── رابط الداشبورد ── */
 .dash-btn{display:flex;align-items:center;justify-content:center;
-  width:44px;height:44px;border-radius:12px;border:1.5px solid rgba(160,100,255,.35);
-  background:rgba(124,58,237,.15);transition:.25s}
-.dash-btn:hover{border-color:var(--gold);box-shadow:var(--glow-g);transform:translateY(-2px)}
-.dash-btn svg{width:22px;height:22px;stroke:var(--gold2)}
+  width:46px;height:46px;border-radius:13px;
+  border:1.5px solid rgba(0,255,220,.3);
+  background:rgba(0,180,160,.15);transition:.25s}
+.dash-btn:hover{border-color:var(--gold);
+  box-shadow:0 0 20px rgba(255,209,102,.4);transform:translateY(-2px)}
+.dash-btn svg{width:23px;height:23px;stroke:var(--gold2)}
 
-/* CONTENT WRAP */
-.wrap{max-width:1140px;margin:0 auto;padding:0 20px;position:relative;z-index:2}
+/* ===== GAUGES ===== */
+.gauges{display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  margin:30px auto;max-width:1160px;padding:0 22px;position:relative;z-index:2}
+@media(max-width:680px){.gauges{grid-template-columns:1fr}}
 
-/* GAUGES */
-.gauges{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:28px auto;max-width:1140px;padding:0 20px;position:relative;z-index:2}
-@media(max-width:700px){.gauges{grid-template-columns:1fr}}
 .g-card{
-  background:linear-gradient(145deg,rgba(46,24,85,.9),rgba(58,32,104,.8));
-  border:1.5px solid rgba(168,85,247,.25);border-radius:20px;
-  padding:22px 24px;display:flex;align-items:center;gap:20px;
-  box-shadow:0 8px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+  background:linear-gradient(150deg,rgba(6,80,78,.9),rgba(10,90,85,.85));
+  border:1.5px solid rgba(0,255,220,.2);border-radius:22px;
+  padding:24px 26px;display:flex;align-items:center;gap:22px;
+  box-shadow:0 8px 50px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06);
   position:relative;overflow:hidden;transition:.3s}
 .g-card::before{content:'';position:absolute;inset:0;
-  background:radial-gradient(160px 100px at 85% 10%,rgba(168,85,247,.1),transparent 70%);pointer-events:none}
-.g-card:hover{border-color:rgba(168,85,247,.55);box-shadow:0 8px 50px rgba(168,85,247,.2)}
-.g-card h3{font-size:.88rem;font-weight:600;color:rgba(210,190,255,.75);margin-bottom:6px;letter-spacing:.5px}
+  background:radial-gradient(200px 120px at 85% 5%,rgba(0,255,220,.08),transparent 70%);
+  pointer-events:none}
+.g-card:hover{border-color:rgba(0,255,220,.45);
+  box-shadow:0 8px 60px rgba(0,200,180,.2)}
+.g-card h3{font-size:.9rem;font-weight:600;color:rgba(180,255,250,.65);margin-bottom:7px;letter-spacing:.4px}
 
-/* score ring */
-.ring-wrap{position:relative;flex-shrink:0;width:88px;height:88px}
+/* دائرة المؤشر */
+.ring-wrap{position:relative;flex-shrink:0;width:92px;height:92px}
 .ring-wrap svg{transform:rotate(-90deg)}
 .ring-bg{fill:none;stroke:rgba(255,255,255,.07);stroke-width:9}
-.ring-fg{fill:none;stroke:var(--gold);stroke-width:9;stroke-linecap:round;
-  stroke-dasharray:251.33;stroke-dashoffset:251.33;transition:stroke-dashoffset 1.4s ease,stroke .4s}
-.ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.ring-num{font-size:.95rem;font-weight:900;font-family:'Almarai',sans-serif;line-height:1}
-.ring-max{font-size:.58rem;color:rgba(200,180,255,.5)}
+.ring-fg{fill:none;stroke:var(--ok);stroke-width:9;stroke-linecap:round;
+  stroke-dasharray:263.89;stroke-dashoffset:263.89;
+  transition:stroke-dashoffset 1.5s ease,stroke .5s;
+  filter:drop-shadow(0 0 6px currentColor)}
+.ring-label{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center}
+.ring-num{font-size:1rem;font-weight:900;font-family:'Almarai',sans-serif;line-height:1}
+.ring-maxl{font-size:.55rem;color:rgba(180,255,250,.4)}
 
-.score-val{font-size:1.9rem;font-weight:900;font-family:'Almarai',sans-serif;line-height:1}
-.score-lv{font-size:.82rem;font-weight:700;margin-top:4px}
-.score-src{font-size:.68rem;color:rgba(200,180,255,.45);margin-top:6px}
-.lv-green{color:var(--ok);text-shadow:0 0 12px var(--ok)}
-.lv-yellow{color:var(--warn);text-shadow:0 0 12px var(--warn)}
-.lv-red{color:var(--danger);text-shadow:0 0 12px var(--danger)}
+.score-val{font-size:2rem;font-weight:900;font-family:'Almarai',sans-serif;line-height:1.1}
+.score-lv{font-size:.85rem;font-weight:700;margin-top:5px}
+.score-src{font-size:.67rem;color:rgba(180,255,250,.35);margin-top:8px}
+.lv-green{color:var(--ok);text-shadow:0 0 14px var(--ok)}
+.lv-yellow{color:var(--warn);text-shadow:0 0 14px var(--warn)}
+.lv-red{color:var(--danger);text-shadow:0 0 14px var(--danger)}
 
-/* threat gauge */
-.threat-icon{font-size:2.2rem;flex-shrink:0;animation:ti 3s ease-in-out infinite}
-@keyframes ti{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
-.threat-label{font-size:1.7rem;font-weight:900;font-family:'Almarai',sans-serif}
+/* تهديد */
+.threat-icon{font-size:2.4rem;flex-shrink:0;animation:tic 3s ease-in-out infinite}
+@keyframes tic{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+.threat-label{font-size:1.8rem;font-weight:900;font-family:'Almarai',sans-serif}
 .tl-low{color:var(--ok);text-shadow:0 0 16px var(--ok)}
 .tl-mid{color:var(--warn);text-shadow:0 0 16px var(--warn)}
 .tl-high{color:var(--hi);text-shadow:0 0 16px var(--hi)}
-.tl-crit{color:var(--danger);text-shadow:0 0 16px var(--danger)}
+.tl-crit{color:var(--danger);text-shadow:0 0 20px var(--danger)}
+.t-bar{display:flex;gap:5px;height:11px;margin-top:11px;border-radius:6px;overflow:hidden}
+.t-bar span{flex:1;border-radius:4px;background:rgba(255,255,255,.08);transition:.5s}
+.tb-low{background:var(--ok);box-shadow:0 0 10px var(--ok)}
+.tb-mid{background:var(--warn);box-shadow:0 0 10px var(--warn)}
+.tb-high{background:var(--hi);box-shadow:0 0 10px var(--hi)}
+.tb-crit{background:var(--danger);box-shadow:0 0 10px var(--danger)}
+.threat-src{font-size:.67rem;color:rgba(180,255,250,.35);margin-top:8px}
 
-.t-bar{display:flex;gap:5px;height:10px;margin-top:10px;border-radius:6px;overflow:hidden}
-.t-bar span{flex:1;border-radius:4px;background:rgba(255,255,255,.07);transition:.4s}
-span.tb-fill-low{background:var(--ok);box-shadow:0 0 8px var(--ok)}
-span.tb-fill-mid{background:var(--warn);box-shadow:0 0 8px var(--warn)}
-span.tb-fill-high{background:var(--hi);box-shadow:0 0 8px var(--hi)}
-span.tb-fill-crit{background:var(--danger);box-shadow:0 0 8px var(--danger)}
-.threat-src{font-size:.68rem;color:rgba(200,180,255,.45);margin-top:8px}
-
-/* SECTION TITLE */
-.sec-hd{max-width:1140px;margin:36px auto 16px;padding:0 20px;
-  display:flex;align-items:center;gap:12px;position:relative;z-index:2}
-.sec-hd h2{font-family:'Almarai',sans-serif;font-size:1rem;font-weight:700;color:rgba(210,190,255,.7);white-space:nowrap}
+/* ===== SECTION TITLE ===== */
+.sec-hd{max-width:1160px;margin:38px auto 18px;padding:0 22px;
+  display:flex;align-items:center;gap:14px;position:relative;z-index:2}
+.sec-hd h2{font-family:'Almarai',sans-serif;font-size:1.05rem;font-weight:700;
+  color:rgba(180,255,250,.65);white-space:nowrap}
 .sec-hd::after{content:'';flex:1;height:1px;
-  background:linear-gradient(90deg,rgba(168,85,247,.4),transparent)}
+  background:linear-gradient(90deg,rgba(0,255,220,.35),transparent)}
 
-/* GRID */
-.grid{max-width:1140px;margin:0 auto 80px;padding:0 20px;
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:13px;
+/* ===== CARDS GRID ===== */
+.grid{max-width:1160px;margin:0 auto 0;padding:0 22px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;
   position:relative;z-index:2}
-@media(max-width:500px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.grid{grid-template-columns:repeat(2,1fr)}}
 
 .card{
-  background:linear-gradient(160deg,rgba(36,18,66,.9),rgba(46,24,85,.8));
-  border:1.5px solid rgba(168,85,247,.18);border-radius:15px;
-  padding:18px 14px;text-align:center;cursor:pointer;
-  position:relative;overflow:hidden;transition:.25s}
-.card::before{content:'';position:absolute;inset:0;opacity:0;
-  background:radial-gradient(100px 100px at 50% 0%,rgba(255,209,102,.1),transparent 70%);
+  background:linear-gradient(155deg,rgba(6,72,68,.88),rgba(10,85,80,.8));
+  border:1.5px solid rgba(0,255,220,.15);border-radius:16px;
+  padding:19px 15px;text-align:center;cursor:pointer;
+  position:relative;overflow:hidden;transition:.26s;
+  box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.card::after{content:'';position:absolute;inset:0;opacity:0;
+  background:radial-gradient(120px 80px at 50% 0%,rgba(255,209,102,.12),transparent 70%);
   transition:.3s}
 .card:hover{transform:translateY(-5px);border-color:rgba(255,209,102,.5);
-  box-shadow:0 10px 40px rgba(168,85,247,.3),var(--glow-g)}
-.card:hover::before{opacity:1}
-.card .ic{font-size:1.9rem;display:block;margin-bottom:9px;
-  filter:drop-shadow(0 0 6px rgba(168,85,247,.6));transition:.25s}
-.card:hover .ic{filter:drop-shadow(0 0 12px var(--gold))}
-.card .ti{font-size:.8rem;font-weight:700;color:#E0D4FF;line-height:1.4}
-.card .st{font-size:.66rem;color:rgba(200,180,255,.45);margin-top:7px}
-.card .st.active{color:var(--ok);text-shadow:0 0 8px var(--ok)}
-.card .st.inactive{color:rgba(200,180,255,.35)}
+  box-shadow:0 12px 45px rgba(0,180,160,.3),0 0 30px rgba(255,209,102,.15)}
+.card:hover::after{opacity:1}
+.card .ic{font-size:2rem;display:block;margin-bottom:10px;
+  filter:drop-shadow(0 0 7px rgba(0,255,220,.6));transition:.26s}
+.card:hover .ic{filter:drop-shadow(0 0 14px var(--gold))}
+.card .ti{font-size:.82rem;font-weight:700;color:#D5FFFA;line-height:1.45}
+.card .st{font-size:.67rem;color:rgba(180,255,250,.4);margin-top:8px}
+.card .st.active{color:var(--ok);text-shadow:0 0 9px var(--ok)}
 
-/* SCROLL TO TOP */
+/* ===== FOOTER ===== */
+footer{
+  position:relative;z-index:2;
+  margin-top:60px;
+  background:linear-gradient(180deg,transparent,rgba(5,50,50,.95) 40%);
+  padding:50px 20px 36px;text-align:center}
+.footer-inner{
+  max-width:900px;margin:0 auto;
+  border-top:1px solid rgba(0,255,220,.15);padding-top:36px}
+.footer-brand{font-family:'Almarai',sans-serif;font-size:1.4rem;font-weight:800;
+  background:linear-gradient(90deg,var(--gold),var(--teal),var(--purple));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  margin-bottom:10px}
+.footer-tagline{font-size:.82rem;color:rgba(180,255,250,.5);margin-bottom:28px;line-height:1.8}
+.footer-stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-bottom:28px}
+.footer-stat{text-align:center}
+.footer-stat .fn{font-family:'Almarai',sans-serif;font-size:1.6rem;font-weight:900;
+  color:var(--teal);text-shadow:0 0 20px var(--teal)}
+.footer-stat .fl{font-size:.72rem;color:rgba(180,255,250,.45);margin-top:4px}
+.footer-divider{width:60px;height:2px;margin:0 auto 22px;
+  background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.footer-copy{font-size:.7rem;color:rgba(180,255,250,.3);line-height:1.9}
+.footer-pulse{display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:var(--ok);margin-left:6px;vertical-align:middle;
+  box-shadow:0 0 8px var(--ok);animation:lp 1.6s ease-in-out infinite}
+
+/* ===== SCROLL BTN ===== */
 #top-btn{position:fixed;bottom:28px;left:28px;z-index:60;
-  width:52px;height:52px;border-radius:50%;
-  background:linear-gradient(135deg,var(--violet),var(--purple));
+  width:54px;height:54px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(0,150,140,.9),rgba(0,120,110,.9));
   border:2px solid rgba(255,209,102,.4);
-  box-shadow:0 0 20px rgba(124,58,237,.5);
+  box-shadow:0 0 24px rgba(0,200,180,.5);
   display:flex;align-items:center;justify-content:center;cursor:pointer;
   opacity:0;pointer-events:none;transform:translateY(20px);transition:.35s}
 #top-btn.show{opacity:1;pointer-events:auto;transform:translateY(0)}
-#top-btn svg{width:22px;height:22px;stroke:var(--gold2)}
-#top-btn.flipping{animation:fl .55s ease}
-@keyframes fl{0%{transform:rotate(0)translateY(0)}50%{transform:rotate(200deg)translateY(-8px)}100%{transform:rotate(360deg)translateY(0)}}
+#top-btn svg{width:23px;height:23px;stroke:var(--gold2)}
+#top-btn.fl{animation:fla .55s ease}
+@keyframes fla{0%{transform:rotate(0) translateY(0)}50%{transform:rotate(200deg) translateY(-8px)}100%{transform:rotate(360deg) translateY(0)}}
 
-/* MODAL */
+/* ===== MODAL ===== */
 #modal{z-index:280}
 .m-box{
-  background:linear-gradient(160deg,rgba(36,18,66,.98),rgba(46,24,85,.96));
-  border:1.5px solid rgba(255,209,102,.4);border-radius:20px;
-  padding:30px;max-width:440px;width:92%;
-  box-shadow:0 20px 60px rgba(0,0,0,.5),var(--glow-g)}
-.m-box .m-ic{font-size:3rem;margin-bottom:10px;
-  filter:drop-shadow(0 0 16px var(--gold))}
-.m-box h2{font-family:'Almarai',sans-serif;font-size:1.15rem;color:var(--gold2);margin-bottom:8px}
-.m-box p{font-size:.83rem;color:rgba(220,200,255,.75);line-height:1.8}
-.m-box .m-st{font-size:.7rem;color:rgba(200,180,255,.4);margin-top:10px}
-.m-close{margin-top:18px;padding:9px 26px;border-radius:24px;
-  border:1.5px solid rgba(168,85,247,.5);background:rgba(124,58,237,.2);
-  color:#E0D4FF;font-size:.85rem;font-weight:700;cursor:pointer;transition:.2s}
-.m-close:hover{background:rgba(124,58,237,.45);border-color:var(--gold)}
-
-footer{text-align:center;padding:22px 20px;font-size:.7rem;color:rgba(200,180,255,.3);position:relative;z-index:2}
+  background:linear-gradient(155deg,rgba(6,72,68,.98),rgba(8,85,80,.96));
+  border:1.5px solid rgba(255,209,102,.4);border-radius:22px;
+  padding:32px;max-width:460px;width:92%;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),0 0 40px rgba(255,209,102,.15)}
+.m-box .m-ic{font-size:3.2rem;margin-bottom:12px;
+  filter:drop-shadow(0 0 18px var(--gold))}
+.m-box h2{font-family:'Almarai',sans-serif;font-size:1.2rem;color:var(--gold2);margin-bottom:10px}
+.m-box p{font-size:.85rem;color:rgba(200,255,250,.72);line-height:1.9}
+.m-box .m-st{font-size:.68rem;color:rgba(180,255,250,.35);margin-top:12px}
+.m-close{margin-top:20px;padding:10px 28px;border-radius:26px;
+  border:1.5px solid rgba(0,255,220,.4);background:rgba(0,160,140,.2);
+  color:#D5FFFA;font-size:.88rem;font-weight:700;cursor:pointer;transition:.22s}
+.m-close:hover{background:rgba(0,160,140,.4);border-color:var(--gold)}
 
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
 </style>
@@ -252,32 +312,37 @@ footer{text-align:center;padding:22px 20px;font-size:.7rem;color:rgba(200,180,25
 <!-- ===== OVERLAYS ===== -->
 <div id="authGate" class="ov">
   <div class="spin"></div>
-  <h2>🔐 جاري التحقق من الهوية…</h2>
-  <p>نظام AQX يتحقق من جلستك الآن لضمان سلامة حسابك.</p>
+  <h2>🔐 نظام AQX يتحقق من هويتك…</h2>
+  <p>جاري التحقق من جلستك الأمنية. يرجى الانتظار.</p>
 </div>
 
 <div id="voiceGate" class="ov off">
   <div class="v-orb"></div>
   <div class="v-waves"><span></span><span></span><span></span><span></span><span></span></div>
   <h2>مرحباً في مركز أمان AQX</h2>
-  <p id="vGateMsg">مرافقتك الصوتية تُحيّيك. يرجى الانتظار…</p>
-  <button id="voiceSkipBtn">تخطّي</button>
+  <p id="vGateMsg">رفيقتك الرقمية تُرحّب بك الآن… يرجى الانتظار لحظة.</p>
+  <button id="voiceSkipBtn">متابعة</button>
 </div>
 
 <div id="killScreen" class="ov off">
   <div class="k-ring">⛔</div>
-  <div class="k-bars"><span class="k-bar"></span><span class="k-bar"></span><span class="k-bar"></span><span class="k-bar"></span><span class="k-bar"></span></div>
+  <div class="k-bars">
+    <span class="k-bar"></span><span class="k-bar"></span>
+    <span class="k-bar"></span><span class="k-bar"></span><span class="k-bar"></span>
+  </div>
   <h2>🚨 تهديد أمني حرج</h2>
-  <p id="killMsg">تم رصد نشاط مشبوه. سيتم إنهاء جلستك فوراً.</p>
+  <p id="killMsg">تم رصد نشاط مشبوه. سيتم إنهاء جلستك وتحويلك فوراً.</p>
 </div>
 
 <div id="focusShield">
-  <p style="color:rgba(220,200,255,.7);font-size:.9rem">🔒 تم تعتيم الشاشة لحماية بياناتك أثناء مغادرة النافذة.</p>
+  <p style="color:rgba(200,255,250,.75);font-size:.95rem;max-width:360px">
+    🔒 تم تعتيم الشاشة لحماية بياناتك أثناء مغادرة النافذة.
+  </p>
 </div>
 
 <!-- ===== HEADER ===== -->
 <header>
-  <!-- أقصى الشمال = أقصى يسار الـ RTL = اليمين في الترتيب المرئي لمتصفح -->
+  <!-- أقصى اليمين (شمال في RTL) = لمبة الاتصال -->
   <div class="h-side">
     <div class="lamp">
       <span class="lamp-dot" id="lampDot"></span>
@@ -301,16 +366,15 @@ footer{text-align:center;padding:22px 20px;font-size:.7rem;color:rgba(200,180,25
 
 <!-- ===== GAUGES ===== -->
 <div class="gauges">
-  <!-- مؤشر الأمان -->
   <div class="g-card">
     <div class="ring-wrap">
-      <svg width="88" height="88" viewBox="0 0 88 88">
-        <circle class="ring-bg" cx="44" cy="44" r="40"/>
-        <circle class="ring-fg" id="scoreRing" cx="44" cy="44" r="40"/>
+      <svg width="92" height="92" viewBox="0 0 92 92">
+        <circle class="ring-bg" cx="46" cy="46" r="42"/>
+        <circle class="ring-fg" id="scoreRing" cx="46" cy="46" r="42"/>
       </svg>
       <div class="ring-label">
         <span class="ring-num" id="ringNum">—</span>
-        <span class="ring-max">/1000</span>
+        <span class="ring-maxl">/1000</span>
       </div>
     </div>
     <div>
@@ -321,14 +385,14 @@ footer{text-align:center;padding:22px 20px;font-size:.7rem;color:rgba(200,180,25
     </div>
   </div>
 
-  <!-- مؤشر التهديد -->
   <div class="g-card">
     <div class="threat-icon" id="threatIcon">🌡️</div>
     <div style="flex:1">
       <h3>مؤشر التهديد اللحظي</h3>
       <div class="threat-label" id="threatLabel">—</div>
       <div class="t-bar">
-        <span id="tb1"></span><span id="tb2"></span><span id="tb3"></span><span id="tb4"></span>
+        <span id="tb1"></span><span id="tb2"></span>
+        <span id="tb3"></span><span id="tb4"></span>
       </div>
       <div class="threat-src">المصدر: data/aqx-threat.json</div>
     </div>
@@ -339,8 +403,8 @@ footer{text-align:center;padding:22px 20px;font-size:.7rem;color:rgba(200,180,25
 <div class="sec-hd"><h2>⚙ بنود الحماية والتحكم</h2></div>
 <div class="grid" id="featureGrid"></div>
 
-<!-- ===== SCROLL TOP ===== -->
-<button id="top-btn" title="الأعلى">
+<!-- ===== SCROLL TO TOP ===== -->
+<button id="top-btn" title="العودة للأعلى">
   <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 19V5M5 12l7-7 7 7"/>
   </svg>
@@ -357,78 +421,110 @@ footer{text-align:center;padding:22px 20px;font-size:.7rem;color:rgba(200,180,25
   </div>
 </div>
 
-<footer>AQX Security Center · الجلسة تنتهي تلقائياً بعد 30 دقيقة خمول · جميع الحقوق محفوظة لنظام AQX</footer>
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">🛡️ مركز أمان AQX</div>
+    <div class="footer-tagline">
+      نظام أمان متكامل من الجيل التالي · يحمي هويتك الرقمية على مدار الساعة<br>
+      مُشفَّر · مُراقَب · محمي بمحرك AQX الذكي
+    </div>
+    <div class="footer-stats">
+      <div class="footer-stat">
+        <div class="fn">53</div>
+        <div class="fl">بند حماية نشط</div>
+      </div>
+      <div class="footer-stat">
+        <div class="fn">256</div>
+        <div class="fl">طبقة تشفير</div>
+      </div>
+      <div class="footer-stat">
+        <div class="fn">24/7</div>
+        <div class="fl">مراقبة مستمرة</div>
+      </div>
+      <div class="footer-stat">
+        <div class="fn">0</div>
+        <div class="fl">اختراقات مسجّلة</div>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-copy">
+      <span class="footer-pulse"></span>
+      الجلسة تنتهي تلقائياً بعد 30 دقيقة من الخمول · جميع الجلسات مراقَبة ومحمية<br>
+      © 2026 مركز أمان AQX · جميع الحقوق محفوظة · تشغيل بواسطة محرك AQX الأمني
+    </div>
+  </div>
+</footer>
 
 <!--
-═══════════════════════════════════════════════════════════════
-  📂 ملفات البيانات المرتبطة (خارج الكود)
-═══════════════════════════════════════════════════════════════
-
-  data/aqx-score.json          ← مؤشر أمان AQX (score/max/label)
-  data/aqx-threat.json         ← مؤشر التهديد اللحظي (level)
+═══════════════════════════════════════════════════════════════════
+  📂 ملفات البيانات (خارج الكود) — استبدل محتواها ببيانات حقيقية
+═══════════════════════════════════════════════════════════════════
+  data/aqx-score.json          ← مؤشر أمان AQX { score, max, label }
+  data/aqx-threat.json         ← التهديد اللحظي { level: منخفض|متوسط|مرتفع|حرج }
 
   data/features/
-  ├── account-protection.json        🔐 حماية الحساب
-  ├── login.json                     👤 تسجيل الدخول
-  ├── instant-protection.json        🚨 الحماية الفورية
-  ├── biometric-auth.json            🧬 المصادقة البيومترية
-  ├── security-monitoring.json       👁️ مراقبة الأمان
-  ├── account-identity.json          🧬 هوية الحساب
-  ├── access-keys.json               🔑 مفاتيح الوصول
-  ├── aqx-shield.json                🛡️ درع AQX
-  ├── security-log.json              📜 سجل الأمان
-  ├── access-permissions.json        ⚖️ صلاحيات الوصول
-  ├── global-security.json           🌍 الأمان العالمي
-  ├── ai-security.json               🤖 أمن الذكاء الاصطناعي
-  ├── behavioral-security.json       🧠 الأمن السلوكي
-  ├── account-pulse.json             🫀 نبض الحساب
-  ├── ghost-mode.json                🕳️ الوضع الشبح
-  ├── decoy-account.json             🎭 الحساب الوهمي
-  ├── smart-wipe.json                🧨 التدمير الذكي
-  ├── account-dna.json               🧬 الحمض النووي للحساب
-  ├── country-wall.json              🌍 جدار الدول
-  ├── travel-mode.json               🚀 وضع السفر
-  ├── security-radar.json            🛰️ الرادار الأمني
-  ├── aqx-eye.json                   👁️ عين AQX
-  ├── smart-lock.json                ⚡ القفل الذكي
-  ├── adaptive-shield.json           🛡️ الدرع المتغير
-  ├── cold-room.json                 🧊 الغرفة الباردة
-  ├── sandbox-env.json               🧪 بيئة معزولة
-  ├── device-radar.json              📡 رادار الأجهزة
-  ├── third-eye.json                 🧿 العين الثالثة
-  ├── risk-mirror.json               🪞 مرآة المخاطر
-  ├── hurricane-mode.json            🌪️ وضع الإعصار
-  ├── watch-tower.json               🛰️ برج المراقبة
-  ├── cosmic-shield.json             🌌 الدرع الكوني
-  ├── kill-switch.json               🔥 زر النهاية
-  ├── secrets-vault.json             📦 صندوق الأسرار
-  ├── security-timer.json            🕰️ مؤقت الأمان
-  ├── evidence-center.json           📋 مركز الأدلة
-  ├── preventive-isolation.json      🛡️ العزل الوقائي
-  ├── smart-security-rules.json      🧬 قوانين الأمان الذكية
-  ├── incident-file.json             📜 ملف الحوادث
-  ├── silence-protocol.json          🔒 بروتوكول الصمت
-  ├── ban-zone.json                  ⛔ منطقة الحظر
-  ├── emergency-center.json          🚨 مركز الطوارئ
-  ├── anti-impersonation-center.json 🕵️ مركز مكافحة الانتحال
-  ├── survival-capsule.json          📦 كبسولة النجاة
-  ├── adaptive-defense.json          🛰️ الدرع المتكيف
-  ├── security-delay.json            ⏳ التأخير الأمني
-  ├── hostage-mode.json              🎭 وضع الرهينة
-  ├── deceptive-identity.json        🎭 الهوية الخادعة
-  ├── early-warning-center.json      📡 مركز الإنذار المبكر
-  ├── attack-simulation-center.json  🎬 مركز محاكاة الهجوم
-  ├── digital-twin.json              🧬 التوأم الرقمي
-  ├── security-command-tower.json    🛰️ برج القيادة الأمنية
-  └── programmable-security-constitution.json  🧠 دستور الأمان
-═══════════════════════════════════════════════════════════════
+  ├── account-protection.json            🔐 حماية الحساب
+  ├── login.json                         👤 تسجيل الدخول
+  ├── instant-protection.json            🚨 الحماية الفورية
+  ├── biometric-auth.json                🧬 المصادقة البيومترية
+  ├── security-monitoring.json           👁️ مراقبة الأمان
+  ├── account-identity.json              🧬 هوية الحساب
+  ├── access-keys.json                   🔑 مفاتيح الوصول
+  ├── aqx-shield.json                    🛡️ درع AQX
+  ├── security-log.json                  📜 سجل الأمان
+  ├── access-permissions.json            ⚖️ صلاحيات الوصول
+  ├── global-security.json               🌍 الأمان العالمي
+  ├── ai-security.json                   🤖 أمن الذكاء الاصطناعي
+  ├── behavioral-security.json           🧠 الأمن السلوكي
+  ├── account-pulse.json                 🫀 نبض الحساب
+  ├── ghost-mode.json                    🕳️ الوضع الشبح
+  ├── decoy-account.json                 🎭 الحساب الوهمي
+  ├── smart-wipe.json                    🧨 التدمير الذكي
+  ├── account-dna.json                   🧬 الحمض النووي للحساب
+  ├── country-wall.json                  🌍 جدار الدول
+  ├── travel-mode.json                   🚀 وضع السفر
+  ├── security-radar.json                🛰️ الرادار الأمني
+  ├── aqx-eye.json                       👁️ عين AQX
+  ├── smart-lock.json                    ⚡ القفل الذكي
+  ├── adaptive-shield.json               🛡️ الدرع المتغير
+  ├── cold-room.json                     🧊 الغرفة الباردة
+  ├── sandbox-env.json                   🧪 بيئة معزولة
+  ├── device-radar.json                  📡 رادار الأجهزة
+  ├── third-eye.json                     🧿 العين الثالثة
+  ├── risk-mirror.json                   🪞 مرآة المخاطر
+  ├── hurricane-mode.json                🌪️ وضع الإعصار
+  ├── watch-tower.json                   🛰️ برج المراقبة
+  ├── cosmic-shield.json                 🌌 الدرع الكوني
+  ├── kill-switch.json                   🔥 زر النهاية
+  ├── secrets-vault.json                 📦 صندوق الأسرار
+  ├── security-timer.json                🕰️ مؤقت الأمان
+  ├── evidence-center.json               📋 مركز الأدلة
+  ├── preventive-isolation.json          🛡️ العزل الوقائي
+  ├── smart-security-rules.json          🧬 قوانين الأمان الذكية
+  ├── incident-file.json                 📜 ملف الحوادث
+  ├── silence-protocol.json              🔒 بروتوكول الصمت
+  ├── ban-zone.json                      ⛔ منطقة الحظر
+  ├── emergency-center.json              🚨 مركز الطوارئ
+  ├── anti-impersonation-center.json     🕵️ مركز مكافحة الانتحال
+  ├── survival-capsule.json              📦 كبسولة النجاة
+  ├── adaptive-defense.json              🛰️ الدرع المتكيف
+  ├── security-delay.json                ⏳ التأخير الأمني
+  ├── hostage-mode.json                  🎭 وضع الرهينة
+  ├── deceptive-identity.json            🎭 الهوية الخادعة
+  ├── early-warning-center.json          📡 مركز الإنذار المبكر
+  ├── attack-simulation-center.json      🎬 مركز محاكاة الهجوم
+  ├── digital-twin.json                  🧬 التوأم الرقمي
+  ├── security-command-tower.json        🛰️ برج القيادة الأمنية
+  └── programmable-security-const.json   🧠 دستور الأمان القابل للبرمجة
+═══════════════════════════════════════════════════════════════════
 -->
 
+<!-- ===== FIREBASE + SECURITY ENGINE ===== -->
 <script type="module">
 import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* ─── Firebase ─── */
 const cfg={
   apiKey:"AIzaSyBICr62Oa_-69hATpfFrdTDfO9WV4bVVvU",
   authDomain:"alqurmanix-d49f7.firebaseapp.com",
@@ -441,16 +537,15 @@ const cfg={
 const app=!getApps().length?initializeApp(cfg):getApps()[0];
 const auth=getAuth(app);
 
-const ENGINE="https://eo3phbvoihx4diw.m.pipedream.net";
-const LOGIN="/login.html";
-const HOME="/index.html";
-const IDLE_MS=30*60*1000;
-const TAB_KEY="aqx_tab_lock";
+const ENGINE_URL="https://eo3phbvoihx4diw.m.pipedream.net";
+const LOGIN_PAGE="/login.html";
+const IDLE_LIMIT=30*60*1000;
+const TAB_LOCK_KEY="aqx_active_tab_lock";
 
 let monitorInterval=null,failureCount=0,idleTimer=null,unlocked=false;
-let warnings=parseInt(sessionStorage.getItem("aqx_w")||"0",10);
+let warnCount=parseInt(sessionStorage.getItem("aqx_warn")||"0",10);
 
-/* ─── TAB LOCK ─── */
+/* ── TAB LOCK: منع فتح أكثر من نافذة ── */
 function getTabId(){
   let id=sessionStorage.getItem("aqx_tid");
   if(!id){id="t_"+Math.random().toString(36).slice(2,11);sessionStorage.setItem("aqx_tid",id);}
@@ -459,158 +554,188 @@ function getTabId(){
 function claimTab(){
   const me=getTabId(),now=Date.now();
   try{
-    const raw=localStorage.getItem(TAB_KEY);
-    if(raw){const l=JSON.parse(raw);if(l.id!==me&&now-l.ts<10000){kill("تم رصد فتح الصفحة في أكثر من نافذة في نفس الوقت.");return;}}
+    const raw=localStorage.getItem(TAB_LOCK_KEY);
+    if(raw){
+      const l=JSON.parse(raw);
+      if(l.id!==me&&now-l.ts<10000){
+        killSession("تم رصد فتح الصفحة في أكثر من تبويب أو نافذة في نفس الوقت — خروج أمني فوري.");
+        return;
+      }
+    }
   }catch(e){}
-  localStorage.setItem(TAB_KEY,JSON.stringify({id:me,ts:now}));
-  setInterval(()=>localStorage.setItem(TAB_KEY,JSON.stringify({id:me,ts:Date.now()})),4000);
+  localStorage.setItem(TAB_LOCK_KEY,JSON.stringify({id:me,ts:now}));
+  setInterval(()=>localStorage.setItem(TAB_LOCK_KEY,JSON.stringify({id:me,ts:Date.now()})),4000);
 }
 
-/* ─── ENGINE ─── */
-async function verify(){
+/* ── محرك الأمان الفعلي (Pipedream) ── */
+async function verifySessionWithEngine(){
   const user=auth.currentUser;if(!user)return;
   try{
-    const tok=await user.getIdToken(true);
-    const r=await fetch(ENGINE,{method:"POST",
-      headers:{"Content-Type":"application/json","Authorization":"Bearer "+tok},
-      body:JSON.stringify({tabId:getTabId(),pageId:location.pathname})});
-    const d=await r.json();failureCount=0;setLamp(true);
-    if(d.status?.action==="REDIRECT"){await signOut(auth);kill("أمرت المحرك الأمني بإنهاء جلستك.");}
-    else if(d.status?.action==="WARN"){console.warn("تحذير من المحرك");}
-  }catch(e){
+    const token=await user.getIdToken(true);
+    const res=await fetch(ENGINE_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},
+      body:JSON.stringify({tabId:getTabId(),pageId:window.location.pathname})
+    });
+    const data=await res.json();
+    failureCount=0;setLamp(true);
+    if(data.status?.action==="REDIRECT"){
+      await signOut(auth);
+      killSession("أمر محرك الأمان بإنهاء جلستك لأسباب استثنائية.");
+    }else if(data.status?.action==="WARN"){
+      console.warn("تحذير من المحرك — محاولات متبقية:",(3-data.status.count));
+    }
+  }catch(err){
     failureCount++;setLamp(false);
-    if(failureCount>=3){await signOut(auth);location.href=LOGIN;}
+    console.error("Engine Error ("+failureCount+")",err);
+    if(failureCount>=3){await signOut(auth);window.location.href=LOGIN_PAGE;}
   }
 }
-function startMonitor(){
+
+const handlePopState=()=>verifySessionWithEngine();
+
+function startSecurityMonitor(){
   if(monitorInterval)return;
-  verify();
-  monitorInterval=setInterval(()=>{if(auth.currentUser)verify();},4*60*1000);
-  window.addEventListener("popstate",verify);
+  verifySessionWithEngine();
+  monitorInterval=setInterval(()=>{if(auth.currentUser)verifySessionWithEngine();},4*60*1000);
+  window.addEventListener("popstate",handlePopState);
   history.pushState(null,"",location.href);
 }
-function stopMonitor(){
-  clearInterval(monitorInterval);monitorInterval=null;
-  window.removeEventListener("popstate",verify);
+function stopSecurityMonitor(){
+  if(monitorInterval){clearInterval(monitorInterval);monitorInterval=null;}
+  window.removeEventListener("popstate",handlePopState);
   failureCount=0;
 }
 
-/* ─── IDLE ─── */
+/* ── خمول 30 دقيقة ── */
 function resetIdle(){
   if(!unlocked)return;
   clearTimeout(idleTimer);
-  idleTimer=setTimeout(async()=>{await signOut(auth);location.href=LOGIN+"?r=timeout";},IDLE_MS);
+  idleTimer=setTimeout(async()=>{await signOut(auth);window.location.href=LOGIN_PAGE+"?r=idle";},IDLE_LIMIT);
 }
-["mousemove","keydown","click","scroll","touchstart"].forEach(e=>window.addEventListener(e,resetIdle,{passive:true}));
+["mousemove","keydown","click","scroll","touchstart"].forEach(ev=>
+  window.addEventListener(ev,resetIdle,{passive:true})
+);
 
-/* ─── LAMP ─── */
+/* ── لمبة الاتصال ── */
 function setLamp(on){
   document.getElementById("lampDot").classList.toggle("on",on);
   document.getElementById("lampTxt").textContent=on?"متصل":"غير متصل";
 }
 
-/* ─── KILL SCREEN ─── */
-window.__kill=function(msg){
-  ["authGate","voiceGate","modal"].forEach(id=>show(id,false));
+/* ── شاشة الطرد الأمنية ── */
+function killSession(msg){
+  ["authGate","voiceGate","modal"].forEach(id=>
+    document.getElementById(id).classList.add("off")
+  );
   document.getElementById("killMsg").textContent=msg||"تم رصد نشاط مشبوه.";
-  show("killScreen",true);document.body.style.overflow="hidden";
-  speak("تحذير أمني. تم رصد نشاط مشبوه. جاري إنهاء الجلسة والخروج الفوري.");
+  document.getElementById("killScreen").classList.remove("off");
+  document.body.style.overflow="hidden";
+  speak("تحذير أمني حرج. تم رصد نشاط مشبوه. جاري إنهاء الجلسة والخروج الفوري من مركز أمان AQX.");
   signOut(auth).catch(()=>{});
-  setTimeout(()=>location.href=HOME,4500);
-};
-function kill(m){window.__kill(m);}
+  setTimeout(()=>window.location.href="/index.html",4800);
+}
+window.__kill=killSession;
 
-/* ─── VOICE ─── */
+/* ── الصوت الأنثوي ── */
 function speak(text){
-  return new Promise(res=>{
-    if(!("speechSynthesis"in window)){res();return;}
+  return new Promise(resolve=>{
+    if(!("speechSynthesis"in window)){resolve();return;}
     speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
-    u.lang="ar-SA";u.rate=1;u.pitch=1.2;
-    const pick=()=>{
+    u.lang="ar-SA";u.rate=1;u.pitch=1.25;
+    const pickVoice=()=>{
       const vs=speechSynthesis.getVoices();
-      const f=vs.find(v=>/ar/i.test(v.lang)&&/female|woman|أنثى/i.test(v.name))||vs.find(v=>/ar/i.test(v.lang));
+      const f=vs.find(v=>/ar/i.test(v.lang)&&/female|woman|أنثى/i.test(v.name))
+              ||vs.find(v=>/ar/i.test(v.lang));
       if(f)u.voice=f;
     };
-    if(speechSynthesis.getVoices().length)pick();
-    else speechSynthesis.onvoiceschanged=pick;
+    speechSynthesis.getVoices().length?pickVoice():(speechSynthesis.onvoiceschanged=pickVoice);
     speechSynthesis.speak(u);
-    u.onend=res;u.onerror=res;
-    setTimeout(res,10000);
+    u.onend=resolve;u.onerror=resolve;
+    setTimeout(resolve,11000);
   });
 }
 
-async function startVoice(){
-  show("voiceGate",true);
-  await speak("مرحباً بك في مركز أمان إيه كيو إكس. أنا رفيقتك الرقمية، وسأكون معك في كل لحظة داخل هذا المركز. حسابك محمي الآن. يمكنك البدء.");
+/* ── مرافقة صوتية عند كل حركة ── */
+function voiceOnHover(title){
+  speak(title);
+}
+
+/* ── بوابة الصوت عند الدخول ── */
+async function startVoiceIntro(){
+  document.getElementById("voiceGate").classList.remove("off");
+  document.getElementById("vGateMsg").textContent="رفيقتك الرقمية تُرحّب بك… يرجى الانتظار.";
+  await speak("مرحباً بك في مركز أمان إيه كيو إكس. أنا رفيقتك الرقمية، وسأكون معك في كل خطوة داخل هذا المركز الآمن. جميع أنظمة الحماية تعمل بكفاءة تامة الآن. يمكنك المتابعة بثقة.");
   finishVoice();
 }
 function finishVoice(){
-  unlocked=true;show("voiceGate",false);resetIdle();
-  loadGauges();loadGrid();
+  unlocked=true;
+  document.getElementById("voiceGate").classList.add("off");
+  resetIdle();
 }
 
-/* SKIP btn fallback after 11s */
+/* زر التخطي يظهر بعد 12 ثانية احتياطياً */
 setTimeout(()=>{
-  if(!unlocked){
-    const b=document.getElementById("voiceSkipBtn");
-    b.style.display="inline-block";
-    b.onclick=finishVoice;
+  const btn=document.getElementById("voiceSkipBtn");
+  const gate=document.getElementById("voiceGate");
+  if(!gate.classList.contains("off")){
+    btn.style.display="inline-block";
+    btn.onclick=finishVoice;
   }
-},11000);
+},12000);
 
-/* ─── HELPERS ─── */
-function show(id,on){document.getElementById(id).classList.toggle("off",!on);}
-
-/* ─── AUTH ─── */
+/* ── Firebase Auth Gate ── */
 onAuthStateChanged(auth,user=>{
   if(user){
-    show("authGate",false);setLamp(true);
-    claimTab();startMonitor();
-    startVoice();
+    document.getElementById("authGate").classList.add("off");
+    setLamp(true);
+    claimTab();
+    startSecurityMonitor();
+    startVoiceIntro();
   }else{
-    stopMonitor();
-    location.href=LOGIN;
+    stopSecurityMonitor();
+    window.location.href=LOGIN_PAGE;
   }
 });
 
-/* ─── GAUGES ─── */
+/* ── تحميل المؤشرات ── */
 function loadGauges(){
-  /* Score */
   fetch("data/aqx-score.json").then(r=>r.json()).then(d=>{
-    const v=d.score||0,mx=d.max||1000,pct=v/mx;
-    const circ=251.33;
+    const v=+(d.score||0),mx=+(d.max||1000),pct=v/mx;
+    const circ=263.89;
     const ring=document.getElementById("scoreRing");
     ring.style.strokeDashoffset=circ-(pct*circ);
+    ring.style.stroke=pct>=.9?"var(--ok)":pct>=.6?"var(--warn)":"var(--danger)";
     document.getElementById("ringNum").textContent=v;
     document.getElementById("scoreVal").textContent=v+"/"+mx;
     let cls,lv;
-    if(pct>=.9){cls="lv-green";lv="🟢 حصن رقمي";}
-    else if(pct>=.6){cls="lv-yellow";lv="🟡 جيد";}
-    else{cls="lv-red";lv="🔴 معرض للخطر";}
-    ring.style.stroke=pct>=.9?"var(--ok)":pct>=.6?"var(--warn)":"var(--danger)";
+    if(pct>=.9){cls="lv-green";lv="🟢 "+v+"/"+mx+" — مستوى: حصن رقمي";}
+    else if(pct>=.6){cls="lv-yellow";lv="🟡 "+v+"/"+mx+" — مستوى: جيد";}
+    else{cls="lv-red";lv="🔴 "+v+"/"+mx+" — مستوى: معرض للخطر";}
     const el=document.getElementById("scoreLv");
-    el.textContent=lv+" — "+( d.label||"");el.className="score-lv "+cls;
-  }).catch(()=>document.getElementById("scoreLv").textContent="تعذّر تحميل data/aqx-score.json");
+    el.textContent=lv;el.className="score-lv "+cls;
+  }).catch(()=>{document.getElementById("scoreLv").textContent="تعذّر تحميل الملف";});
 
-  /* Threat */
   fetch("data/aqx-threat.json").then(r=>r.json()).then(d=>{
-    const map={منخفض:{c:"tl-low",cls:"tb-fill-low",bars:1,ic:"🟢"},
-               متوسط:{c:"tl-mid",cls:"tb-fill-mid",bars:2,ic:"🟡"},
-               مرتفع:{c:"tl-high",cls:"tb-fill-high",bars:3,ic:"🟠"},
-               حرج:{c:"tl-crit",cls:"tb-fill-crit",bars:4,ic:"🔴"}};
+    const map={
+      "منخفض":{c:"tl-low",  fill:"tb-low", bars:1,ic:"🟢"},
+      "متوسط":{c:"tl-mid",  fill:"tb-mid", bars:2,ic:"🟡"},
+      "مرتفع":{c:"tl-high", fill:"tb-high",bars:3,ic:"🟠"},
+      "حرج"  :{c:"tl-crit", fill:"tb-crit",bars:4,ic:"🔴"}
+    };
     const m=map[d.level]||map["منخفض"];
     const lbl=document.getElementById("threatLabel");
     lbl.textContent=d.level;lbl.className="threat-label "+m.c;
     document.getElementById("threatIcon").textContent=m.ic;
     for(let i=1;i<=4;i++){
-      const el=document.getElementById("tb"+i);
-      el.className=i<=m.bars?m.cls:"";
+      const s=document.getElementById("tb"+i);
+      s.className=i<=m.bars?m.fill:"";
     }
   }).catch(()=>{});
 }
 
-/* ─── FEATURES GRID ─── */
+/* ── شبكة البنود ── */
 const features=[
   ["🔐","حماية الحساب","account-protection"],
   ["👤","تسجيل الدخول","login"],
@@ -654,119 +779,161 @@ const features=[
   ["🔒","بروتوكول الصمت","silence-protocol"],
   ["⛔","منطقة الحظر","ban-zone"],
   ["🚨","مركز الطوارئ","emergency-center"],
-  ["🕵️","مكافحة الانتحال","anti-impersonation-center"],
+  ["🕵️","مركز مكافحة الانتحال","anti-impersonation-center"],
   ["📦","كبسولة النجاة","survival-capsule"],
   ["🛰️","الدرع المتكيف","adaptive-defense"],
   ["⏳","التأخير الأمني","security-delay"],
   ["🎭","وضع الرهينة","hostage-mode"],
   ["🎭","الهوية الخادعة","deceptive-identity"],
-  ["📡","الإنذار المبكر","early-warning-center"],
-  ["🎬","محاكاة الهجوم","attack-simulation-center"],
+  ["📡","مركز الإنذار المبكر","early-warning-center"],
+  ["🎬","مركز محاكاة الهجوم","attack-simulation-center"],
   ["🧬","التوأم الرقمي","digital-twin"],
   ["🛰️","برج القيادة الأمنية","security-command-tower"],
-  ["🧠","دستور الأمان","programmable-security-constitution"]
+  ["🧠","دستور الأمان القابل للبرمجة","programmable-security-constitution"]
 ];
 
 function loadGrid(){
   const grid=document.getElementById("featureGrid");
   features.forEach(([ic,ti,file])=>{
-    const c=document.createElement("div");c.className="card";
-    c.innerHTML=`<span class="ic">${ic}</span><div class="ti">${ti}</div><div class="st">جاري التحميل…</div>`;
-    grid.appendChild(c);
-    const f=`data/features/${file}.json`;c.dataset.f=f;
-    fetch(f).then(r=>r.json()).then(d=>{
-      const s=c.querySelector(".st");
-      s.textContent=d.status||"غير معروف";
-      s.className="st "+(d.status==="مُفعّل"?"active":"inactive");
-      c.dataset.desc=d.description||"";
-      c.dataset.upd=d.updated_at||"";
-    }).catch(()=>{c.querySelector(".st").textContent="—";});
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`<span class="ic">${ic}</span><div class="ti">${ti}</div><div class="st">جاري التحميل…</div>`;
+    grid.appendChild(card);
+    const fp=`data/features/${file}.json`;
+    card.dataset.f=fp;
+    fetch(fp).then(r=>r.json()).then(d=>{
+      const st=card.querySelector(".st");
+      st.textContent=d.status||"—";
+      st.className="st "+(d.status==="مُفعّل"?"active":"");
+      card.dataset.desc=d.description||"";
+      card.dataset.upd=d.updated_at||"";
+    }).catch(()=>{card.querySelector(".st").textContent="—";});
 
-    c.addEventListener("click",()=>{
+    /* تفاعل صوتي عند hover */
+    card.addEventListener("mouseenter",()=>{if(unlocked)speak(ti);});
+    card.addEventListener("touchstart",()=>{if(unlocked)speak(ti);},{passive:true});
+
+    /* مودال عند الضغط */
+    card.addEventListener("click",()=>{
       if(!unlocked)return;
       document.getElementById("mIc").textContent=ic;
       document.getElementById("mTitle").textContent=ti;
-      document.getElementById("mDesc").textContent=c.dataset.desc||"لا توجد بيانات إضافية بعد.";
-      document.getElementById("mSt").textContent="الملف: "+c.dataset.f+" · آخر تحديث: "+(c.dataset.upd||"—");
-      show("modal",true);
-      speak(ti+" · "+( c.dataset.desc?.slice(0,60)||""));
+      document.getElementById("mDesc").textContent=card.dataset.desc||"لا توجد بيانات إضافية بعد.";
+      document.getElementById("mSt").textContent="الملف: "+fp+" · آخر تحديث: "+(card.dataset.upd||"—");
+      document.getElementById("modal").classList.remove("off");
     });
   });
 }
 
-/* ─── MODAL CLOSE ─── */
-document.getElementById("mClose").addEventListener("click",()=>show("modal",false));
+document.getElementById("mClose").addEventListener("click",()=>{
+  document.getElementById("modal").classList.add("off");
+});
 
-/* ─── FOCUS SHIELD ─── */
+/* ── تعتيم عند فقدان التركيز ── */
 document.addEventListener("visibilitychange",()=>{
   document.getElementById("focusShield").classList.toggle("on",document.hidden);
 });
 
-/* ─── DEVTOOLS / CODE PROTECTION ─── */
+/* ── حماية الكود (3 تحذيرات ثم طرد) ── */
 (()=>{
   function warn(reason){
-    warnings++;sessionStorage.setItem("aqx_w",warnings);
-    if(warnings>=3){kill("ثلاث محاولات للوصول للكود — طرد أمني فوري. السبب: "+reason);}
-    else{
-      speak("تحذير أمني رقم "+warnings+". الوصول للكود ممنوع نهائياً.");
-      alert("⚠ تحذير أمني ("+ warnings+"/3): "+"الوصول لكود الصفحة ممنوع نهائياً. في حالة التكرار ستُطرد فوراً.");
+    warnCount++;sessionStorage.setItem("aqx_warn",warnCount);
+    if(warnCount>=3){
+      killSession("ثلاث محاولات للوصول لكود الصفحة — طرد أمني فوري. السبب: "+reason);
+    }else{
+      speak("تحذير أمني رقم "+warnCount+". الوصول للكود ممنوع نهائياً.");
+      alert("⚠ تحذير أمني ("+warnCount+"/3): الوصول لكود الصفحة ممنوع نهائياً. ستُطرد فوراً عند الإصرار.");
     }
   }
   document.addEventListener("contextmenu",e=>{e.preventDefault();warn("كليك يمين");});
   document.addEventListener("keydown",e=>{
-    const k=e.key?.toLowerCase();
-    const bad=k==="f12"||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))||(e.ctrlKey&&k==="u")||(e.metaKey&&e.altKey&&["i","j","c"].includes(k));
-    if(bad){e.preventDefault();warn("اختصار فحص");}
+    const k=(e.key||"").toLowerCase();
+    const bad=k==="f12"
+      ||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))
+      ||(e.ctrlKey&&k==="u")
+      ||(e.metaKey&&e.altKey&&["i","j","c"].includes(k));
+    if(bad){e.preventDefault();warn("اختصار فحص الكود");}
   });
-  let dt=false;
+  let dtOpen=false;
   setInterval(()=>{
     const open=window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160;
-    if(open&&!dt){dt=true;warn("أدوات مطوّر");}
-    if(!open)dt=false;
+    if(open&&!dtOpen){dtOpen=true;warn("أدوات المطوّر");}
+    if(!open)dtOpen=false;
   },1500);
 })();
+
+/* ── تشغيل كل شيء بعد التحقق ── */
+window.__startApp=()=>{ loadGauges(); loadGrid(); };
+
+/* نستدعيه بعد انتهاء الصوت */
+const _origFinish=finishVoice;
+window._finishVoice=()=>{_origFinish();window.__startApp();};
 </script>
 
-<!-- ─── PARTICLES + SCROLL BTN (non-module) ─── -->
+<!-- ===== PARTICLES + SCROLL BTN ===== -->
 <script>
-/* PARTICLES */
+/* ── جسيمات ذهبية وفضية عشوائية ── */
 (()=>{
   const cv=document.getElementById("canvas");
   const ctx=cv.getContext("2d");
   const resize=()=>{cv.width=innerWidth;cv.height=innerHeight;};
   window.addEventListener("resize",resize);resize();
-  const N=Math.min(80,Math.floor(innerWidth/14));
-  const pts=Array.from({length:N},()=>({
-    x:Math.random()*innerWidth,y:Math.random()*innerHeight,
-    vx:(Math.random()-.5)*.3,vy:-(Math.random()*.5+.1),
-    r:Math.random()*2.2+.5,a:Math.random()*.55+.15
-  }));
+
+  function mkPt(){
+    const gold=Math.random()>.4;
+    return{
+      x:Math.random()*cv.width,
+      y:Math.random()*cv.height,
+      vx:(Math.random()-.5)*.35,
+      vy:-(Math.random()*.55+.1),
+      r:Math.random()*2.4+.5,
+      a:Math.random()*.6+.15,
+      gold,
+      drift:Math.random()*Math.PI*2,
+      driftSpeed:(Math.random()*.02+.005)
+    };
+  }
+  const N=Math.min(90,Math.floor(innerWidth/13));
+  const pts=Array.from({length:N},mkPt);
+
   function tick(){
     ctx.clearRect(0,0,cv.width,cv.height);
     pts.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;
-      if(p.y<-10){p.y=cv.height+10;p.x=Math.random()*cv.width;}
-      if(p.x<-10)p.x=cv.width+10;if(p.x>cv.width+10)p.x=-10;
+      p.drift+=p.driftSpeed;
+      p.x+=p.vx+Math.sin(p.drift)*.3;
+      p.y+=p.vy;
+      if(p.y<-15){const np=mkPt();Object.assign(p,np);p.y=cv.height+10;}
+      if(p.x<-15)p.x=cv.width+15;
+      if(p.x>cv.width+15)p.x=-15;
+
+      const color=p.gold
+        ?`rgba(255,209,102,${p.a})`
+        :`rgba(200,240,235,${p.a*.75})`;
+      const glow=p.gold?"rgba(255,209,102,.9)":"rgba(200,240,235,.7)";
+
       ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(255,209,102,${p.a})`;
-      ctx.shadowColor="rgba(255,209,102,.9)";ctx.shadowBlur=8;
-      ctx.fill();
+      ctx.fillStyle=color;
+      ctx.shadowColor=glow;ctx.shadowBlur=p.gold?10:6;
+      ctx.fill();ctx.shadowBlur=0;
     });
     requestAnimationFrame(tick);
   }
   tick();
 })();
 
-/* SCROLL TO TOP */
+/* ── سهم الصعود (يتشقلب عند الضغط) ── */
 (()=>{
   const btn=document.getElementById("top-btn");
-  window.addEventListener("scroll",()=>btn.classList.toggle("show",scrollY>300));
+  window.addEventListener("scroll",()=>btn.classList.toggle("show",scrollY>320),{passive:true});
   btn.addEventListener("click",()=>{
-    btn.classList.add("flipping");
-    scrollTo({top:0,behavior:"smooth"});
-    setTimeout(()=>btn.classList.remove("flipping"),580);
+    btn.classList.add("fl");
+    window.scrollTo({top:0,behavior:"smooth"});
+    setTimeout(()=>btn.classList.remove("fl"),580);
   });
 })();
+
+/* ── تأكد من تحميل البيانات بعد انتهاء الصوت ── */
+/* يُنفَّذ startApp من داخل finishVoice */
 </script>
 </body>
 </html>

@@ -77,7 +77,7 @@ async function verifySessionWithEngine() {
       await signOut(auth);
       window.dispatchEvent(new CustomEvent('aqxSecurityKick', { detail: 'engine_redirect' }));
     } else if (result.status?.action === "WARN") {
-      console.warn("تحذير أمني: محاولات متبقية " + (3 - result.status.count));
+      console.warn("تحذير أمني من المحرك الباك إند");
     }
   } catch (error) {
     failureCount++;
@@ -126,22 +126,28 @@ window.aqxSignOut = signOut;
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  /* تعديل الألوان لرمادي داكن متوسط */
-  --bg-main: #2b2e36;
-  --bg-2: #1e2025;
-  --bg-glass: rgba(30, 33, 39, 0.65);
-  --ink: #f4f6f8;
-  --ink-soft: #bac0cb;
-  --ink-muted: rgba(244, 246, 248, 0.55);
+  /* منصة الألوان التركوازية الفخمة والمتباينة */
+  --bg-main: #1bc3b3;
+  --bg-gradient: linear-gradient(135deg, #3ae4d2 0%, #0693a4 50%, #036b76 100%);
+  --bg-glass: rgba(255, 255, 255, 0.28);
+  --bg-glass-hover: rgba(255, 255, 255, 0.48);
+  --card-border: rgba(255, 255, 255, 0.5);
+  --card-border-hover: rgba(212, 175, 55, 0.8);
+  
+  /* نصوص داكنة حادة وفخمة جداً لتحقيق أعلى معايير التباين على التركواز */
+  --ink: #022b30;
+  --ink-soft: #054850;
+  --ink-muted: rgba(2, 43, 48, 0.65);
   
   --neon1: #00f0ff;
   --neon2: #ff00d4;
-  --neon3: #d4ff00;
-  --neon4: #ff7a00;
-  --gold: #d4af37;
-  --silver: #c7ccd6;
-  --green-on: #19ff7a;
-  --red-danger: #ff2a55;
+  --neon3: #7000ff;
+  --neon4: #ffd700;
+  --gold: #b28603;
+  --gold-glow: #ffcc00;
+  --silver: #475569;
+  --green-on: #047857;
+  --red-danger: #b91c1c;
   --font-main: 'Cairo', 'Tajawal', sans-serif;
   --base-font: 18px;
 }
@@ -151,9 +157,7 @@ html { scroll-behavior: smooth; font-size: var(--base-font); }
 body {
   font-family: var(--font-main);
   background: var(--bg-main);
-  background-image:
-    radial-gradient(ellipse at 14% 16%, var(--bg-2) 0%, transparent 55%),
-    radial-gradient(ellipse at 86% 84%, var(--bg-2) 0%, transparent 55%);
+  background-image: var(--bg-gradient);
   min-height: 100vh;
   overflow-x: hidden;
   direction: rtl;
@@ -167,49 +171,48 @@ body {
 
 /* ===================== SECURITY WARNING ===================== */
 #security-warning {
-  display: none; position: fixed; inset: 0; z-index: 99999; background: #0a0000;
+  display: none; position: fixed; inset: 0; z-index: 99999; background: #070000;
   flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px;
 }
 #security-warning.active { display: flex; }
-.sec-bg-anim { position: absolute; inset: 0; background: radial-gradient(ellipse at center, #900000 0%, #000 70%); animation: secPulse 0.4s ease-in-out infinite alternate; }
+.sec-bg-anim { position: absolute; inset: 0; background: radial-gradient(ellipse at center, #800000 0%, #000 75%); animation: secPulse 0.4s ease-in-out infinite alternate; }
 @keyframes secPulse { from { opacity: 0.6; } to { opacity: 1; } }
 .sec-content { position: relative; z-index: 2; max-width: 700px; }
 .sec-icon { font-size: clamp(70px, 16vw, 120px); display: block; margin-bottom: 20px; animation: secIconFlash 0.3s linear infinite alternate; }
-@keyframes secIconFlash { from { filter: drop-shadow(0 0 20px #ff0000); transform: scale(0.9); } to { filter: drop-shadow(0 0 60px #ff1111) drop-shadow(0 0 100px #ff0000); transform: scale(1.1); } }
-.sec-title { font-size: clamp(28px, 7vw, 60px); font-weight: 900; color: #FF0000; margin-bottom: 18px; animation: neonRed 0.3s linear infinite alternate; }
-@keyframes neonRed { from { text-shadow: 0 0 15px #ff0000; } to { text-shadow: 0 0 30px #ff0000, 0 0 60px #ff0000, 0 0 90px #ff3333; } }
+@keyframes secIconFlash { from { filter: drop-shadow(0 0 20px #ff0000); transform: scale(0.9); } to { filter: drop-shadow(0 0 60px #ff1111); transform: scale(1.1); } }
+.sec-title { font-size: clamp(28px, 7vw, 60px); font-weight: 900; color: #FF0000; margin-bottom: 18px; text-shadow: 0 0 20px #ff0000; }
 .sec-body { font-size: clamp(17px, 4vw, 26px); color: #FFD700; font-weight: 800; line-height: 1.85; margin-bottom: 28px; }
+.sec-phrase { font-size: clamp(18px, 4.5vw, 28px); color: #ff5555; font-weight: 900; margin-top: 18px; text-shadow: 0 0 15px #ff0000; }
 .sec-redirect { font-size: clamp(16px, 3.5vw, 22px); color: #fff; margin-top: 18px; font-weight: bold; }
-.sec-countdown { font-size: clamp(28px, 7vw, 50px); color: #FF2222; font-weight: 900; display: block; margin-top: 15px; animation: neonRed 0.3s linear infinite alternate; }
-.sec-phrase { font-size: clamp(18px, 4.5vw, 28px); color: #ff5555; font-weight: 900; margin-top: 18px; line-height: 1.6; animation: neonRed 0.5s linear infinite alternate; }
+.sec-countdown { font-size: clamp(28px, 7vw, 50px); color: #FF2222; font-weight: 900; display: block; margin-top: 15px; }
 
 /* ===================== AUTH GATE ===================== */
 #auth-gate {
   display: none; position: fixed; inset: 0; z-index: 2000;
-  background: linear-gradient(135deg, #14171c, #1f242c);
+  background: linear-gradient(135deg, #042f35, #084c54);
   align-items: center; justify-content: center; flex-direction: column; padding: 30px; text-align: center;
 }
 #auth-gate.active { display: flex; }
 .ag-logo { font-size: clamp(36px, 10vw, 68px); font-weight: 900; color: #FFD700; text-shadow: 0 0 22px rgba(255,215,0,0.55); letter-spacing: 5px; margin-bottom: 22px; }
 .ag-title { font-size: clamp(22px, 5.5vw, 34px); font-weight: 800; color: #fff; margin-bottom: 14px; }
-.ag-desc { font-size: clamp(15px, 3.5vw, 20px); color: rgba(255,255,255,0.65); line-height: 1.9; max-width: 440px; margin-bottom: 10px; }
-.ag-redirect-note { font-size: clamp(13px, 2.8vw, 16px); color: rgba(255,215,0,0.78); margin-top: 14px; }
-.ag-countdown { font-weight: 900; color: #FFD700; font-size: 1.3em; display: inline-block; animation: neonGold 0.6s ease-in-out infinite alternate; }
-@keyframes neonGold { from { text-shadow: 0 0 6px #FFD700; } to { text-shadow: 0 0 18px #FFD700, 0 0 36px #F59E0B; } }
+.ag-desc { font-size: clamp(15px, 3.5vw, 20px); color: rgba(255,255,255,0.75); line-height: 1.9; max-width: 440px; margin-bottom: 10px; }
+.ag-redirect-note { font-size: clamp(13px, 2.8vw, 16px); color: #FFD700; margin-top: 14px; }
+.ag-countdown { font-weight: 900; color: #FFD700; font-size: 1.3em; display: inline-block; }
 
 /* ===================== PAGE LOADER ===================== */
-#page-loader { position: fixed; inset: 0; z-index: 9000; background: #1a1c23; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 22px; transition: opacity 0.5s ease; }
+#page-loader { position: fixed; inset: 0; z-index: 9000; background: #034850; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 22px; transition: opacity 0.5s ease; }
 #page-loader.fade-out { opacity: 0; pointer-events: none; }
-.loader-logo { font-size: clamp(38px, 12vw, 80px); font-weight: 900; animation: neonColorCycle 2s linear infinite; letter-spacing: 5px; }
-.loader-bar-wrap { width: min(88vw, 300px); height: 5px; background: rgba(255,255,255,0.12); border-radius: 10px; overflow: hidden; }
-.loader-bar { height: 100%; background: linear-gradient(90deg, var(--neon1), var(--neon2), var(--neon3), var(--neon4)); border-radius: 10px; animation: loaderFill 1.9s ease-in-out forwards; }
+.loader-logo { font-size: clamp(38px, 12vw, 80px); font-weight: 900; color: var(--neon1); text-shadow: 0 0 20px var(--neon1); letter-spacing: 5px; animation: pulseSmooth 1.5s ease-in-out infinite alternate; }
+@keyframes pulseSmooth { from { opacity: 0.5; transform: scale(0.95); } to { opacity: 1; transform: scale(1.05); } }
+.loader-bar-wrap { width: min(88vw, 300px); height: 5px; background: rgba(255,255,255,0.15); border-radius: 10px; overflow: hidden; }
+.loader-bar { height: 100%; background: linear-gradient(90deg, var(--neon1), var(--neon4)); border-radius: 10px; width: 0; animation: loaderFill 1.7s ease-in-out forwards; }
 @keyframes loaderFill { from { width:0; } to { width:100%; } }
-.loader-text { font-size: clamp(12px, 2.8vw, 15px); color: rgba(255,255,255,0.55); }
+.loader-text { font-size: clamp(12px, 2.8vw, 15px); color: rgba(255,255,255,0.7); }
 
 /* ===================== GATEWAY ===================== */
 #gateway {
   position: fixed; inset: 0; z-index: 1500;
-  background: linear-gradient(135deg, #111317 0%, #1c2027 35%, #2a313c 65%, #14171c 100%);
+  background: linear-gradient(135deg, #033a40 0%, #075f6a 50%, #1bc3b3 100%);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   transition: opacity 0.6s ease, visibility 0.6s ease; overflow: hidden; padding: 24px;
 }
@@ -219,227 +222,208 @@ body {
 @keyframes gwFloat { 0% { transform: translateY(110vh) scale(0); opacity: 0; } 8% { opacity: 0.8; } 92% { opacity: 0.8; } 100% { transform: translateY(-60px) scale(1.2); opacity: 0; } }
 .gw-logo-wrap { position: relative; z-index: 2; margin-bottom: 22px; animation: logoFloat 3.2s ease-in-out infinite; }
 @keyframes logoFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-.gw-logo { font-size: clamp(50px, 14vw, 100px); font-weight: 900; letter-spacing: 8px; display: inline-block; }
-.gw-logo span { display: inline-block; animation: neonColorCycle 2.2s linear infinite; }
-.gw-logo span:nth-child(1){animation-delay:0s} .gw-logo span:nth-child(2){animation-delay:0.37s} .gw-logo span:nth-child(3){animation-delay:0.74s}
-@keyframes neonColorCycle {
-  0%   { color:var(--neon1); text-shadow:0 0 10px var(--neon1),0 0 24px var(--neon1); }
-  25%  { color:var(--neon2); text-shadow:0 0 10px var(--neon2),0 0 24px var(--neon2); }
-  50%  { color:var(--neon3); text-shadow:0 0 10px var(--neon3),0 0 24px var(--neon3); }
-  75%  { color:var(--neon4); text-shadow:0 0 10px var(--neon4),0 0 24px var(--neon4); }
-  100% { color:var(--neon1); text-shadow:0 0 10px var(--neon1),0 0 24px var(--neon1); }
-}
-.gw-subtitle { font-size: clamp(15px, 3.8vw, 26px); color: rgba(255,255,255,0.9); font-weight: 300; letter-spacing: 3px; text-align: center; margin-bottom: 10px; z-index: 2; position: relative; }
-.gw-tagline { font-size: clamp(18px, 4.8vw, 32px); font-weight: 800; color: #FFD700; text-shadow: 0 0 18px rgba(255,215,0,0.65); text-align: center; z-index: 2; position: relative; margin-bottom: 12px; line-height: 1.55; }
-.gw-desc { font-size: clamp(14px, 3.2vw, 20px); color: rgba(255,255,255,0.8); text-align: center; max-width: min(90vw, 520px); line-height: 2; z-index: 2; position: relative; margin-bottom: 32px; }
+.gw-logo { font-size: clamp(50px, 14vw, 100px); font-weight: 900; letter-spacing: 8px; color: #fff; text-shadow: 0 0 25px var(--neon1); }
+.gw-subtitle { font-size: clamp(15px, 3.8vw, 26px); color: rgba(255,255,255,0.95); font-weight: 300; letter-spacing: 3px; margin-bottom: 10px; z-index: 2; position: relative; }
+.gw-tagline { font-size: clamp(18px, 4.8vw, 32px); font-weight: 800; color: #FFD700; text-shadow: 0 0 18px rgba(255,215,0,0.65); z-index: 2; position: relative; margin-bottom: 12px; }
+.gw-desc { font-size: clamp(14px, 3.2vw, 20px); color: rgba(255,255,255,0.9); text-align: center; max-width: min(90vw, 520px); line-height: 2; z-index: 2; position: relative; margin-bottom: 32px; }
 .gw-progress-wrap { width: min(90vw, 440px); z-index: 2; position: relative; margin-bottom: 24px; }
-.gw-progress-labels { display: flex; justify-content: space-between; color: rgba(255,255,255,0.8); font-size: clamp(12px, 2.6vw, 16px); margin-bottom: 10px; font-weight: bold; }
-.gw-pbar-bg { width: 100%; height: 7px; background: rgba(255,255,255,0.16); border-radius: 10px; overflow: hidden; }
-.gw-pbar-fill { height: 100%; background: linear-gradient(90deg,var(--neon1),var(--neon2),var(--neon3),var(--neon4)); background-size: 200% 100%; border-radius: 10px; width: 0%; transition: width 0.35s ease; animation: progressShimmer 2.2s linear infinite; }
-@keyframes progressShimmer { 0% { background-position: 200% center; } 100% { background-position: 0% center; } }
-.gw-enter-btn { background: linear-gradient(135deg,#FFD700,#F59E0B,#D97706); border: none; padding: clamp(13px,3.2vw,20px) clamp(32px,8vw,65px); border-radius: 50px; font-size: clamp(16px,3.8vw,24px); font-weight: 900; color: #14171c; cursor: pointer; z-index: 2; position: relative; box-shadow: 0 0 28px rgba(255,215,0,0.55), 0 8px 32px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 12px; letter-spacing: 1px; }
-.gw-enter-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 45px rgba(255,215,0,0.85), 0 14px 42px rgba(0,0,0,0.4); }
-.gw-enter-btn:active { transform: scale(0.97); }
-.gw-skip-hint { color: rgba(255,255,255,0.55); font-size: clamp(12px,2.5vw,15px); z-index: 2; position: relative; margin-top: 20px; text-align: center; }
-.gw-count-num { font-weight: 900; color: #FFD700; font-size: 1.25em; }
+.gw-progress-labels { display: flex; justify-content: space-between; color: #fff; font-size: clamp(12px, 2.6vw, 16px); margin-bottom: 10px; font-weight: bold; }
+.gw-pbar-bg { width: 100%; height: 7px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; }
+.gw-pbar-fill { height: 100%; background: linear-gradient(90deg, var(--neon1), var(--neon4)); width: 0%; }
+.gw-enter-btn { background: linear-gradient(135deg,#FFD700,#F59E0B,#D97706); border: none; padding: clamp(13px,3.2vw,20px) clamp(32px,8vw,65px); border-radius: 50px; font-size: clamp(16px,3.8vw,24px); font-weight: 900; color: #022b30; cursor: pointer; z-index: 10; position: relative; box-shadow: 0 0 28px rgba(255,215,0,0.55); transition: all 0.3s ease; display: flex; align-items: center; gap: 12px; }
+.gw-enter-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 45px rgba(255,215,0,0.85); }
+.gw-skip-hint { color: rgba(255,255,255,0.7); font-size: clamp(12px,2.5vw,15px); z-index: 2; position: relative; margin-top: 20px; }
+.gw-count-num { font-weight: 900; color: #FFD700; }
 
 /* ===================== TOP HEADER ===================== */
 #main-header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 300;
-  background: rgba(30, 33, 39, 0.88);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(212,175,55,0.15);
-  padding: 0 clamp(14px,4vw,32px);
-  height: 64px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(25px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 0 clamp(14px,4vw,32px); height: 64px;
   display: flex; align-items: center; justify-content: space-between;
 }
-
 .header-home-link {
   display: flex; align-items: center; gap: 8px;
-  text-decoration: none; color: var(--ink);
-  font-weight: 800; font-size: clamp(13px,2.8vw,15px);
-  padding: 8px 14px; border-radius: 12px;
-  transition: background 0.25s ease;
+  text-decoration: none; color: var(--ink); font-weight: 800; font-size: clamp(13px,2.8vw,15px);
+  padding: 8px 14px; border-radius: 12px; transition: background 0.25s ease;
 }
-.header-home-link:hover { background: rgba(212,175,55,0.15); }
-.header-home-icon { font-size: 18px; }
-
+.header-home-link:hover { background: rgba(255,255,255,0.4); }
 .header-left { display: flex; align-items: center; gap: 14px; }
-
 .status-dot-wrap { display: flex; align-items: center; gap: 8px; }
 .status-dot { width: 12px; height: 12px; border-radius: 50%; animation: dotBlink 1.8s ease-in-out infinite; }
 @keyframes dotBlink {
-  0%,100% { background: var(--green-on); box-shadow: 0 0 6px var(--green-on), 0 0 14px var(--green-on); }
-  50%      { background: #0a3a1a; box-shadow: none; }
+  0%,100% { background: var(--green-on); box-shadow: 0 0 8px var(--green-on); }
+  50%      { background: #104e3c; box-shadow: none; }
 }
 .status-text { font-size: clamp(12px,2.6vw,14px); color: var(--ink-soft); font-weight: 700; }
+.clock-text { font-size: clamp(11px,2.4vw,13px); color: var(--ink-soft); font-weight: 700; direction: ltr; }
 
-.clock-text {
-  font-size: clamp(11px,2.4vw,13px); color: var(--ink-soft); font-weight: 700;
-  font-variant-numeric: tabular-nums; direction: ltr; display: inline-block;
-}
+/* ===================== HERO SECTION ===================== */
+.settings-hero { padding: clamp(45px,9vw,75px) clamp(16px,5vw,50px) clamp(25px,5vw,45px); text-align: center; }
+.settings-logo { font-size: clamp(32px,8vw,54px); font-weight: 900; letter-spacing: 3px; color: var(--ink); text-shadow: 0 2px 10px rgba(0,0,0,0.1); display: inline-block; }
+.settings-subtitle { font-size: clamp(14px,2.9vw,18px); color: var(--ink-soft); margin-top: 10px; font-weight: 700; }
 
-/* ===================== LOGO (under header) ===================== */
-.settings-hero {
-  padding: clamp(34px,8vw,64px) clamp(16px,5vw,50px) clamp(20px,5vw,40px);
-  text-align: center;
-}
-.settings-logo {
-  font-size: clamp(30px,7.5vw,50px); font-weight: 900; letter-spacing: 4px;
-  animation: neonColorCycle 3s linear infinite, logoWiggle 4s ease-in-out infinite;
-  display: inline-block;
-}
-@keyframes logoWiggle { 0%,100% { transform: rotate(0deg) scale(1); } 25% { transform: rotate(-2deg) scale(1.03); } 75% { transform: rotate(2deg) scale(1.03); } }
-.settings-subtitle { font-size: clamp(13px,2.8vw,17px); color: var(--ink-soft); margin-top: 10px; font-weight: 600; }
-
-/* ===================== MAIN ===================== */
+/* ===================== MAIN CONTENT AREA ===================== */
 #main-content { padding-top: 64px; min-height: 100vh; position: relative; z-index: 1; }
-.content-wrap { max-width: 1080px; margin: 0 auto; padding: 0 clamp(14px,5vw,50px) 60px; }
+.content-wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(14px,5vw,50px) 60px; }
 
-/* ===================== SETTINGS LIST ===================== */
-.settings-list { display: flex; flex-direction: column; gap: 14px; }
+/* ===================== 3D GRID LUXURY LAYOUT ===================== */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 24px;
+}
 
+/* الكروت الزجاجية ثلاثية الأبعاد الفاخرة */
 .settings-item {
-  display: flex; align-items: center; gap: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
   background: var(--bg-glass);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(212,175,55,0.12);
-  border-radius: 18px;
-  padding: 17px 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 26px;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
-  /* تأثير الدخول الأنيق (Fade-Up) */
-  animation: cardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  box-shadow: 0 10px 30px rgba(2, 43, 48, 0.08), inset 0 1px 1px rgba(255,255,255,0.4);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              background-color 0.3s ease, border-color 0.3s ease;
+  animation: cardEntrance 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) backwards;
 }
+
 @keyframes cardEntrance {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* تتابع تأثير الدخول لكل عنصر لإعطاء شكل ديناميكي */
-.settings-item:nth-child(1) { animation-delay: 0.05s; }
-.settings-item:nth-child(2) { animation-delay: 0.10s; }
-.settings-item:nth-child(3) { animation-delay: 0.15s; }
-.settings-item:nth-child(4) { animation-delay: 0.20s; }
-.settings-item:nth-child(5) { animation-delay: 0.25s; }
-.settings-item:nth-child(6) { animation-delay: 0.30s; }
-.settings-item:nth-child(7) { animation-delay: 0.35s; }
+/* تتابع متناسق لتأثير الدخول */
+.settings-grid .settings-item:nth-child(1) { animation-delay: 0.04s; }
+.settings-grid .settings-item:nth-child(2) { animation-delay: 0.08s; }
+.settings-grid .settings-item:nth-child(3) { animation-delay: 0.12s; }
+.settings-grid .settings-item:nth-child(4) { animation-delay: 0.16s; }
+.settings-grid .settings-item:nth-child(5) { animation-delay: 0.20s; }
+.settings-grid .settings-item:nth-child(6) { animation-delay: 0.24s; }
+.settings-grid .settings-item:nth-child(7) { animation-delay: 0.28s; }
 
-.settings-item::before {
-  content: ''; position: absolute; top: 0; right: 0; height: 100%; width: 5px;
-  background: linear-gradient(180deg, var(--neon1), var(--neon2));
-  opacity: 0; transition: opacity 0.3s ease;
+/* تأثير الارتداد والانعكاس الضوئي الشيمر الفاخر الشبيه بالذهب/الفضة المتطايرة */
+.settings-item::after {
+  content: ''; position: absolute; top: -50%; left: -60%; width: 30%; height: 200%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+  transform: rotate(30deg); transition: none; pointer-events: none; opacity: 0;
 }
 
-/* تأثير الـ Hover الأنيق */
 .settings-item:hover {
-  transform: translateY(-4px) scale(1.01);
-  border-color: rgba(212,175,55,0.6);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 18px rgba(212,175,55,0.15);
-  background: rgba(45, 50, 58, 0.8);
+  transform: translateY(-10px) scale(1.03) rotateX(2deg);
+  background: var(--bg-glass-hover);
+  border-color: var(--card-border-hover);
+  box-shadow: 0 25px 50px rgba(2, 43, 48, 0.22), 0 0 20px rgba(212, 175, 55, 0.3);
 }
-.settings-item:hover::before { opacity: 1; }
-.settings-item:active { transform: translateY(-1px) scale(0.99); }
 
+.settings-item:hover::after {
+  opacity: 1; left: 130%; transition: all 0.8s ease-in-out;
+}
+
+.settings-item:active { transform: translateY(-3px) scale(0.99); }
+
+/* محتويات الكارت الفخم */
+.card-top { display: flex; align-items: center; gap: 16px; width: 100%; margin-bottom: 20px; }
 .settings-item-icon {
-  width: 50px; height: 50px; border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 24px; flex-shrink: 0;
-  background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+  width: 56px; height: 56px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center; font-size: 26px;
+  background: rgba(255,255,255,0.5);
+  box-shadow: 0 8px 20px rgba(2, 43, 48, 0.06);
+  transition: transform 0.3s ease;
 }
-.settings-item-title {
-  font-size: clamp(15px,3.2vw,18px); font-weight: 800; color: var(--ink); flex: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-}
-.settings-item-arrow { color: var(--gold); font-size: 20px; transition: transform 0.3s ease; flex-shrink: 0; }
-.settings-item:hover .settings-item-arrow { transform: translateX(-6px); text-shadow: 0 0 8px var(--gold); }
+.settings-item:hover .settings-item-icon { transform: scale(1.12) rotate(-5deg); background: #fff; }
 
+.settings-item-title { font-size: clamp(16px,3.2vw,19px); font-weight: 800; color: var(--ink); }
+
+.card-bottom { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: auto; }
+.card-action-text { font-size: 13px; font-weight: 700; color: var(--ink-soft); opacity: 0.8; transition: opacity 0.3s; }
+.settings-item:hover .card-action-text { opacity: 1; color: var(--gold); }
+.settings-item-arrow { color: var(--ink-soft); font-size: 20px; transition: transform 0.3s ease; }
+.settings-item:hover .settings-item-arrow { transform: translateX(-6px); color: var(--gold); }
+
+/* كارت الحظر وتسجيل الخروج الفخم والخطير */
+.settings-item.danger { background: rgba(254, 226, 226, 0.35); border-color: rgba(239, 68, 68, 0.4); }
 .settings-item.danger .settings-item-title { color: var(--red-danger); }
-.settings-item.danger .settings-item-icon { background: linear-gradient(135deg, rgba(255,42,85,0.2), rgba(255,42,85,0.05)); }
-.settings-item.danger:hover { border-color: rgba(255,42,85,0.6); box-shadow: 0 15px 35px rgba(255,42,85,0.2), 0 0 18px rgba(255,42,85,0.3); background: rgba(55, 30, 35, 0.8); }
-.settings-item.danger::before { background: linear-gradient(180deg, #ff2a55, #ff6b8b); }
-
-.section-divider {
-  display: flex; align-items: center; gap: 12px;
-  margin: 32px 0 18px;
+.settings-item.danger .settings-item-icon { background: rgba(254, 226, 226, 0.6); }
+.settings-item.danger .card-action-text { color: var(--red-danger); }
+.settings-item.danger .settings-item-arrow { color: var(--red-danger); }
+.settings-item.danger:hover {
+  background: rgba(254, 226, 226, 0.6); border-color: rgba(239, 68, 68, 0.8);
+  box-shadow: 0 25px 50px rgba(185, 28, 28, 0.15), 0 0 20px rgba(239, 68, 68, 0.2);
 }
-.section-divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent); }
-.section-divider-text { font-size: clamp(13px,2.6vw,15px); color: var(--ink-soft); font-weight: 800; white-space: nowrap; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+
+.section-divider { display: flex; align-items: center; gap: 16px; margin: 45px 0 24px; }
+.section-divider-line { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, rgba(2, 43, 48, 0.25), transparent); }
+.section-divider-text { font-size: clamp(14px,2.8vw,16px); color: var(--ink); font-weight: 900; letter-spacing: 1px; }
 
 /* ===================== SIGNATURE / CLOSING ===================== */
-.aqx-signature {
-  text-align: center;
-  padding: clamp(50px,10vw,90px) 24px clamp(40px,8vw,70px);
-  position: relative;
-}
-.sig-glow { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 50% 50%, rgba(212,175,55,0.08), transparent 60%); }
-.sig-line { width: 70px; height: 3px; background: linear-gradient(90deg, var(--gold), var(--silver)); margin: 0 auto 24px; border-radius: 2px; }
-.sig-text { font-size: clamp(17px,4vw,24px); font-weight: 800; color: var(--ink); line-height: 1.8; margin-bottom: 18px; max-width: 560px; margin-left:auto; margin-right:auto; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-.sig-logo { font-size: clamp(30px,8vw,50px); font-weight: 900; letter-spacing: 5px; animation: neonColorCycle 3s linear infinite; margin-bottom: 10px; }
-.sig-sub { font-size: clamp(12px,2.6vw,14px); color: var(--ink-soft); }
+.aqx-signature { text-align: center; padding: clamp(60px,12vw,100px) 24px clamp(40px,8vw,70px); position: relative; }
+.sig-glow { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4), transparent 65%); }
+.sig-line { width: 80px; height: 3px; background: linear-gradient(90deg, var(--ink), transparent); margin: 0 auto 24px; border-radius: 2px; }
+.sig-text { font-size: clamp(17px,4vw,23px); font-weight: 800; color: var(--ink); line-height: 1.8; margin-bottom: 18px; max-width: 580px; margin-left:auto; margin-right:auto; }
+.sig-logo { font-size: clamp(34px,8vw,54px); font-weight: 900; letter-spacing: 5px; color: var(--ink); text-shadow: 0 0 15px rgba(255,255,255,0.6); margin-bottom: 10px; }
+.sig-sub { font-size: clamp(12px,2.6vw,14px); color: var(--ink-soft); font-weight: 700; }
 
-/* ===================== SCROLL TOP (FLIP) ===================== */
+/* ===================== SCROLL TOP ===================== */
 #scroll-top {
-  position: fixed; bottom: 28px; left: 24px;
-  width: 52px; height: 52px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--neon1), var(--neon2));
-  border: none; color: #111; font-size: 22px; cursor: pointer; font-weight: bold;
-  box-shadow: 0 6px 25px rgba(0,0,0,0.4);
-  z-index: 250; opacity: 0; transform: translateY(20px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  position: fixed; bottom: 28px; left: 24px; width: 54px; height: 54px; border-radius: 50%;
+  background: var(--bg-glass); border: 1px solid var(--card-border); color: var(--ink);
+  font-size: 22px; cursor: pointer; font-weight: bold; backdrop-filter: blur(10px);
+  box-shadow: 0 6px 25px rgba(0,0,0,0.1); z-index: 250; opacity: 0; transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease, background 0.2s;
   display: none; align-items: center; justify-content: center;
 }
 #scroll-top.visible { opacity: 1; transform: translateY(0); display: flex; }
+#scroll-top:hover { background: #fff; color: var(--gold); }
 #scroll-top.flip { animation: flipUp 0.6s ease; }
 @keyframes flipUp { 0% { transform: rotateX(0deg); } 50% { transform: rotateX(180deg); } 100% { transform: rotateX(360deg); } }
 
 /* ===================== VOICE STATUS ===================== */
 #voice-status {
   position: fixed; bottom: 28px; right: clamp(16px,5vw,44px);
-  background: rgba(20,23,28,0.96);
-  border: 1px solid rgba(212,175,55,0.7);
-  border-radius: 50px; padding: 10px 22px;
-  font-size: clamp(12px,2.5vw,14px); color: #f5d576; font-weight: bold;
-  display: flex; align-items: center; gap: 10px;
-  z-index: 250; opacity: 0; transition: opacity 0.3s ease;
-  max-width: 280px; pointer-events: none;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  background: rgba(255,255,255,0.95); border: 1px solid var(--ink); border-radius: 50px;
+  padding: 12px 24px; font-size: clamp(13px,2.5vw,15px); color: var(--ink); font-weight: bold;
+  display: flex; align-items: center; gap: 10px; z-index: 250; opacity: 0; transition: opacity 0.3s ease;
+  pointer-events: none; box-shadow: 0 10px 30px rgba(2, 43, 48, 0.15);
 }
 #voice-status.active { opacity: 1; }
-#voice-status .pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: #f5d576; animation: pulseDot 1s ease-in-out infinite; flex-shrink: 0; }
-@keyframes pulseDot { 0%,100% { transform:scale(1); opacity:1; box-shadow: 0 0 5px #f5d576; } 50% { transform:scale(1.55); opacity:0.45; box-shadow: 0 0 15px #f5d576; } }
-
+#voice-status .pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--bg-main); animation: pulseDot 1s ease-in-out infinite; }
+@keyframes pulseDot { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.5); opacity:0.5; } }
 #voice-block-overlay { position: fixed; inset: 0; z-index: 1600; background: transparent; display: none; }
 #voice-block-overlay.active { display: block; cursor: not-allowed; }
 
 /* ===================== LOGOUT CONFIRM MODAL ===================== */
 #logout-modal {
   display: none; position: fixed; inset: 0; z-index: 5000;
-  background: rgba(10,12,15,0.85); backdrop-filter: blur(8px);
+  background: rgba(2, 43, 48, 0.6); backdrop-filter: blur(12px);
   align-items: center; justify-content: center; padding: 24px;
 }
 #logout-modal.active { display: flex; }
 .lm-box {
-  background: #23262d; border-radius: 22px; padding: 32px 28px; max-width: 380px; width: 100%;
-  text-align: center; box-shadow: 0 25px 70px rgba(0,0,0,0.6);
-  border: 1px solid rgba(212,175,55,0.4);
+  background: #fff; border-radius: 28px; padding: 36px 32px; max-width: 400px; width: 100%;
+  text-align: center; box-shadow: 0 30px 70px rgba(2, 43, 48, 0.25);
+  border: 1px solid rgba(255,255,255,0.8);
 }
-.lm-icon { font-size: 46px; margin-bottom: 14px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
-.lm-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 10px; }
-.lm-desc { font-size: 15px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 24px; }
-.lm-buttons { display: flex; gap: 12px; }
-.lm-btn { flex: 1; padding: 14px; border-radius: 14px; border: none; font-weight: 800; font-size: 15px; cursor: pointer; font-family: var(--font-main); transition: all 0.3s ease; }
-.lm-btn-cancel { background: #3b404a; color: #fff; }
-.lm-btn-cancel:hover { background: #4b515d; }
-.lm-btn-confirm { background: linear-gradient(135deg,#e11d48,#be123c); color: #fff; box-shadow: 0 4px 15px rgba(225,29,72,0.3); }
-.lm-btn-confirm:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(225,29,72,0.5); }
-
-@media (prefers-reduced-motion:reduce) {
-  *, *::before, *::after { animation-duration:0.01ms !important; transition-duration:0.1ms !important; }
-}
+.lm-icon { font-size: 50px; margin-bottom: 16px; }
+.lm-title { font-size: 24px; font-weight: 900; color: var(--ink); margin-bottom: 12px; }
+.lm-desc { font-size: 16px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 28px; }
+.lm-buttons { display: flex; gap: 14px; }
+.lm-btn { flex: 1; padding: 16px; border-radius: 18px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; font-family: var(--font-main); transition: all 0.3s ease; }
+.lm-btn-cancel { background: #e2e8f0; color: var(--ink); }
+.lm-btn-cancel:hover { background: #cbd5e1; }
+.lm-btn-confirm { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; box-shadow: 0 4px 15px rgba(239,68,68,0.3); }
+.lm-btn-confirm:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(239,68,68,0.4); }
 </style>
 </head>
 <body>
@@ -447,22 +431,21 @@ body {
 <div id="page-loader">
   <div class="loader-logo">AQX</div>
   <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
-  <div class="loader-text">جارٍ تحميل منظومة القرماني إكس...</div>
+  <div class="loader-text">جارٍ تحميل واجهة منظومة القرماني إكس...</div>
 </div>
 
 <div id="security-warning">
   <div class="sec-bg-anim"></div>
   <div class="sec-content">
     <span class="sec-icon">🚨</span>
-    <div class="sec-title">⚠️ تحذير أمني شديد ⚠️</div>
+    <div class="sec-title">⚠️ انتهاك أمني ⚠️</div>
     <div class="sec-body" id="sec-body-text">
-      تم رصد انتهاك أمني وتجاوز للصلاحيات!<br>
-      هذه الصفحة مُحصنة ومحمية بأعلى معايير الأمن الرقمي لمنظومة القرماني إكس AQX.<br>
-      <strong>محاولة الاختراق أو التحايل مرفوضة وموثّقة بالكامل.</strong>
+      تم رصد سلوك غير مصرح به لتجاوز بروتوكولات الأمان الحصينة لمنظومة القرماني إكس AQX.<br>
+      <strong>محاولة فحص الشفرات المصدرية أو العبث بالجلسة مرفوضة ومسجلة.</strong>
     </div>
-    <div class="sec-phrase" id="sec-phrase-text">🛑 لا مساومة على الأمن — الجلسة محظورة الآن 🛑</div>
+    <div class="sec-phrase" id="sec-phrase-text">🛑 تم إغلاق وتجميد الصلاحيات الحالية فوراً 🛑</div>
     <div class="sec-redirect">
-      سيتم طردك وتحويلك فوراً إلى الصفحة الرئيسية...<br>
+      جاري نقل المستخدم لغرفة التطهير الرئيسية...<br>
       <span class="sec-countdown" id="sec-countdown">5</span>
     </div>
   </div>
@@ -470,41 +453,43 @@ body {
 
 <div id="auth-gate">
   <div class="ag-logo">AQX</div>
-  <div class="ag-title">🔐 هذا المحتوى مقيّد</div>
-  <div class="ag-desc">يجب تسجيل الدخول إلى منظومة القرماني إكس للوصول إلى هذه الصفحة.<br>سيتم تحويلك تلقائيًا إلى الصفحة الرئيسية.</div>
-  <div class="ag-redirect-note">التحويل التلقائي خلال <span class="ag-countdown" id="ag-count">5</span> ثوانٍ...</div>
+  <div class="ag-title">🔐 دخول مقيد للغاية</div>
+  <div class="ag-desc">يتطلب هذا الملف مصادقة نشطة تابعة لبوابة AQX الموحدة.<br>سيتم سحبك تلقائياً إلى الواجهة العامة.</div>
+  <div class="ag-redirect-note">إعادة توجيه قسرية آمنة خلال <span class="ag-countdown" id="ag-count">5</span> ثوانٍ...</div>
 </div>
 
 <canvas id="particles-canvas"></canvas>
 
 <div id="gateway">
   <div class="gw-particles-wrap" id="gw-particles"></div>
-  <div class="gw-logo-wrap"><div class="gw-logo"><span>A</span><span>Q</span><span>X</span></div></div>
+  <div class="gw-logo-wrap"><div class="gw-logo">AQX</div></div>
   <div class="gw-subtitle">منظومة القرماني إكس</div>
-  <div class="gw-tagline">⚙️ تحكم كامل في حسابك ⚙️</div>
-  <div class="gw-desc">مرحباً بك في إعدادات حساب AQX.<br><em>سيتم تفعيل المرشد الصوتي تلقائياً بعد الدخول.</em></div>
+  <div class="gw-tagline">✨ أداء بصري متطور وخارق ✨</div>
+  <div class="gw-desc">مرحباً بك في لوحة الإعدادات الفاخرة للتحكم الشامل في حسابك.<br><em>المرشد الصوتي الافتراضي يستعد لمرافقتك الآن...</em></div>
   <div class="gw-progress-wrap">
-    <div class="gw-progress-labels"><span>سيتم الدخول تلقائياً خلال</span><span><span id="gw-count" class="gw-count-num">15</span> ثانية</span></div>
+    <div class="gw-progress-labels"><span>ولوج تلقائي بعد</span><span><span id="gw-count" class="gw-count-num">15</span> ثانية</span></div>
     <div class="gw-pbar-bg"><div class="gw-pbar-fill" id="gw-progress"></div></div>
   </div>
-  <button class="gw-enter-btn" id="gw-enter-btn"><span>⚙️</span><span>الدخول إلى الإعدادات الآن</span></button>
-  <div class="gw-skip-hint">أو انتظر <span class="gw-count-num" id="gw-count2">15</span> ثانية للدخول التلقائي</div>
+  <button class="gw-enter-btn" id="gw-enter-btn">⚙️ الدخول إلى الإعدادات الآن</button>
+  <div class="gw-skip-hint">أو انتظر <span class="gw-count-num" id="gw-count2">15</span> ثانية للتخطي التلقائي</div>
 </div>
 
 <div id="voice-block-overlay"></div>
 
+<!-- LOGOUT MODAL -->
 <div id="logout-modal">
   <div class="lm-box">
     <div class="lm-icon">🚪</div>
-    <div class="lm-title">تسجيل الخروج</div>
-    <div class="lm-desc">هل أنت متأكد أنك تريد تسجيل الخروج من حسابك في منظومة القرماني إكس؟</div>
+    <div class="lm-title">تأكيد المغادرة</div>
+    <div class="lm-desc">هل أنت متأكد من رغبتك في قطع الاتصال وتسجيل الخروج من منظومة القرماني إكس بالكامل؟</div>
     <div class="lm-buttons">
-      <button class="lm-btn lm-btn-cancel" id="lm-cancel">إلغاء</button>
-      <button class="lm-btn lm-btn-confirm" id="lm-confirm">تسجيل الخروج</button>
+      <button class="lm-btn lm-btn-cancel" id="lm-cancel">تراجع وبقاء</button>
+      <button class="lm-btn lm-btn-confirm" id="lm-confirm">قطع الاتصال فوراً</button>
     </div>
   </div>
 </div>
 
+<!-- TOP HEADER -->
 <header id="main-header">
   <a href="index.html" class="header-home-link" id="header-home-link">
     <span class="header-home-icon">🏠</span>
@@ -514,62 +499,127 @@ body {
     <span class="clock-text" id="clock-text">--:--:--</span>
     <div class="status-dot-wrap">
       <div class="status-dot"></div>
-      <span class="status-text">متصل</span>
+      <span class="status-text">متصل وآمن</span>
     </div>
   </div>
 </header>
 
+<!-- MAIN APP INTERFACE -->
 <main id="main-content">
 
   <section class="settings-hero">
-    <div class="settings-logo">اعدادات AQX</div>
-    <div class="settings-subtitle">تحكم كامل في حسابك، خصوصيتك، وهويتك الرقمية</div>
+    <div class="settings-logo">إعدادات AQX الفخمة</div>
+    <div class="settings-subtitle">الإدارة العليا لهويتك الرقمية وبواباتك القانونية المشفرة</div>
   </section>
 
   <div class="content-wrap">
 
-    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">عام ودعم</span><div class="section-divider-line"></div></div>
-    <div class="settings-list">
-      <a href="security.html" class="settings-item" data-voice="الأمان"><div class="settings-item-icon">🛡️</div><div class="settings-item-title">الأمان</div><span class="settings-item-arrow">←</span></a>
-      <a href="ai.html" class="settings-item" data-voice="الذكاء الاصطناعي"><div class="settings-item-icon">🤖</div><div class="settings-item-title">الذكاء الاصطناعي</div><span class="settings-item-arrow">←</span></a>
-      <a href="support.html" class="settings-item" data-voice="المساعدة والدعم"><div class="settings-item-icon">💬</div><div class="settings-item-title">المساعدة والدعم</div><span class="settings-item-arrow">←</span></a>
-      <a href="report.html" class="settings-item" data-voice="الإبلاغ عن مشكلة"><div class="settings-item-icon">📩</div><div class="settings-item-title">الإبلاغ عن مشكلة</div><span class="settings-item-arrow">←</span></a>
-      <a href="feedback.html" class="settings-item" data-voice="الاقتراحات والملاحظات"><div class="settings-item-icon">💡</div><div class="settings-item-title">الاقتراحات والملاحظات</div><span class="settings-item-arrow">←</span></a>
-      <a href="rating.html" class="settings-item" data-voice="تقييم إيه كيو إكس"><div class="settings-item-icon">⭐</div><div class="settings-item-title">تقييم AQX</div><span class="settings-item-arrow">←</span></a>
-      <a href="about.html" class="settings-item" data-voice="حول إيه كيو إكس"><div class="settings-item-icon">ℹ️</div><div class="settings-item-title">حول AQX</div><span class="settings-item-arrow">←</span></a>
+    <!-- GENERAL / SUPPORT -->
+    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">إدارات الدعم الشامل والتواصل</span><div class="section-divider-line"></div></div>
+    <div class="settings-grid">
+      <a href="security.html" class="settings-item" data-voice="الأمان">
+        <div class="card-top"><div class="settings-item-icon">🛡️</div><div class="settings-item-title">الأمان والتشفير</div></div>
+        <div class="card-bottom"><span class="card-action-text">تعديل بروتوكولات الحماية</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="ai.html" class="settings-item" data-voice="الذكاء الاصطناعي">
+        <div class="card-top"><div class="settings-item-icon">🤖</div><div class="settings-item-title">الذكاء الاصطناعي</div></div>
+        <div class="card-bottom"><span class="card-action-text">تكوين النماذج العصبية</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="support.html" class="settings-item" data-voice="المساعدة والدعم">
+        <div class="card-top"><div class="settings-item-icon">💬</div><div class="settings-item-title">المساعدة والدعم</div></div>
+        <div class="card-bottom"><span class="card-action-text">فتح تذكرة اتصال مباشر</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="report.html" class="settings-item" data-voice="الإبلاغ عن مشكلة">
+        <div class="card-top"><div class="settings-item-icon">📩</div><div class="settings-item-title">الإبلاغ عن مشكلة</div></div>
+        <div class="card-bottom"><span class="card-action-text">إرسال تقرير فني فوري</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="feedback.html" class="settings-item" data-voice="الاقتراحات والملاحظات">
+        <div class="card-top"><div class="settings-item-icon">💡</div><div class="settings-item-title">الاقتراحات والملاحظات</div></div>
+        <div class="card-bottom"><span class="card-action-text">تطوير تجربة المستخدم</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="rating.html" class="settings-item" data-voice="تقييم إيه كيو إكس">
+        <div class="card-top"><div class="settings-item-icon">⭐</div><div class="settings-item-title">تقييم AQX</div></div>
+        <div class="card-bottom"><span class="card-action-text">منح مراجعتك الرقمية</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="about.html" class="settings-item" data-voice="حول إيه كيو إكس">
+        <div class="card-top"><div class="settings-item-icon">ℹ️</div><div class="settings-item-title">حول AQX</div></div>
+        <div class="card-bottom"><span class="card-action-text">مستندات البناء والترخيص</span><span class="settings-item-arrow">←</span></div>
+      </a>
     </div>
 
-    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">الإقليم والقانون</span><div class="section-divider-line"></div></div>
-    <div class="settings-list">
-      <a href="regional.html" class="settings-item" data-voice="الخدمات الإقليمية"><div class="settings-item-icon">🌍</div><div class="settings-item-title">الخدمات الإقليمية</div><span class="settings-item-arrow">←</span></a>
-      <a href="international.html" class="settings-item" data-voice="البوابة الدولية"><div class="settings-item-icon">🌍</div><div class="settings-item-title">البوابة الدولية</div><span class="settings-item-arrow">←</span></a>
-      <a href="legal_country.html" class="settings-item" data-voice="اختيار الدولة القانونية للحساب"><div class="settings-item-icon">🌍</div><div class="settings-item-title">اختيار الدولة القانونية للحساب</div><span class="settings-item-arrow">←</span></a>
-      <a href="digital_nationality.html" class="settings-item" data-voice="الجنسية الرقمية"><div class="settings-item-icon">🏳️</div><div class="settings-item-title">الجنسية الرقمية</div><span class="settings-item-arrow">←</span></a>
-      <a href="datetime.html" class="settings-item" data-voice="التاريخ والوقت"><div class="settings-item-icon">🕰️</div><div class="settings-item-title">التاريخ والوقت</div><span class="settings-item-arrow">←</span></a>
+    <!-- REGIONAL / LEGAL -->
+    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">النطاقات الجغرافية والبوابات الدولية</span><div class="section-divider-line"></div></div>
+    <div class="settings-grid">
+      <a href="regional.html" class="settings-item" data-voice="الخدمات الإقليمية">
+        <div class="card-top"><div class="settings-item-icon">🌍</div><div class="settings-item-title">الخدمات الإقليمية</div></div>
+        <div class="card-bottom"><span class="card-action-text">تحديث الخوادم المحلية</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="international.html" class="settings-item" data-voice="البوابة الدولية">
+        <div class="card-top"><div class="settings-item-icon">🌐</div><div class="settings-item-title">البوابة الدولية</div></div>
+        <div class="card-bottom"><span class="card-action-text">تخصيص العقد الخارجية</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="legal_country.html" class="settings-item" data-voice="اختيار الدولة القانونية للحساب">
+        <div class="card-top"><div class="settings-item-icon">⚖️</div><div class="settings-item-title">الدولة القانونية للحساب</div></div>
+        <div class="card-bottom"><span class="card-action-text">تحديد الاختصاص القضائي</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="digital_nationality.html" class="settings-item" data-voice="الجنسية الرقمية">
+        <div class="card-top"><div class="settings-item-icon">🏳️</div><div class="settings-item-title">الجنسية الرقمية</div></div>
+        <div class="card-bottom"><span class="card-action-text">توثيق الهوية السحابية</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="datetime.html" class="settings-item" data-voice="التاريخ والوقت">
+        <div class="card-top"><div class="settings-item-icon">🕰️</div><div class="settings-item-title">التاريخ والوقت</div></div>
+        <div class="card-bottom"><span class="card-action-text">مزامنة الساعات الذرية</span><span class="settings-item-arrow">←</span></div>
+      </a>
     </div>
 
-    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">الأزمات والوصية الرقمية</span><div class="section-divider-line"></div></div>
-    <div class="settings-list">
-      <a href="critical_alerts.html" class="settings-item" data-voice="مركز التنبيهات الحرجة"><div class="settings-item-icon">🚨</div><div class="settings-item-title">مركز التنبيهات الحرجة</div><span class="settings-item-arrow">←</span></a>
-      <a href="digital_will.html" class="settings-item" data-voice="الوصية الرقمية"><div class="settings-item-icon">🕊️</div><div class="settings-item-title">الوصية الرقمية</div><span class="settings-item-arrow">←</span></a>
-      <a href="digital_heirs.html" class="settings-item" data-voice="الورثة الرقميون"><div class="settings-item-icon">👨‍👩‍👧‍👦</div><div class="settings-item-title">الورثة الرقميون</div><span class="settings-item-arrow">←</span></a>
-      <a href="delegates.html" class="settings-item" data-voice="المفوضون"><div class="settings-item-icon">👥</div><div class="settings-item-title">المفوضون</div><span class="settings-item-arrow">←</span></a>
-      <a href="digital_arbitration.html" class="settings-item" data-voice="التحكيم الرقمي"><div class="settings-item-icon">🧑‍⚖️</div><div class="settings-item-title">التحكيم الرقمي</div><span class="settings-item-arrow">←</span></a>
-      <a href="crisis_center.html" class="settings-item" data-voice="مركز الأزمات"><div class="settings-item-icon">🚨</div><div class="settings-item-title">مركز الأزمات</div><span class="settings-item-arrow">←</span></a>
+    <!-- CRITICAL / LEGACY -->
+    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">إدارة الطوارئ وحفظ الإرث الرقمي</span><div class="section-divider-line"></div></div>
+    <div class="settings-grid">
+      <a href="critical_alerts.html" class="settings-item" data-voice="مركز التنبيهات الحرجة">
+        <div class="card-top"><div class="settings-item-icon">🚨</div><div class="settings-item-title">التنبيهات الحرجة</div></div>
+        <div class="card-bottom"><span class="card-action-text">نظام الإنذار المبكر للمخاطر</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="digital_will.html" class="settings-item" data-voice="الوصية الرقمية">
+        <div class="card-top"><div class="settings-item-icon">🕊️</div><div class="settings-item-title">الوصية الرقمية</div></div>
+        <div class="card-bottom"><span class="card-action-text">صياغة بنود التوريث والأصول</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="digital_heirs.html" class="settings-item" data-voice="الورثة الرقميون">
+        <div class="card-top"><div class="settings-item-icon">👨‍👩‍👧‍👦</div><div class="settings-item-title">الورثة الرقميون</div></div>
+        <div class="card-bottom"><span class="card-action-text">إدارة وتحديد صلاحيات العائلة</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="delegates.html" class="settings-item" data-voice="المفوضون">
+        <div class="card-top"><div class="settings-item-icon">👥</div><div class="settings-item-title">المفوضون المعتمدون</div></div>
+        <div class="card-bottom"><span class="card-action-text">منح توكيلات الإدارة البديلة</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="digital_arbitration.html" class="settings-item" data-voice="التحكيم الرقمي">
+        <div class="card-top"><div class="settings-item-icon">🧑‍⚖️</div><div class="settings-item-title">التحكيم الرقمي</div></div>
+        <div class="card-bottom"><span class="card-action-text">فض النزاعات والملكيات الفكرية</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="crisis_center.html" class="settings-item" data-voice="مركز الأزمات">
+        <div class="card-top"><div class="settings-item-icon">🔥</div><div class="settings-item-title">مركز الأزمات الطارئة</div></div>
+        <div class="card-bottom"><span class="card-action-text">تفعيل بروتوكول التدمير الذاتي الآمن</span><span class="settings-item-arrow">←</span></div>
+      </a>
     </div>
 
-    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">المطورين والموافقات</span><div class="section-divider-line"></div></div>
-    <div class="settings-list">
-      <a href="dev_tools.html" class="settings-item" data-voice="أدوات المطور"><div class="settings-item-icon">🛠️</div><div class="settings-item-title">أدوات المطور</div><span class="settings-item-arrow">←</span></a>
-      <a href="digital_consents.html" class="settings-item" data-voice="الموافقات الرقمية"><div class="settings-item-icon">📜</div><div class="settings-item-title">الموافقات الرقمية</div><span class="settings-item-arrow">←</span></a>
+    <!-- DEVELOPER / CONSENTS -->
+    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">المطورين وبنود الموافقات القانونية</span><div class="section-divider-line"></div></div>
+    <div class="settings-grid">
+      <a href="dev_tools.html" class="settings-item" data-voice="أدوات المطور">
+        <div class="card-top"><div class="settings-item-icon">🛠️</div><div class="settings-item-title">أدوات المطور</div></div>
+        <div class="card-bottom"><span class="card-action-text">مفاتيح ربط البيئات البرمجية API</span><span class="settings-item-arrow">←</span></div>
+      </a>
+      <a href="digital_consents.html" class="settings-item" data-voice="الموافقات الرقمية">
+        <div class="card-top"><div class="settings-item-icon">📜</div><div class="settings-item-title">الموافقات الرقمية</div></div>
+        <div class="card-bottom"><span class="card-action-text">مراجعة تراخيص ومعاهدات الاستخدام</span><span class="settings-item-arrow">←</span></div>
+      </a>
     </div>
 
-    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">الجلسة</span><div class="section-divider-line"></div></div>
-    <div class="settings-list">
+    <!-- SESSIONS LOGOUT -->
+    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">إنهاء وإغلاق الجلسة الحالية</span><div class="section-divider-line"></div></div>
+    <div class="settings-grid">
       <div class="settings-item danger" id="logout-trigger" data-voice="تسجيل الخروج">
-        <div class="settings-item-icon">🚪</div>
-        <div class="settings-item-title">تسجيل الخروج</div>
-        <span class="settings-item-arrow">←</span>
+        <div class="card-top"><div class="settings-item-icon">🚪</div><div class="settings-item-title">تسجيل الخروج من النظام</div></div>
+        <div class="card-bottom"><span class="card-action-text">قطع الاتصال المشفر وطرد الجلسة</span><span class="settings-item-arrow">←</span></div>
       </div>
     </div>
 
@@ -578,24 +628,21 @@ body {
   <section class="aqx-signature">
     <div class="sig-glow"></div>
     <div class="sig-line"></div>
-    <div class="sig-text">حسابك، قراراتك، إرثك الرقمي — كله بين يديك داخل منظومة إيه كيو إكس.</div>
+    <div class="sig-text">حسابك، قراراتك، إرثك الرقمي الفخم — كله محمي ومدار بقبضة تكنولوجية متكاملة.</div>
     <div class="sig-logo">AQX</div>
-    <div class="sig-sub">منظومة القرماني إكس — حيث الثقة تلتقي بالتكنولوجيا</div>
+    <div class="sig-sub">منظومة القرماني إكس التكنولوجية الحصينة لعام 2026</div>
   </section>
 
 </main>
 
 <button id="scroll-top" onclick="scrollToTopFlip()" aria-label="العودة للأعلى">↑</button>
 
-<div id="voice-status">
-  <div class="pulse-dot"></div>
-  <span id="voice-text">جارٍ التشغيل...</span>
-</div>
+<div id="voice-status"><div class="pulse-dot"></div><span id="voice-text">جارٍ التشغيل...</span></div>
 
 <script>
 'use strict';
 
-/* ===================== STRICT EXCLUSIVE TAB SECURITY (NO NEW TABS) ===================== */
+/* ===================== STRICT EXCLUSIVE TAB SECURITY ===================== */
 const _tabSessionId = sessionStorage.getItem('aqx_exclusive_tab_id') || Math.random().toString(36).substring(2);
 sessionStorage.setItem('aqx_exclusive_tab_id', _tabSessionId);
 const _lockKey = 'aqx_security_lock_' + window.location.pathname;
@@ -603,7 +650,6 @@ const _lockKey = 'aqx_security_lock_' + window.location.pathname;
 function enforceExclusiveTab() {
   const existingLock = localStorage.getItem(_lockKey);
   const lockTime = parseInt(localStorage.getItem(_lockKey + '_time') || '0');
-  
   if (existingLock && existingLock !== _tabSessionId && (Date.now() - lockTime) < 3000) {
     triggerSecWarning('new_tab');
   } else {
@@ -612,9 +658,9 @@ function enforceExclusiveTab() {
   }
 }
 enforceExclusiveTab();
-setInterval(enforceExclusiveTab, 1000); // تحديث القفل وتأكيد الحصرية
+setInterval(enforceExclusiveTab, 1000);
 
-/* ===================== SCREEN PROTECTION ===================== */
+/* ===================== ANTI-SCREEN CAPTURE PROTECTION ===================== */
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('copy', e => e.preventDefault());
 document.addEventListener('cut', e => e.preventDefault());
@@ -623,21 +669,19 @@ document.addEventListener('dragstart', e => e.preventDefault());
 document.addEventListener('keydown', e => {
   if (e.key === 'PrintScreen') {
     navigator.clipboard?.writeText('');
-    playVoice('تحذير أمني! التقاط الشاشة غير مسموح به في منظومة القرماني إكس.');
+    playVoice('بروتوكول حماية الشاشة مفعل. التقاط المحتوى ممنوع.');
   }
 });
-window.addEventListener('blur', () => { document.title = '🔒 محظور — AQX'; });
+window.addEventListener('blur', () => { document.title = '🔒 جلسة مشفرة — AQX'; });
 window.addEventListener('focus', () => { document.title = 'إعدادات الحساب | منظومة القرماني إكس AQX'; });
 
-/* ===================== LIVE CLOCK BY VISITOR COUNTRY/TIMEZONE ===================== */
+/* ===================== DYNAMIC LOCAL CLOCK ===================== */
 function updateClock() {
   const clockEl = document.getElementById('clock-text');
   try {
-    const now = new Date();
-    const formatted = now.toLocaleTimeString('ar-EG', {
+    clockEl.textContent = new Date().toLocaleTimeString('ar-EG', {
       hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
     });
-    clockEl.textContent = formatted;
   } catch(e) {
     clockEl.textContent = new Date().toLocaleTimeString();
   }
@@ -645,16 +689,10 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 1000);
 
-/* ===================== SIDEBAR-LESS HOME LINK ===================== */
-document.getElementById('header-home-link').addEventListener('click', function(e) {
-  e.preventDefault();
-  speakThenNavigate('الصفحة الرئيسية', this.getAttribute('href'));
-});
-
-/* ===================== SCROLL TOP (FLIP) ===================== */
+/* ===================== SMART SCROLL TOP ===================== */
 const scrollBtn = document.getElementById('scroll-top');
 window.addEventListener('scroll', () => {
-  scrollBtn.classList.toggle('visible', window.scrollY > 420);
+  scrollBtn.classList.toggle('visible', window.scrollY > 400);
 }, { passive: true });
 function scrollToTopFlip() {
   scrollBtn.classList.add('flip');
@@ -662,11 +700,17 @@ function scrollToTopFlip() {
   setTimeout(() => scrollBtn.classList.remove('flip'), 650);
 }
 
-/* ===================== VOICE SYSTEM (FEMALE ARABIC GUIDE) ===================== */
+/* ===================== SYSTEM NAVIGATIONS ===================== */
+document.getElementById('header-home-link').addEventListener('click', function(e) {
+  e.preventDefault();
+  speakThenNavigate('الصفحة الرئيسية', this.getAttribute('href'));
+});
+
+/* ===================== MASTER ARABIC VOICE ENGINE (SPEECH SYNTHESIS) ===================== */
 const synth = window.speechSynthesis;
 let arabicVoice = null;
-let isSpeaking  = false;
-let currentUtt  = null;
+let isSpeaking = false;
+let currentUtt = null;
 const voiceOverlay = document.getElementById('voice-block-overlay');
 
 function loadVoices() {
@@ -675,28 +719,27 @@ function loadVoices() {
     vv.find(v => v.lang === 'ar-EG' && /fem|f/i.test(v.name)) ||
     vv.find(v => v.lang.startsWith('ar') && /fem|f/i.test(v.name)) ||
     vv.find(v => v.lang === 'ar-EG') ||
-    vv.find(v => v.lang.startsWith('ar')) ||
-    null;
+    vv.find(v => v.lang.startsWith('ar')) || null;
 }
 loadVoices();
-synth.addEventListener('voiceschanged', loadVoices);
+if (synth.addEventListener) synth.addEventListener('voiceschanged', loadVoices);
 
 function playVoice(text, onEnd) {
   if (!text || !synth) { if (onEnd) onEnd(); return; }
   if (synth.speaking) synth.cancel();
+  
   const vsEl = document.getElementById('voice-status');
   const vtEl = document.getElementById('voice-text');
   currentUtt = new SpeechSynthesisUtterance(text);
-  currentUtt.lang   = 'ar-EG';
+  currentUtt.lang = 'ar-EG';
   if (arabicVoice) currentUtt.voice = arabicVoice;
-  currentUtt.rate   = 0.92;
-  currentUtt.pitch  = 1.18;
-  currentUtt.volume = 1;
-
+  currentUtt.rate = 0.95;
+  currentUtt.pitch = 1.15;
+  
   isSpeaking = true;
   voiceOverlay.classList.add('active');
   if (vsEl) vsEl.classList.add('active');
-  if (vtEl) vtEl.textContent = text.substring(0, 42) + (text.length > 42 ? '...' : '');
+  if (vtEl) vtEl.textContent = text.substring(0, 45) + (text.length > 45 ? '...' : '');
 
   currentUtt.onend = () => {
     isSpeaking = false;
@@ -714,11 +757,12 @@ function playVoice(text, onEnd) {
 }
 
 function speakThenNavigate(label, href) {
-  playVoice('جارٍ فتح: ' + label, () => {
+  playVoice('جاري الانتقال بأمان إلى ' + label, () => {
     window.location.href = href;
   });
 }
 
+// تفعيل أحداث الماوس والصوت على الكروت المحدثة بنظام الـ 3D Grid
 document.querySelectorAll('.settings-item').forEach(item => {
   if (item.id === 'logout-trigger') return;
   item.addEventListener('click', function(e) {
@@ -734,110 +778,145 @@ document.querySelectorAll('.settings-item').forEach(item => {
   });
 });
 
-/* ===================== LOGOUT FLOW ===================== */
+/* ===================== LOGOUT CORE LOGIC (FULLY FIXED & OPERATIONAL) ===================== */
 const logoutTrigger = document.getElementById('logout-trigger');
-const logoutModal    = document.getElementById('logout-modal');
-const lmCancel        = document.getElementById('lm-cancel');
-const lmConfirm       = document.getElementById('lm-confirm');
+const logoutModal = document.getElementById('logout-modal');
+const lmCancel = document.getElementById('lm-cancel');
+const lmConfirm = document.getElementById('lm-confirm');
 
-logoutTrigger.addEventListener('click', () => {
-  playVoice('تسجيل الخروج. هل تريد بالفعل مغادرة حسابك؟');
-  logoutModal.classList.add('active');
-});
-logoutTrigger.addEventListener('mouseenter', () => {
-  if (!isSpeaking) playVoice('تسجيل الخروج');
-});
-
-lmCancel.addEventListener('click', () => {
-  logoutModal.classList.remove('active');
-  playVoice('تم إلغاء تسجيل الخروج.');
-});
-
-lmConfirm.addEventListener('click', () => {
-  logoutModal.classList.remove('active');
-  playVoice('إلى اللقاء، نتمنى لك يوماً سعيداً. كانت سعادة أن نخدمك في منظومة القرماني إكس.', async () => {
-    try {
-      if (window.aqxAuth && window.aqxSignOut) {
-        await window.aqxSignOut(window.aqxAuth);
-      }
-    } catch(e) {
-      console.warn('Sign out error:', e);
-    }
-    window.location.href = 'index.html';
+if (logoutTrigger) {
+  logoutTrigger.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    playVoice('لقد طلبت تسجيل الخروج، هل أنت متأكد؟');
+    logoutModal.classList.add('active');
   });
-});
+  logoutTrigger.addEventListener('mouseenter', () => {
+    if (!isSpeaking) playVoice('تسجيل الخروج من النظام الموحد');
+  });
+}
 
-/* ===================== GOLD / SILVER PARTICLES BACKGROUND ===================== */
+if (lmCancel) {
+  lmCancel.addEventListener('click', (e) => {
+    e.preventDefault();
+    logoutModal.classList.remove('active');
+    playVoice('تم إلغاء العملية والعودة للمنظومة الآمنة.');
+  });
+}
+
+if (lmConfirm) {
+  lmConfirm.addEventListener('click', (e) => {
+    e.preventDefault();
+    logoutModal.classList.remove('active');
+    playVoice('تم قطع الاتصال المشفر لـ القرماني إكس بنجاح. نتمنى لك سلامة رقمية دائمًا.', async () => {
+      try {
+        if (window.aqxAuth && window.aqxSignOut) {
+          await window.aqxSignOut(window.aqxAuth);
+        }
+      } catch(err) {
+        console.error('Firebase Logout Error Intercepted:', err);
+      }
+      // مسح الهوية المحلية وتصفير الكاش الأمني
+      sessionStorage.clear();
+      window.location.href = 'index.html';
+    });
+  });
+}
+
+/* ===================== ADVANCED GOLD & SILVER RANDOM PARTICLES ENGINE ===================== */
 const canvas = document.getElementById('particles-canvas');
-const ctx    = canvas.getContext('2d');
+const ctx = canvas.getContext('2d');
 function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-const P_COLORS = ['#d4af37','#f5d576','#ffe9a8','#b8860b','#c7ccd6','#e8ecf2','#aab0bd'];
-const P_COUNT  = window.innerWidth < 600 ? 38 : 75;
+// ألوان برّاقة من سبائك الذهب والفضة اللامعة لتتطابق مع الفخامة البصرية الفوقية
+const P_COLORS = ['#ffdf7a', '#d4af37', '#aa7c11', '#ffffff', '#e2e8f0', '#94a3b8'];
 const ptcls = [];
+const P_COUNT = window.innerWidth < 600 ? 45 : 95;
+
 for (let i = 0; i < P_COUNT; i++) {
   ptcls.push({
-    x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight,
-    r: Math.random()*3.4+0.8, dx:(Math.random()-0.5)*0.5, dy:(Math.random()-0.5)*0.5-0.12,
-    color: P_COLORS[Math.floor(Math.random()*P_COLORS.length)], phase: Math.random()*Math.PI*2
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 3.5 + 1.2,
+    dx: (Math.random() - 0.5) * 0.7,
+    dy: (Math.random() - 0.5) * 0.6 - 0.15,
+    color: P_COLORS[Math.floor(Math.random() * P_COLORS.length)],
+    phase: Math.random() * Math.PI * 2
   });
 }
+
 function animParticles() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ptcls.forEach(p => {
-    p.phase += 0.03;
-    const alpha = 0.16 + 0.3*Math.abs(Math.sin(p.phase));
-    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle = p.color; ctx.globalAlpha = alpha;
-    ctx.shadowBlur = 6; ctx.shadowColor = p.color; ctx.fill();
-    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
-    p.x += p.dx; p.y += p.dy;
-    if (p.x < -10) p.x = canvas.width+10; if (p.x > canvas.width+10) p.x = -10;
-    if (p.y < -10) p.y = canvas.height+10; if (p.y > canvas.height+10) p.y = -10;
+    p.phase += 0.025;
+    const alpha = 0.3 + 0.5 * Math.abs(Math.sin(p.phase));
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = alpha;
+    
+    // إضافة ظلال خفيفة ووهج للجسيمات لتبدو ثلاثية أبعاد تطفو فوق التركواز الفاتح
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = p.color;
+    ctx.fill();
+    
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+    
+    p.x += p.dx;
+    p.y += p.dy;
+    
+    if (p.x < -15) p.x = canvas.width + 15;
+    if (p.x > canvas.width + 15) p.x = -15;
+    if (p.y < -15) p.y = canvas.height + 15;
+    if (p.y > canvas.height + 15) p.y = -15;
   });
   requestAnimationFrame(animParticles);
 }
 animParticles();
 
-/* ===================== GATEWAY ===================== */
+/* ===================== GATEWAY OVERLAY ===================== */
 let gwTimer = null, gwSecs = 15, gwDone = false;
 (function createGwParticles() {
   const wrap = document.getElementById('gw-particles');
   if (!wrap) return;
-  for (let i=0;i<26;i++) {
+  for (let i=0; i<30; i++) {
     const p = document.createElement('div');
     p.className = 'gw-p';
-    const sz = Math.random()*12+4, dur = Math.random()*7+4, del = Math.random()*7;
-    const hue = Math.floor(Math.random()*360);
-    p.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;background:hsl(${hue},85%,62%);animation-duration:${dur}s;animation-delay:${del}s;`;
+    const sz = Math.random() * 14 + 4, dur = Math.random() * 6 + 4, del = Math.random() * 5;
+    p.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;background:${P_COLORS[Math.floor(Math.random()*P_COLORS.length)]};animation-duration:${dur}s;animation-delay:${del}s;`;
     wrap.appendChild(p);
   }
 })();
+
 function startGateway() {
-  playVoice('مرحباً بك في إعدادات حساب منظومة القرماني إكس. سيتم نقلك تلقائياً خلال لحظات.');
-  const cEl=document.getElementById('gw-count'), c2El=document.getElementById('gw-count2'), pEl=document.getElementById('gw-progress');
+  playVoice('مرحباً بك في البوابة الفاخرة لإعدادات منظومة القرماني إكس المتطورة.');
+  const cEl = document.getElementById('gw-count'), c2El = document.getElementById('gw-count2'), pEl = document.getElementById('gw-progress');
   gwTimer = setInterval(() => {
     gwSecs--;
-    if (cEl) cEl.textContent = gwSecs; if (c2El) c2El.textContent = gwSecs;
-    if (pEl) pEl.style.width = ((15-gwSecs)/15*100)+'%';
+    if (cEl) cEl.textContent = gwSecs;
+    if (c2El) c2El.textContent = gwSecs;
+    if (pEl) pEl.style.width = ((15 - gwSecs) / 15 * 100) + '%';
     if (gwSecs <= 0) { clearInterval(gwTimer); enterSite(); }
   }, 1000);
 }
+
 function enterSite() {
-  if (gwDone) return; gwDone = true; clearInterval(gwTimer);
+  if (gwDone) return; gwDone = true;
+  clearInterval(gwTimer);
   const gw = document.getElementById('gateway');
-  if (gw) { gw.classList.add('hidden'); setTimeout(()=>gw.remove(), 900); }
-  playVoice('أهلاً بك. هذه صفحة إعدادات حسابك، حيث تتحكم في كل جانب من جوانب هويتك الرقمية.');
+  if (gw) {
+    gw.style.opacity = '0';
+    setTimeout(() => gw.remove(), 600);
+  }
+  playVoice('تم الدخول، أهلاً بك في مقصورة التحكم الاستراتيجية.');
 }
 window.enterSite = enterSite;
 document.getElementById('gw-enter-btn')?.addEventListener('click', enterSite);
-document.getElementById('gw-enter-btn')?.addEventListener('mouseenter', () => {
-  if (!isSpeaking) playVoice('اضغط للدخول إلى إعدادات حسابك الآن.');
-});
 
-/* ===================== STRICT SECURITY SYSTEM (DEVTOOLS & PROTECTION) ===================== */
+/* ===================== HIGH SECURITY DEFENSE (DEVTOOLS KICK) ===================== */
 let secTriggered = false, devToolsCount = 0;
 const MAX_DT_WARNS = 3;
 
@@ -845,25 +924,20 @@ function ringAlarmBell() {
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     const actx = new AudioCtx();
-    [0,0.18,0.36].forEach(t => {
+    [0, 0.2].forEach(t => {
       const osc = actx.createOscillator();
       const gain = actx.createGain();
-      osc.type = 'square';
-      osc.frequency.value = 800; // صوت حاد للأمن
-      gain.gain.setValueAtTime(0.25, actx.currentTime + t);
-      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + t + 0.16);
+      osc.type = 'sawtooth'; osc.frequency.value = 950;
+      gain.gain.setValueAtTime(0.3, actx.currentTime + t);
+      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + t + 0.2);
       osc.connect(gain); gain.connect(actx.destination);
-      osc.start(actx.currentTime + t);
-      osc.stop(actx.currentTime + t + 0.16);
+      osc.start(actx.currentTime + t); osc.stop(actx.currentTime + t + 0.2);
     });
   } catch(e) {}
 }
 
 document.addEventListener('keydown', e => {
-  const blocked =
-    e.key === 'F12' ||
-    (e.ctrlKey && e.shiftKey && ['I','J','C','K'].includes(e.key.toUpperCase())) ||
-    (e.ctrlKey && ['U','S','P'].includes(e.key.toUpperCase()));
+  const blocked = e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C','K'].includes(e.key.toUpperCase())) || (e.ctrlKey && ['U','S','P'].includes(e.key.toUpperCase()));
   if (blocked) { e.preventDefault(); handleDevToolsAttempt(); }
 });
 
@@ -878,15 +952,9 @@ setInterval(() => {
 function handleDevToolsAttempt() {
   if (secTriggered) return;
   devToolsCount++;
-  const remaining = MAX_DT_WARNS - devToolsCount;
   ringAlarmBell();
-  
   if (devToolsCount < MAX_DT_WARNS) {
-    playVoice('تحذير أمني! هذه المحاولة رقم ' + devToolsCount + ' لفتح أدوات النظام. تبقّى لك ' + remaining + ' محاولة قبل الطرد الفوري.');
-    const flash = document.createElement('div');
-    flash.style.cssText = 'position:fixed;inset:0;background:rgba(255,0,0,0.3);z-index:88888;pointer-events:none;';
-    document.body.appendChild(flash);
-    setTimeout(()=>flash.remove(), 900);
+    playVoice('تحذير أمني صارم! محاولة كشف النظام مرفوضة، تبقت لك محاولات محدودة قبل تدمير الجلسة.');
   } else {
     triggerSecWarning('devtools');
   }
@@ -898,68 +966,36 @@ function triggerSecWarning(reason) {
   ringAlarmBell();
   const warn = document.getElementById('security-warning');
   const body = document.getElementById('sec-body-text');
-
-  if (body) {
-    if (reason === 'devtools') {
-      body.innerHTML = '🚨 تم رصد محاولة فتح أدوات المطورين أو فحص الكود المصدري!<br><br><strong>هذا الفعل مخالف صريح لسياسة الأمان لمنظومة القرماني إكس AQX.</strong><br>تم توثيق هذه المحاولة. سيتم حظر الجلسة فوراً وطردك للرئيسية.';
-    } else if (reason === 'new_tab') {
-      body.innerHTML = '🚨 محاولة فتح الرابط في تبويب أو متصفح جديد تم رصدها!<br><br><strong>هذه الصفحة محمية بنظام الحصرية — لا يُسمح بفتحها خارج الجلسة الأصلية.</strong><br>سيتم إغلاق الجلسة الآن لحمايتك وطردك للرئيسية.';
-    } else if (reason === 'idle') {
-      body.innerHTML = '⏰ انتهت جلستك بسبب عدم النشاط لمدة ثلاثين دقيقة متواصلة.<br><br><strong>لحماية أمانك، يتم إغلاق الجلسة تلقائياً وسيتم إرجاعك للرئيسية.</strong>';
-    } else if (reason === 'suspicious') {
-      body.innerHTML = '🚨 تم رصد سلوك مشبوه أو محاولة هجوم على هذه الصفحة!<br><br><strong>تم توثيق وتسجيل هذا النشاط فوراً.</strong><br>سيتم إغلاق الجلسة الآن وطردك للرئيسية.';
-    } else {
-      body.innerHTML = '🚨 محاولة وصول غير مصرح بها تم رصدها!<br><br><strong>هذه الصفحة محمية. تم توثيق هذه المحاولة.</strong><br>سيتم إغلاق الجلسة وطردك للرئيسية.';
-    }
+  if (body && reason === 'devtools') {
+    body.innerHTML = '🚨 تم رصد اختراق مباشر للبيئة البرمجية وفحص العناصر!<br><br>تم تفعيل العزل الدفاعي الفوري لحماية منظومة القرماني إكس من التلاعب.';
   }
-  
   if (warn) warn.classList.add('active');
-
-  playVoice('تحذير أمني شديد الأهمية! تم رصد محاولة اختراق أو تحايل على النظام. سيتم حظر الجلسة وطردك فوراً.');
-
+  playVoice('انتهاك أمني خطير، سيتم سحب الصلاحيات وطرد الجلسة فوراً.');
   let c = 5;
   const cdEl = document.getElementById('sec-countdown');
   const t = setInterval(() => { c--; if (cdEl) cdEl.textContent = c; if (c<=0){clearInterval(t); redirectToMain();} }, 1000);
-  setTimeout(redirectToMain, 5500);
 }
-
 function redirectToMain() { window.location.href = 'index.html'; }
 
-/* Suspicious behavior heuristic */
-let suspiciousScore = 0;
-window.addEventListener('error', () => { suspiciousScore++; if (suspiciousScore > 12) triggerSecWarning('suspicious'); });
-
-window.addEventListener('aqxIdleExpired', () => {
-  playVoice('انتهت جلستك بسبب عدم النشاط لمدة ثلاثين دقيقة. سيتم تحويلك للصفحة الرئيسية.');
-  triggerSecWarning('idle');
-});
-window.addEventListener('aqxSecurityKick', () => {
-  playVoice('تحذير أمني! تم إغلاق الجلسة. سيتم تحويلك فوراً.');
-  triggerSecWarning('kick');
-});
+window.addEventListener('aqxIdleExpired', () => triggerSecWarning('idle'));
+window.addEventListener('aqxSecurityKick', () => triggerSecWarning('kick'));
 
 document.addEventListener('aqxUserNotAuth', () => {
-  const ag = document.getElementById('auth-gate');
-  ag.classList.add('active');
-  playVoice('يجب تسجيل الدخول للوصول إلى هذه الصفحة. سيتم تحويلك تلقائياً إلى الصفحة الرئيسية.');
-  let agCount = 5;
-  const agEl = document.getElementById('ag-count');
-  const agInt = setInterval(() => {
-    agCount--; if (agEl) agEl.textContent = agCount;
-    if (agCount <= 0) { clearInterval(agInt); window.location.href = 'index.html'; }
-  }, 1000);
+  document.getElementById('auth-gate').classList.add('active');
+  playVoice('خطأ في الصلاحيات الرقمية، يرجى الولوج عبر البوابة الموحدة.');
+  setTimeout(() => window.location.href = 'index.html', 5000);
 });
 document.addEventListener('aqxUserReady', () => {
   document.getElementById('auth-gate').classList.remove('active');
 });
 
-/* ===================== PAGE LOAD ===================== */
+/* ===================== SYSTEM LOADER TIMING ===================== */
 window.addEventListener('load', () => {
   setTimeout(() => {
     const loader = document.getElementById('page-loader');
     if (loader) { loader.classList.add('fade-out'); setTimeout(()=>loader.remove(), 520); }
     startGateway();
-  }, 1700);
+  }, 1600);
 });
 </script>
 </body>

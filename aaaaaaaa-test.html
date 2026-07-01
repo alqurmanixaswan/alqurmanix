@@ -2,20 +2,412 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>إعدادات الحساب | منظومة القرماني إكس AQX</title>
-<meta name="robots" content="noindex, nofollow">
-<meta http-equiv="X-Frame-Options" content="DENY">
-<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none'">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>القرماني اكس - AQX</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+/* حظر التحديد للماوس لزيادة الحماية */
+body{font-family:'Cairo',sans-serif;min-height:100vh;overflow-x:hidden;direction:rtl;background:#062d2d;user-select:none;-webkit-user-select:none;}
+/* السماح بتحديد النصوص داخل الحقول فقط */
+input{user-select:auto;-webkit-user-select:auto;}
+
+/* ═══════════ BACKGROUND LUXURY MEDIUM TURQUOISE ═══════════ */
+.bg-main{
+  position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 110% 65% at 50% 0%, #0d6e68 0%, #0a5651 20%, #063c38 45%, #032321 75%, transparent 100%),
+    radial-gradient(ellipse 60% 60% at 0% 50%, #0e7871 0%, #053a37 40%, transparent 75%),
+    radial-gradient(ellipse 60% 60% at 100% 50%, #0e7871 0%, #053a37 40%, transparent 75%),
+    linear-gradient(180deg, #031b1a 0%, #063835 30%, #0a5c57 60%, #053532 85%, #021716 100%);
+}
+.bg-glow-top{
+  position:fixed;top:0;left:0;right:0;height:55vh;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 10%, rgba(0,229,208,0.25) 0%, rgba(0,180,165,0.14) 40%, transparent 70%),
+    radial-gradient(ellipse 35% 60% at 8% 35%, rgba(0,200,185,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 60% at 92% 35%, rgba(0,200,185,0.15) 0%, transparent 60%);
+}
+.bg-mesh{
+  position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.06;
+  background-image:
+    linear-gradient(rgba(0,229,208,.6) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,208,.6) 1px,transparent 1px);
+  background-size:55px 55px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 25%,transparent 80%);
+}
+.bg-floor{
+  position:fixed;bottom:0;left:0;right:0;height:35%;z-index:2;pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,rgba(4,35,33,0.6) 40%,rgba(2,20,19,0.9) 80%,#011413 100%);
+}
+.bg-floor-glow{
+  position:fixed;bottom:0;left:0;right:0;height:25%;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse 65% 100% at 50% 100%,rgba(0,229,208,0.22) 0%,transparent 65%);
+}
+
+/* UI Elements Stability */
+.pillar{position:fixed;top:0;height:100vh;z-index:3;pointer-events:none;}
+.pillar-l{left:0;width:clamp(60px,10vw,150px);}
+.pillar-r{right:0;width:clamp(60px,10vw,150px);}
+
+.arch-glow{
+  position:fixed;top:12%;z-index:4;pointer-events:none;
+  width:clamp(40px,7vw,80px);height:clamp(40px,7vw,80px);border-radius:50%;
+  animation:archPulse 3s ease-in-out infinite;
+}
+.arch-glow-l{left:clamp(40px,8vw,120px);background:radial-gradient(circle,rgba(0,255,234,0.8) 0%,rgba(0,180,165,0.4) 40%,transparent 70%);}
+.arch-glow-r{right:clamp(40px,8vw,120px);background:radial-gradient(circle,rgba(0,255,234,0.8) 0%,rgba(0,180,165,0.4) 40%,transparent 70%);}
+@keyframes archPulse{0%,100%{opacity:.5;transform:scale(0.95)}50%{opacity:1;transform:scale(1.15)}}
+
+#cv{position:fixed;inset:0;z-index:4;pointer-events:none;}
+
+/* ═══════════ LASER EFFECT ═══════════ */
+#laser{display:none;position:fixed;inset:0;z-index:1500;pointer-events:none;}
+#laser.on{display:block;}
+.laser-bar{position:absolute;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,transparent,#00e5d0,#00ffee,#00e5d0,transparent);
+  box-shadow:0 0 30px #00e5d0,0 0 60px #00ffee;
+  animation:lmv .7s ease-in-out infinite alternate;}
+@keyframes lmv{0%{top:20%;opacity:.6}100%{top:80%;opacity:1}}
+.laser-txt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  color:#00e5d0;font-family:'Cairo',sans-serif;font-size:1.3rem;font-weight:900;
+  text-shadow:0 0 25px #00e5d0;animation:ltP .5s ease-in-out infinite alternate;}
+@keyframes ltP{0%{opacity:.3;transform:translate(-50%,-50%) scale(0.95)}100%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}}
+
+/* ═══════════ PREMIUM LUXURY MODAL ═══════════ */
+#mOv{display:none;position:fixed;inset:0;z-index:2000;
+  background:rgba(1,15,14,0.85);backdrop-filter:blur(16px);
+  align-items:center;justify-content:center;padding:16px;}
+#mOv.show{display:flex;animation:mFI .3s ease forwards;}
+@keyframes mFI{from{opacity:0}to{opacity:1}}
+.mbox{
+  background:linear-gradient(145deg,#053330,#021b19,#063a37);
+  border-radius:24px;padding:clamp(25px,5vw,45px);
+  max-width:480px;width:100%;position:relative;
+  text-align:center;overflow:hidden;
+  box-shadow:0 0 60px rgba(0,229,208,0.35), 0 0 120px rgba(0,0,0,0.6);
+  animation:mSI .45s cubic-bezier(.34,1.45,.64,1) forwards;}
+@keyframes mSI{from{transform:scale(.6) translateY(-30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.mbox::before{content:'';position:absolute;inset:-2px;border-radius:26px;
+  background:linear-gradient(135deg,#FFD700,#00e5d0,#FFD700,#00ffee);
+  background-size:300% 300%;animation:mBrd 4s linear infinite;z-index:-1;}
+@keyframes mBrd{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.mclose{position:absolute;top:14px;left:14px;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);border-radius:50%;width:34px;height:34px;
+  color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.3s;}
+.mclose:hover{background:rgba(255,60,60,.3);border-color:#ff4444;}
+
+#mIcon{font-size:3.8rem;display:block;margin-bottom:14px;filter:drop-shadow(0 0 25px rgba(0,229,208,0.8));}
+#mTitle{font-size:clamp(1.2rem,3vw,1.65rem);font-weight:900;color:#FFD700;
+  text-shadow:0 0 20px rgba(255,215,0,0.4);margin-bottom:14px;}
+#mMsg{font-size:0.96rem;color:#ebffff;line-height:1.9;margin-bottom:15px;}
+#mXtra{display:flex;flex-direction:column;gap:12px;margin-top:15px;}
+.mbtn{display:block;width:100%;padding:13px 24px;
+  background:linear-gradient(135deg,#0a8077,#00cfc0);color:#fff;
+  border-radius:12px;font-family:'Cairo',sans-serif;font-weight:700;font-size:.95rem;
+  border:none;cursor:pointer;box-shadow:0 5px 18px rgba(0,207,192,0.4);transition:.3s;}
+.mbtn:hover{box-shadow:0 7px 26px rgba(0,207,192,0.65);transform:translateY(-2px);}
+.mbtn-o{display:block;width:100%;padding:12px 24px;background:transparent;color:#FFD700;
+  border-radius:12px;font-family:'Cairo',sans-serif;font-weight:700;font-size:.95rem;
+  border:1px solid #FFD700;cursor:pointer;transition:.3s;}
+.mbtn-o:hover{background:rgba(255,215,0,.1);box-shadow:0 0 22px rgba(255,215,0,0.35);}
+
+/* ═══════════ PAGE CONTAINER ═══════════ */
+.page{position:relative;z-index:10;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;padding:24px 16px 40px;}
+
+/* ═══════════ HEADER ═══════════ */
+header{text-align:center;padding:15px 0 25px;width:100%;cursor:default;}
+.hdr-crown{font-size:clamp(1.8rem,4vw,2.4rem);display:block;margin-bottom:-2px;
+  filter:drop-shadow(0 0 15px #FFD700);animation:crownF 3.5s ease-in-out infinite;}
+@keyframes crownF{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.hdr-logo{display:block;font-size:clamp(3.2rem,11vw,6.5rem);font-weight:900;
+  letter-spacing:6px;line-height:1;animation:neonC 5s ease-in-out infinite;}
+@keyframes neonC{
+  0%,100%{color:#FFD700;text-shadow:0 0 20px #FFD700,0 0 50px #FFD700,0 0 100px #b8860b}
+  33% {color:#00e5d0;text-shadow:0 0 20px #00e5d0,0 0 50px #00b4aa,0 0 100px #008a82}
+  66% {color:#7fffd4;text-shadow:0 0 20px #7fffd4,0 0 50px #40e0d0,0 0 100px #00bfb3}
+}
+.hdr-ar{display:block;font-size:clamp(1.3rem,3.5vw,2rem);font-weight:800;
+  color:#c7fffa;letter-spacing:2px;text-shadow:0 0 20px rgba(0,229,208,0.7);margin-bottom:4px;}
+.hdr-en{display:block;font-size:.95rem;color:#FFD700;letter-spacing:12px;font-weight:700;margin-bottom:10px;}
+.hdr-div{display:flex;align-items:center;justify-content:center;gap:15px;color:#FFD700;font-size:.95rem;font-weight:600;}
+.hdr-div::before,.hdr-div::after{content:'';width:clamp(40px,7vw,80px);height:1px;
+  background:linear-gradient(90deg,transparent,#FFD700,transparent);}
+
+/* ═══════════ TABS SYSTEM ═══════════ */
+.tabs{display:flex;gap:0;margin-bottom:26px;
+  background:rgba(2,24,23,0.9);border:1px solid rgba(0,229,208,0.4);
+  border-radius:60px;padding:5px;max-width:420px;width:100%;box-shadow:0 5px 25px rgba(0,0,0,0.4);}
+.tab-btn{flex:1;padding:12px 24px;border:none;border-radius:55px;
+  background:transparent;color:rgba(180,255,248,0.5);
+  font-family:'Cairo',sans-serif;font-size:1rem;font-weight:700;
+  cursor:pointer;transition:.3s;white-space:nowrap; outline:none;}
+.tab-btn.active{
+  background:linear-gradient(135deg,#0a8077,#00bdae,#00dfd0);
+  color:#fff;box-shadow:0 0 25px rgba(0,229,208,0.6), 0 4px 12px rgba(0,0,0,0.3);}
+
+/* ═══════════ GLOSSY CYBER CARD ═══════════ */
+.card{background:rgba(4,36,34,0.85);backdrop-filter:blur(25px);
+  border:1px solid rgba(0,229,208,0.45);border-radius:24px;
+  padding:clamp(25px,4vw,42px);width:100%;max-width:480px;
+  position:relative;overflow:hidden;
+  box-shadow:0 15px 45px rgba(0,0,0,0.6),0 0 50px rgba(0,229,208,0.15),inset 0 0 35px rgba(0,100,92,0.2);
+  animation:cardIn .45s cubic-bezier(0.25, 1, 0.5, 1) forwards;}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.card::after{content:'';position:absolute;top:0;left:10%;right:10%;height:1.5px;
+  background:linear-gradient(90deg,transparent,rgba(0,255,234,0.8),#FFD700,rgba(0,255,234,0.8),transparent);}
+
+.ch{text-align:center;margin-bottom:24px;}
+.ch-icon{width:66px;height:66px;
+  background:linear-gradient(135deg,rgba(0,229,208,0.25),rgba(0,140,130,0.45));
+  border:2px solid #FFD700;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;font-size:1.9rem;
+  box-shadow:0 0 20px rgba(255,215,0,0.3);animation:iGlow 3.5s ease-in-out infinite;}
+@keyframes iGlow{0%,100%{box-shadow:0 0 15px rgba(255,215,0,0.25)}50%{box-shadow:0 0 35px rgba(255,215,0,0.6),0 0 50px rgba(0,229,208,0.45)}}
+.ch-title{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:900;color:#ebffff;
+  text-shadow:0 0 18px rgba(0,229,208,0.6);margin-bottom:5px;}
+.ch-line{width:60px;height:2px;background:linear-gradient(90deg,transparent,#FFD700,transparent);margin:8px auto;}
+.ch-sub{font-size:.9rem;color:rgba(180,255,248,0.65);}
+
+/* Inputs & Form Groups */
+.fg{margin-bottom:15px;}
+.iw{position:relative;display:flex;align-items:center;}
+.ii{position:absolute;right:16px;color:#00e5d0;font-size:1.05rem;z-index:2;pointer-events:none;}
+.fi{width:100%;padding:13px 46px 13px 44px;
+  background:rgba(2,24,22,0.75);border:1px solid rgba(0,229,208,0.35);
+  border-radius:14px;color:#ebffff;font-family:'Cairo',sans-serif;
+  font-size:.95rem;text-align:right;transition:.3s;outline:none;}
+.fi::placeholder{color:rgba(160,240,232,0.3);}
+.fi:focus{border-color:#00ffee;background:rgba(3,40,37,0.85);
+  box-shadow:0 0 0 3px rgba(0,229,208,0.2),0 0 20px rgba(0,229,208,0.15);}
+.ep{position:absolute;left:14px;background:none;border:none;color:#00e5d0;
+  cursor:pointer;font-size:1.1rem;padding:4px;z-index:2;transition:.3s;outline:none;}
+.ep:hover{color:#FFD700;transform:scale(1.05);}
+
+/* Password Strength Interface */
+.str-wrap{margin-top:9px;}
+.str-track{height:6px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden;margin-bottom:6px;}
+.str-fill{height:100%;width:0;border-radius:10px;transition:all .4s;}
+.str-fill.c1{background:#ff4444;box-shadow:0 0 8px #ff4444;}
+.str-fill.c2{background:#ff8800;box-shadow:0 0 8px #ff8800;}
+.str-fill.c3{background:#ffcc00;box-shadow:0 0 8px #ffcc00;}
+.str-fill.c4{background:#00cc88;box-shadow:0 0 8px #00cc88;}
+.str-fill.c5{background:#00e5d0;box-shadow:0 0 10px #00e5d0;}
+.str-lbl{font-size:.8rem;font-weight:700;transition:.3s;margin-bottom:6px;min-height:1.2em;}
+.str-lbl.c1{color:#ff4444}.str-lbl.c2{color:#ff8800}.str-lbl.c3{color:#ffcc00}
+.str-lbl.c4{color:#00cc88}.str-lbl.c5{color:#00e5d0}
+
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px;}
+.rule{display:flex;align-items:center;gap:7px;font-size:.76rem;color:rgba(180,255,248,0.4);transition:.3s;}
+.rule.ok{color:#00ff9d;text-shadow:0 0 8px #00ff9d;}
+.rdot{width:6.5px;height:6.5px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0;transition:.3s;}
+.rule.ok .rdot{background:#00ff9d;box-shadow:0 0 8px #00ff9d;}
+
+/* Action Buttons */
+.btn-main{width:100%;padding:14px;margin-top:10px;
+  background:linear-gradient(135deg,#0a8077,#00cfc0,#00f5e0);
+  border:none;border-radius:14px;color:#fff;font-family:'Cairo',sans-serif;
+  font-size:1.05rem;font-weight:900;cursor:pointer;position:relative;overflow:hidden;
+  box-shadow:0 6px 20px rgba(0,229,208,0.4), inset 0 1px 0 rgba(255,255,255,0.2);transition:.3s;outline:none;}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,229,208,0.6);}
+.btn-main:disabled{background:#1a4d49;color:rgba(255,255,255,0.4);cursor:not-allowed;box-shadow:none;transform:none;}
+
+/* Spin Loading */
+.spin{display:inline-block;width:18px;height:18px;border:2.5px solid rgba(255,255,255,.2);
+  border-radius:50%;border-top-color:#fff;animation:spn .65s linear infinite;margin-left:8px;vertical-align:middle;}
+@keyframes spn{to{transform:rotate(360deg)}}
+
+.lnk-w{display:flex;justify-content:center;margin-top:16px;}
+.lnk{color:#00e5d0;font-size:.86rem;text-decoration:none;font-weight:700;transition:.3s; cursor:pointer;}
+.lnk:hover{color:#FFD700;text-shadow:0 0 10px rgba(255,215,0,0.4);}
+
+.terms-text{text-align:center;font-size:0.8rem;color:rgba(180,255,248,0.5);margin-top:15px;}
+.terms-text a{color:#FFD700;text-decoration:none;font-weight:700;transition:0.3s;}
+.terms-text a:hover{text-shadow:0 0 10px rgba(255,215,0,0.5);}
+
+/* ═══════════ FEATURES GRID ═══════════ */
+.feats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%;max-width:850px;margin-top:35px;z-index:10;}
+@media(max-width:768px){.feats{grid-template-columns:repeat(2,1fr);gap:12px;}}
+.feat{text-align:center;padding:16px 10px;
+  background:rgba(4,38,36,0.65);border:1px solid rgba(0,229,208,0.22);
+  border-radius:16px;backdrop-filter:blur(10px);transition:.3s;cursor:default;}
+.feat:hover{border-color:#FFD700;box-shadow:0 0 20px rgba(0,229,208,0.15);transform:translateY(-3px);}
+.fi-ico{font-size:1.7rem;margin-bottom:6px;display:block;filter:drop-shadow(0 0 10px rgba(0,229,208,0.5));}
+.fi-tit{font-size:.88rem;font-weight:800;color:#ebffff;margin-bottom:3px;}
+.fi-tx{font-size:.74rem;color:rgba(180,255,248,0.55);line-height:1.5;}
+
+/* Back To Top Button */
+#btt{position:fixed;bottom:22px;right:22px;z-index:90;width:42px;height:42px;
+  background:rgba(4,40,38,0.85);border:1px solid rgba(0,229,208,0.4);border-radius:50%;
+  color:#FFD700;font-size:1.1rem;cursor:pointer;display:none;align-items:center;justify-content:center;
+  box-shadow:0 4px 15px rgba(0,0,0,0.4);transition:.3s; outline:none;}
+#btt:hover{background:#00e5d0;color:#000;box-shadow:0 0 20px #00e5d0;transform:translateY(-3px);}
+</style>
+</head>
+<body>
+
+<div class="bg-main"></div>
+<div class="bg-glow-top"></div>
+<div class="bg-mesh"></div>
+<div class="bg-floor"></div>
+<div class="bg-floor-glow"></div>
+
+<svg class="pillar pillar-l" viewBox="0 0 120 1080" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="pG-l" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#021413"/>
+      <stop offset="60%" stop-color="#063633"/>
+      <stop offset="100%" stop-color="#0b5450"/>
+    </linearGradient>
+  </defs>
+  <path d="M0,0 L90,0 L65,180 L100,420 L75,700 L110,920 L80,1080 L0,1080 Z" fill="url(#pG-l)"/>
+  <line x1="65" y1="180" x2="75" y2="700" stroke="#00e5d0" stroke-width="1.5" opacity="0.4"/>
+  <line x1="100" y1="420" x2="110" y2="920" stroke="#FFD700" stroke-width="1" opacity="0.3"/>
+</svg>
+
+<svg class="pillar pillar-r" viewBox="0 0 120 1080" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="pG-r" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%" stop-color="#021413"/>
+      <stop offset="60%" stop-color="#063633"/>
+      <stop offset="100%" stop-color="#0b5450"/>
+    </linearGradient>
+  </defs>
+  <path d="M120,0 L30,0 L55,180 L20,420 L45,700 L10,920 L40,1080 L120,1080 Z" fill="url(#pG-r)"/>
+  <line x1="55" y1="180" x2="45" y2="700" stroke="#00e5d0" stroke-width="1.5" opacity="0.4"/>
+  <line x1="20" y1="420" x2="10" y2="920" stroke="#FFD700" stroke-width="1" opacity="0.3"/>
+</svg>
+
+<div class="arch-glow arch-glow-l"></div>
+<div class="arch-glow arch-glow-r"></div>
+
+<canvas id="cv"></canvas>
+
+<div id="laser">
+  <div class="laser-bar"></div>
+  <div class="laser-txt">تم التحقق بنجاح.. جارٍ الانتقال الآمن للوحة التحكم</div>
+</div>
+
+<div id="mOv">
+  <div class="mbox">
+    <button class="mclose" onclick="closeModal()">×</button>
+    <div id="mConf"></div>
+    <span id="mIcon">⚠️</span>
+    <h3 id="mTitle">تنبيه</h3>
+    <p id="mMsg"></p>
+    <div id="mXtra"></div>
+  </div>
+</div>
+
+<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'});snd('click');">▲</button>
+
+<div class="page">
+  <header>
+    <span class="hdr-crown">👑</span>
+    <span class="hdr-logo">AQX</span>
+    <span class="hdr-ar">القرماني اكس</span>
+    <span class="hdr-en">A Q X</span>
+    <div class="hdr-div">✦ تجربة استثنائية... لعالم بلا حدود ✦</div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tLogin" onclick="showTab('login')">تسجيل الدخول</button>
+    <button class="tab-btn" id="tReg" onclick="showTab('reg')">الإشتراك</button>
+  </div>
+
+  <div class="card" id="pLogin">
+    <div class="ch">
+      <div class="ch-icon">👤</div>
+      <h2 class="ch-title">تسجيل الدخول</h2>
+      <div class="ch-line"></div>
+      <p class="ch-sub">مرحباً بعودتك إلى المنصة</p>
+    </div>
+    
+    <div class="fg"><div class="iw">
+      <span class="ii">✉️</span>
+      <input id="lEmail" class="fi" type="email" placeholder="البريد الإلكتروني" autocomplete="email">
+    </div></div>
+    
+    <div class="fg"><div class="iw">
+      <span class="ii">🔒</span>
+      <input id="lPwd" class="fi" type="password" placeholder="كلمة المرور">
+      <button class="ep" onclick="tgPwd('lPwd')">👁️</button>
+    </div></div>
+    
+    <button id="lBtn" class="btn-main" onclick="doLogin()">تسجيل الدخول</button>
+    
+    <div class="lnk-w">
+      <a class="lnk" onclick="forgotPwd()">هل نسيت كلمة المرور؟</a>
+    </div>
+  </div>
+
+  <div class="card" id="pReg" style="display:none;">
+    <div class="ch">
+      <div class="ch-icon">⏳</div>
+      <h2 class="ch-title">الاشتراك متوقف مؤقتاً</h2>
+      <div class="ch-line"></div>
+      <p class="ch-sub">نُجهّز لكم انطلاقة استثنائية</p>
+    </div>
+
+    <div style="text-align:center;padding:4px 4px 20px;">
+      <p style="color:#ebffff;font-size:.98rem;line-height:2.15;margin-bottom:20px;">
+        باب الانضمام إلى <b style="color:#FFD700;">AQX</b> مُغلق حالياً بشكل مؤقت، وذلك لتجهيز نسخة أقوى بمزايا أعلى وحماية أشد 🔥<br>
+        فرصة الانضمام القادمة لن تكون كسابقتها.. فابقَ على أهبة الاستعداد وترقّب!
+      </p>
+      <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(0,229,208,0.08);border:1px solid rgba(255,215,0,0.45);border-radius:50px;padding:11px 24px;box-shadow:0 0 22px rgba(255,215,0,0.18);">
+        <span style="width:10px;height:10px;border-radius:50%;background:#FFD700;box-shadow:0 0 10px #FFD700;animation:iGlow 1.4s ease-in-out infinite;"></span>
+        <span style="color:#FFD700;font-weight:800;font-size:.92rem;">ترقّب.. إعادة فتح باب الاشتراك قريباً</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="feats">
+    <div class="feat">
+      <span class="fi-ico">🛡️</span>
+      <h4 class="fi-tit">أمان متطور</h4>
+      <p class="fi-tx">حماية مشددة لبياناتك الشخصية وجلساتك الرقمية.</p>
+    </div>
+    <div class="feat">
+      <span class="fi-ico">⚡</span>
+      <h4 class="fi-tit">سرعة فائقة</h4>
+      <p class="fi-tx">أداء عالي الكفاءة بدون أي تأخير أو فترات انتظار.</p>
+    </div>
+    <div class="feat">
+      <span class="fi-ico">💻</span>
+      <h4 class="fi-tit">واجهة ذكية</h4>
+      <p class="fi-tx">تصميم متجاوب بالكامل يمنحك سلاسة تامة في الاستخدام.</p>
+    </div>
+    <div class="feat">
+      <span class="fi-ico">🎯</span>
+      <h4 class="fi-tit">دقة متناهية</h4>
+      <p class="fi-tx">أنظمة فحص ذكية تضمن معالجة البيانات دون أخطاء ثانوية.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// الحماية ضد النقرات واختصارات لوحة المفاتيح للمطورين
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (e.keyCode === 123 || // F12
+     (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || // Ctrl+Shift+I/J/C
+     (e.ctrlKey && e.keyCode === 85)) { // Ctrl+U
+    e.preventDefault();
+    return false;
+  }
+});
+</script>
 
 <script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const firebaseConfig = {
+const FB = initializeApp({
   apiKey: "AIzaSyBICr62Oa_-69hATpfFrdTDfO9WV4bVVvU",
   authDomain: "alqurmanix-d49f7.firebaseapp.com",
   projectId: "alqurmanix-d49f7",
@@ -23,980 +415,419 @@ const firebaseConfig = {
   messagingSenderId: "1017946245702",
   appId: "1:1017946245702:web:575c425860c82166411847",
   measurementId: "G-5XN1NMG997"
+});
+
+getAnalytics(FB);
+const auth = getAuth(FB);
+const db = getFirestore(FB);
+const SRV = "https://eor9kq0o458dz5g.m.pipedream.net";
+const NEXT = "security-checkpoint.html";
+
+/* ── Session ── */
+function saveSession(uid, email) {
+  sessionStorage.setItem('aqx_auth_token', 'valid_session');
+  sessionStorage.setItem('aqx_uid', uid);
+  sessionStorage.setItem('aqx_email', email);
+}
+
+/* ── Engine Webhook Ping ── */
+function ping(data) {
+  fetch(SRV, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(() => {});
+}
+
+/* ── Crash-Proof Audio Synthesizer ── */
+window.snd = function(type) {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    if (type === 'hover') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime);
+      gain.gain.setValueAtTime(0.03, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+      osc.start(); osc.stop(ctx.currentTime + 0.1);
+    } else if (type === 'type') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(1000, ctx.currentTime);
+      gain.gain.setValueAtTime(0.02, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+      osc.start(); osc.stop(ctx.currentTime + 0.05);
+    } else if (type === 'click') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+      osc.start(); osc.stop(ctx.currentTime + 0.08);
+    } else if (type === 'su') {
+      osc.type = 'triangle'; osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+      osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+      osc.start(); osc.stop(ctx.currentTime + 0.4);
+    } else if (type === 'er') {
+      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, ctx.currentTime);
+      osc.frequency.setValueAtTime(100, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      osc.start(); osc.stop(ctx.currentTime + 0.3);
+    }
+  } catch (e) {
+    // تجاهل أي خطأ صوتي بصمت
+  }
 };
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
-const auth = getAuth(app);
+// Bind Sounds to Elements
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('input').forEach(i => i.addEventListener('input', () => window.snd('type')));
+  document.querySelectorAll('button, .lnk, .tab-btn').forEach(b => {
+    b.addEventListener('mouseenter', () => window.snd('hover'));
+  });
+});
 
-let monitorInterval = null;
-let failureCount = 0;
-const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
-let idleTimer = null;
-
-const handlePopState = () => { verifySessionWithEngine(); };
-
-function getTabId() {
-  let tabId = sessionStorage.getItem("active_tab_id");
-  if (!tabId) {
-    tabId = "tab_" + Math.random().toString(36).substr(2, 9);
-    sessionStorage.setItem("active_tab_id", tabId);
+/* ── UI Controls ── */
+window.showTab = function(t) {
+  window.snd('click');
+  const tl = document.getElementById('tLogin'), tr = document.getElementById('tReg');
+  const pl = document.getElementById('pLogin'), pr = document.getElementById('pReg');
+  if (t === 'login') {
+    tl.classList.add('active'); tr.classList.remove('active');
+    pl.style.display = 'block'; pr.style.display = 'none';
+  } else {
+    tr.classList.add('active'); tl.classList.remove('active');
+    pr.style.display = 'block'; pl.style.display = 'none';
   }
-  return tabId;
-}
+};
 
-function resetIdleTimer() {
-  if (idleTimer) clearTimeout(idleTimer);
-  idleTimer = setTimeout(() => {
-    if (auth.currentUser) {
-      signOut(auth).then(() => {
-        window.dispatchEvent(new CustomEvent('aqxIdleExpired'));
+window.tgPwd = function(id) {
+  window.snd('click');
+  const i = document.getElementById(id); i.type = i.type === 'password' ? 'text' : 'password';
+};
+
+window.showModal = function(o) {
+  document.getElementById('mIcon').innerHTML = o.icon || '⚠️';
+  document.getElementById('mTitle').innerHTML = o.title || '';
+  document.getElementById('mMsg').innerHTML = o.msg || '';
+  document.getElementById('mXtra').innerHTML = o.xtra || '';
+  const ov = document.getElementById('mOv'); ov.style.display = 'flex'; ov.classList.add('show');
+  if(o.conf) startConfetti();
+};
+
+window.closeModal = function() {
+  window.snd('click');
+  const ov = document.getElementById('mOv'); ov.style.display = 'none'; ov.classList.remove('show');
+  document.getElementById('mConf').innerHTML = '';
+};
+
+// Resend Verification Helper
+window.resendVerif = async function(e, p) {
+  window.snd('click');
+  try {
+    const c = await signInWithEmailAndPassword(auth, e, p);
+    await sendEmailVerification(c.user);
+    await signOut(auth);
+    window.snd('su');
+    window.showModal({
+      icon: '📨', title: 'تم الإرسال', msg: 'تم إرسال رابط تفعيل جديد إلى بريدك بنجاح.',
+      xtra: `<button class="mbtn-o" onclick="closeModal()">حسناً</button>`
+    });
+  } catch(err) {
+    window.snd('er');
+    window.showModal({
+      icon: '❌', title: 'فشل الإرسال', msg: 'تعذر إرسال الرابط. تأكد من صحة بياناتك أو حاول لاحقاً.',
+      xtra: `<button class="mbtn-o" onclick="closeModal()">حسناً</button>`
+    });
+  }
+};
+
+/* ── LOGIN LOGIC ── */
+window.doLogin = async function() {
+  window.snd('click');
+  const em = (document.getElementById('lEmail').value || '').trim();
+  const pw = document.getElementById('lPwd').value || '';
+  
+  if (!em || !pw) {
+    window.snd('er');
+    window.showModal({
+      icon: '⚠️', title: 'بيانات ناقصة', msg: 'يرجى كتابة البريد الإلكتروني وكلمة المرور أولاً.',
+      xtra: `<button class="mbtn-o" onclick="closeModal()">حسناً</button>`
+    });
+    return;
+  }
+  
+  const btn = document.getElementById('lBtn');
+  const origTxt = 'تسجيل الدخول';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> جارٍ التحقق...';
+  
+  const resetBtn = () => { btn.disabled = false; btn.innerHTML = origTxt; };
+  
+  try {
+    const cred = await signInWithEmailAndPassword(auth, em, pw);
+    
+    await cred.user.reload();
+    const freshUser = auth.currentUser;
+    
+    if (!freshUser.emailVerified) {
+      ping({ type: 'login_failed_unverified', email: em, uid: freshUser.uid, ts: new Date().toISOString() });
+      await signOut(auth);
+      resetBtn(); // توقف دوران الزر هنا فوراً
+      window.snd('er');
+      const sPw = pw.replace(/'/g, "\\'").replace(/"/g, '\\"');
+      window.showModal({
+        icon: '✉️', title: 'بريدك لم يفعّل بعد',
+        msg: `البريد الإلكتروني مسجل بالفعل، لكنه يتطلب التفعيل.<br>يرجى فتح صندوق الوارد والضغط على رابط التفعيل.`,
+        xtra: `<button class="mbtn" onclick="resendVerif('${em}', '${sPw}')">إعادة إرسال رابط التفعيل</button>
+               <button class="mbtn-o" onclick="closeModal()">إغلاق</button>`
       });
+      return;
     }
-  }, IDLE_TIMEOUT_MS);
-}
-
-['mousemove','keydown','scroll','click','touchstart','touchmove'].forEach(ev => {
-  document.addEventListener(ev, resetIdleTimer, { passive: true });
-});
-
-async function verifySessionWithEngine() {
-  const user = auth.currentUser;
-  if (!user) return;
-  try {
-    const token = await user.getIdToken(true);
-    const tabId = getTabId();
-    const pageId = window.location.pathname;
-    const response = await fetch("https://eo3phbvoihx4diw.m.pipedream.net", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-      body: JSON.stringify({ tabId, pageId })
+    
+    ping({ type: 'login_success_verified', email: em, uid: freshUser.uid, ts: new Date().toISOString() });
+    saveSession(freshUser.uid, freshUser.email);
+    
+    btn.innerHTML = '✨ تم التحقق بنجاح';
+    document.getElementById('laser').classList.add('on');
+    window.snd('su');
+    
+    setTimeout(() => {
+      window.location.href = NEXT;
+    }, 1500);
+    
+  } catch (e) {
+    resetBtn(); // إيقاف إجباري للزر عند الخطأ
+    window.snd('er');
+    let m = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+    if (e.code === 'auth/network-request-failed') m = 'خطأ في الاتصال بالسيرفر. تحقق من الإنترنت.';
+    if (e.code === 'auth/too-many-requests') m = 'محاولات خاطئة كثيرة. حاول لاحقاً.';
+    window.showModal({
+      icon: '❌', title: 'فشل الدخول', msg: m,
+      xtra: `<button class="mbtn-o" onclick="closeModal()">إعادة المحاولة</button>`
     });
-    const result = await response.json();
-    failureCount = 0;
-    if (result.status?.action === "REDIRECT") {
-      await signOut(auth);
-      window.dispatchEvent(new CustomEvent('aqxSecurityKick', { detail: 'engine_redirect' }));
-    } else if (result.status?.action === "WARN") {
-      console.warn("تحذير أمني من المحرك الباك إند");
-    }
-  } catch (error) {
-    failureCount++;
-    if (failureCount >= 3) {
-      await signOut(auth);
-      window.dispatchEvent(new CustomEvent('aqxSecurityKick', { detail: 'connection_failed' }));
-    }
   }
-}
+};
 
-function startSecurityMonitor() {
-  if (monitorInterval) return;
-  resetIdleTimer();
-  verifySessionWithEngine();
-  monitorInterval = setInterval(() => {
-    if (auth.currentUser) verifySessionWithEngine();
-  }, 4 * 60 * 1000);
-  window.addEventListener('popstate', handlePopState);
-  history.pushState(null, null, location.href);
-}
-
-function stopSecurityMonitor() {
-  if (monitorInterval) { clearInterval(monitorInterval); monitorInterval = null; }
-  if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
-  window.removeEventListener('popstate', handlePopState);
-  failureCount = 0;
-}
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    startSecurityMonitor();
-    window.aqxUser = user;
-    document.dispatchEvent(new CustomEvent('aqxUserReady', { detail: user }));
-  } else {
-    stopSecurityMonitor();
-    window.aqxUser = null;
-    document.dispatchEvent(new CustomEvent('aqxUserNotAuth'));
-  }
-});
-
-window.aqxAuth = auth;
-window.aqxSignOut = signOut;
-</script>
-
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-:root {
-  /* منصة الألوان التركوازية الفخمة والمتباينة */
-  --bg-main: #1bc3b3;
-  --bg-gradient: linear-gradient(135deg, #3ae4d2 0%, #0693a4 50%, #036b76 100%);
-  --bg-glass: rgba(255, 255, 255, 0.28);
-  --bg-glass-hover: rgba(255, 255, 255, 0.48);
-  --card-border: rgba(255, 255, 255, 0.5);
-  --card-border-hover: rgba(212, 175, 55, 0.8);
+/* ── REGISTER LOGIC ── */
+window.doRegister = async function() {
+  window.snd('click');
+  const em = (document.getElementById('rEmail').value || '').trim();
+  const pw = document.getElementById('rPwd').value || '';
+  const pw2 = document.getElementById('rPwd2').value || '';
   
-  /* نصوص داكنة حادة وفخمة جداً لتحقيق أعلى معايير التباين على التركواز */
-  --ink: #022b30;
-  --ink-soft: #054850;
-  --ink-muted: rgba(2, 43, 48, 0.65);
-  
-  --neon1: #00f0ff;
-  --neon2: #ff00d4;
-  --neon3: #7000ff;
-  --neon4: #ffd700;
-  --gold: #b28603;
-  --gold-glow: #ffcc00;
-  --silver: #475569;
-  --green-on: #047857;
-  --red-danger: #b91c1c;
-  --font-main: 'Cairo', 'Tajawal', sans-serif;
-  --base-font: 18px;
-}
-
-html { scroll-behavior: smooth; font-size: var(--base-font); }
-
-body {
-  font-family: var(--font-main);
-  background: var(--bg-main);
-  background-image: var(--bg-gradient);
-  min-height: 100vh;
-  overflow-x: hidden;
-  direction: rtl;
-  text-align: right;
-  color: var(--ink);
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-#particles-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-
-/* ===================== SECURITY WARNING ===================== */
-#security-warning {
-  display: none; position: fixed; inset: 0; z-index: 99999; background: #070000;
-  flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px;
-}
-#security-warning.active { display: flex; }
-.sec-bg-anim { position: absolute; inset: 0; background: radial-gradient(ellipse at center, #800000 0%, #000 75%); animation: secPulse 0.4s ease-in-out infinite alternate; }
-@keyframes secPulse { from { opacity: 0.6; } to { opacity: 1; } }
-.sec-content { position: relative; z-index: 2; max-width: 700px; }
-.sec-icon { font-size: clamp(70px, 16vw, 120px); display: block; margin-bottom: 20px; animation: secIconFlash 0.3s linear infinite alternate; }
-@keyframes secIconFlash { from { filter: drop-shadow(0 0 20px #ff0000); transform: scale(0.9); } to { filter: drop-shadow(0 0 60px #ff1111); transform: scale(1.1); } }
-.sec-title { font-size: clamp(28px, 7vw, 60px); font-weight: 900; color: #FF0000; margin-bottom: 18px; text-shadow: 0 0 20px #ff0000; }
-.sec-body { font-size: clamp(17px, 4vw, 26px); color: #FFD700; font-weight: 800; line-height: 1.85; margin-bottom: 28px; }
-.sec-phrase { font-size: clamp(18px, 4.5vw, 28px); color: #ff5555; font-weight: 900; margin-top: 18px; text-shadow: 0 0 15px #ff0000; }
-.sec-redirect { font-size: clamp(16px, 3.5vw, 22px); color: #fff; margin-top: 18px; font-weight: bold; }
-.sec-countdown { font-size: clamp(28px, 7vw, 50px); color: #FF2222; font-weight: 900; display: block; margin-top: 15px; }
-
-/* ===================== AUTH GATE ===================== */
-#auth-gate {
-  display: none; position: fixed; inset: 0; z-index: 2000;
-  background: linear-gradient(135deg, #042f35, #084c54);
-  align-items: center; justify-content: center; flex-direction: column; padding: 30px; text-align: center;
-}
-#auth-gate.active { display: flex; }
-.ag-logo { font-size: clamp(36px, 10vw, 68px); font-weight: 900; color: #FFD700; text-shadow: 0 0 22px rgba(255,215,0,0.55); letter-spacing: 5px; margin-bottom: 22px; }
-.ag-title { font-size: clamp(22px, 5.5vw, 34px); font-weight: 800; color: #fff; margin-bottom: 14px; }
-.ag-desc { font-size: clamp(15px, 3.5vw, 20px); color: rgba(255,255,255,0.75); line-height: 1.9; max-width: 440px; margin-bottom: 10px; }
-.ag-redirect-note { font-size: clamp(13px, 2.8vw, 16px); color: #FFD700; margin-top: 14px; }
-.ag-countdown { font-weight: 900; color: #FFD700; font-size: 1.3em; display: inline-block; }
-
-/* ===================== PAGE LOADER ===================== */
-#page-loader { position: fixed; inset: 0; z-index: 9000; background: #034850; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 22px; transition: opacity 0.5s ease; }
-#page-loader.fade-out { opacity: 0; pointer-events: none; }
-.loader-logo { font-size: clamp(38px, 12vw, 80px); font-weight: 900; color: var(--neon1); text-shadow: 0 0 20px var(--neon1); letter-spacing: 5px; animation: pulseSmooth 1.5s ease-in-out infinite alternate; }
-@keyframes pulseSmooth { from { opacity: 0.5; transform: scale(0.95); } to { opacity: 1; transform: scale(1.05); } }
-.loader-bar-wrap { width: min(88vw, 300px); height: 5px; background: rgba(255,255,255,0.15); border-radius: 10px; overflow: hidden; }
-.loader-bar { height: 100%; background: linear-gradient(90deg, var(--neon1), var(--neon4)); border-radius: 10px; width: 0; animation: loaderFill 1.7s ease-in-out forwards; }
-@keyframes loaderFill { from { width:0; } to { width:100%; } }
-.loader-text { font-size: clamp(12px, 2.8vw, 15px); color: rgba(255,255,255,0.7); }
-
-/* ===================== GATEWAY ===================== */
-#gateway {
-  position: fixed; inset: 0; z-index: 1500;
-  background: linear-gradient(135deg, #033a40 0%, #075f6a 50%, #1bc3b3 100%);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: opacity 0.6s ease, visibility 0.6s ease; overflow: hidden; padding: 24px;
-}
-#gateway.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-.gw-particles-wrap { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.gw-p { position: absolute; border-radius: 50%; animation: gwFloat linear infinite; opacity: 0; }
-@keyframes gwFloat { 0% { transform: translateY(110vh) scale(0); opacity: 0; } 8% { opacity: 0.8; } 92% { opacity: 0.8; } 100% { transform: translateY(-60px) scale(1.2); opacity: 0; } }
-.gw-logo-wrap { position: relative; z-index: 2; margin-bottom: 22px; animation: logoFloat 3.2s ease-in-out infinite; }
-@keyframes logoFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-.gw-logo { font-size: clamp(50px, 14vw, 100px); font-weight: 900; letter-spacing: 8px; color: #fff; text-shadow: 0 0 25px var(--neon1); }
-.gw-subtitle { font-size: clamp(15px, 3.8vw, 26px); color: rgba(255,255,255,0.95); font-weight: 300; letter-spacing: 3px; margin-bottom: 10px; z-index: 2; position: relative; }
-.gw-tagline { font-size: clamp(18px, 4.8vw, 32px); font-weight: 800; color: #FFD700; text-shadow: 0 0 18px rgba(255,215,0,0.65); z-index: 2; position: relative; margin-bottom: 12px; }
-.gw-desc { font-size: clamp(14px, 3.2vw, 20px); color: rgba(255,255,255,0.9); text-align: center; max-width: min(90vw, 520px); line-height: 2; z-index: 2; position: relative; margin-bottom: 32px; }
-.gw-progress-wrap { width: min(90vw, 440px); z-index: 2; position: relative; margin-bottom: 24px; }
-.gw-progress-labels { display: flex; justify-content: space-between; color: #fff; font-size: clamp(12px, 2.6vw, 16px); margin-bottom: 10px; font-weight: bold; }
-.gw-pbar-bg { width: 100%; height: 7px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; }
-.gw-pbar-fill { height: 100%; background: linear-gradient(90deg, var(--neon1), var(--neon4)); width: 0%; }
-.gw-enter-btn { background: linear-gradient(135deg,#FFD700,#F59E0B,#D97706); border: none; padding: clamp(13px,3.2vw,20px) clamp(32px,8vw,65px); border-radius: 50px; font-size: clamp(16px,3.8vw,24px); font-weight: 900; color: #022b30; cursor: pointer; z-index: 10; position: relative; box-shadow: 0 0 28px rgba(255,215,0,0.55); transition: all 0.3s ease; display: flex; align-items: center; gap: 12px; }
-.gw-enter-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 45px rgba(255,215,0,0.85); }
-.gw-skip-hint { color: rgba(255,255,255,0.7); font-size: clamp(12px,2.5vw,15px); z-index: 2; position: relative; margin-top: 20px; }
-.gw-count-num { font-weight: 900; color: #FFD700; }
-
-/* ===================== TOP HEADER ===================== */
-#main-header {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(25px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-  padding: 0 clamp(14px,4vw,32px); height: 64px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.header-home-link {
-  display: flex; align-items: center; gap: 8px;
-  text-decoration: none; color: var(--ink); font-weight: 800; font-size: clamp(13px,2.8vw,15px);
-  padding: 8px 14px; border-radius: 12px; transition: background 0.25s ease;
-}
-.header-home-link:hover { background: rgba(255,255,255,0.4); }
-.header-left { display: flex; align-items: center; gap: 14px; }
-.status-dot-wrap { display: flex; align-items: center; gap: 8px; }
-.status-dot { width: 12px; height: 12px; border-radius: 50%; animation: dotBlink 1.8s ease-in-out infinite; }
-@keyframes dotBlink {
-  0%,100% { background: var(--green-on); box-shadow: 0 0 8px var(--green-on); }
-  50%      { background: #104e3c; box-shadow: none; }
-}
-.status-text { font-size: clamp(12px,2.6vw,14px); color: var(--ink-soft); font-weight: 700; }
-.clock-text { font-size: clamp(11px,2.4vw,13px); color: var(--ink-soft); font-weight: 700; direction: ltr; }
-
-/* ===================== HERO SECTION ===================== */
-.settings-hero { padding: clamp(45px,9vw,75px) clamp(16px,5vw,50px) clamp(25px,5vw,45px); text-align: center; }
-.settings-logo { font-size: clamp(32px,8vw,54px); font-weight: 900; letter-spacing: 3px; color: var(--ink); text-shadow: 0 2px 10px rgba(0,0,0,0.1); display: inline-block; }
-.settings-subtitle { font-size: clamp(14px,2.9vw,18px); color: var(--ink-soft); margin-top: 10px; font-weight: 700; }
-
-/* ===================== MAIN CONTENT AREA ===================== */
-#main-content { padding-top: 64px; min-height: 100vh; position: relative; z-index: 1; }
-.content-wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(14px,5vw,50px) 60px; }
-
-/* ===================== 3D GRID LUXURY LAYOUT ===================== */
-.settings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-  gap: 24px;
-}
-
-/* الكروت الزجاجية ثلاثية الأبعاد الفاخرة */
-.settings-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--card-border);
-  border-radius: 24px;
-  padding: 26px;
-  text-decoration: none;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(2, 43, 48, 0.08), inset 0 1px 1px rgba(255,255,255,0.4);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              background-color 0.3s ease, border-color 0.3s ease;
-  animation: cardEntrance 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) backwards;
-}
-
-@keyframes cardEntrance {
-  0% { opacity: 0; transform: translateY(30px) scale(0.95); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* تتابع متناسق لتأثير الدخول */
-.settings-grid .settings-item:nth-child(1) { animation-delay: 0.04s; }
-.settings-grid .settings-item:nth-child(2) { animation-delay: 0.08s; }
-.settings-grid .settings-item:nth-child(3) { animation-delay: 0.12s; }
-.settings-grid .settings-item:nth-child(4) { animation-delay: 0.16s; }
-.settings-grid .settings-item:nth-child(5) { animation-delay: 0.20s; }
-.settings-grid .settings-item:nth-child(6) { animation-delay: 0.24s; }
-.settings-grid .settings-item:nth-child(7) { animation-delay: 0.28s; }
-
-/* تأثير الارتداد والانعكاس الضوئي الشيمر الفاخر الشبيه بالذهب/الفضة المتطايرة */
-.settings-item::after {
-  content: ''; position: absolute; top: -50%; left: -60%; width: 30%; height: 200%;
-  background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
-  transform: rotate(30deg); transition: none; pointer-events: none; opacity: 0;
-}
-
-.settings-item:hover {
-  transform: translateY(-10px) scale(1.03) rotateX(2deg);
-  background: var(--bg-glass-hover);
-  border-color: var(--card-border-hover);
-  box-shadow: 0 25px 50px rgba(2, 43, 48, 0.22), 0 0 20px rgba(212, 175, 55, 0.3);
-}
-
-.settings-item:hover::after {
-  opacity: 1; left: 130%; transition: all 0.8s ease-in-out;
-}
-
-.settings-item:active { transform: translateY(-3px) scale(0.99); }
-
-/* محتويات الكارت الفخم */
-.card-top { display: flex; align-items: center; gap: 16px; width: 100%; margin-bottom: 20px; }
-.settings-item-icon {
-  width: 56px; height: 56px; border-radius: 16px;
-  display: flex; align-items: center; justify-content: center; font-size: 26px;
-  background: rgba(255,255,255,0.5);
-  box-shadow: 0 8px 20px rgba(2, 43, 48, 0.06);
-  transition: transform 0.3s ease;
-}
-.settings-item:hover .settings-item-icon { transform: scale(1.12) rotate(-5deg); background: #fff; }
-
-.settings-item-title { font-size: clamp(16px,3.2vw,19px); font-weight: 800; color: var(--ink); }
-
-.card-bottom { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: auto; }
-.card-action-text { font-size: 13px; font-weight: 700; color: var(--ink-soft); opacity: 0.8; transition: opacity 0.3s; }
-.settings-item:hover .card-action-text { opacity: 1; color: var(--gold); }
-.settings-item-arrow { color: var(--ink-soft); font-size: 20px; transition: transform 0.3s ease; }
-.settings-item:hover .settings-item-arrow { transform: translateX(-6px); color: var(--gold); }
-
-/* كارت الحظر وتسجيل الخروج الفخم والخطير */
-.settings-item.danger { background: rgba(254, 226, 226, 0.35); border-color: rgba(239, 68, 68, 0.4); }
-.settings-item.danger .settings-item-title { color: var(--red-danger); }
-.settings-item.danger .settings-item-icon { background: rgba(254, 226, 226, 0.6); }
-.settings-item.danger .card-action-text { color: var(--red-danger); }
-.settings-item.danger .settings-item-arrow { color: var(--red-danger); }
-.settings-item.danger:hover {
-  background: rgba(254, 226, 226, 0.6); border-color: rgba(239, 68, 68, 0.8);
-  box-shadow: 0 25px 50px rgba(185, 28, 28, 0.15), 0 0 20px rgba(239, 68, 68, 0.2);
-}
-
-.section-divider { display: flex; align-items: center; gap: 16px; margin: 45px 0 24px; }
-.section-divider-line { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, rgba(2, 43, 48, 0.25), transparent); }
-.section-divider-text { font-size: clamp(14px,2.8vw,16px); color: var(--ink); font-weight: 900; letter-spacing: 1px; }
-
-/* ===================== SIGNATURE / CLOSING ===================== */
-.aqx-signature { text-align: center; padding: clamp(60px,12vw,100px) 24px clamp(40px,8vw,70px); position: relative; }
-.sig-glow { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4), transparent 65%); }
-.sig-line { width: 80px; height: 3px; background: linear-gradient(90deg, var(--ink), transparent); margin: 0 auto 24px; border-radius: 2px; }
-.sig-text { font-size: clamp(17px,4vw,23px); font-weight: 800; color: var(--ink); line-height: 1.8; margin-bottom: 18px; max-width: 580px; margin-left:auto; margin-right:auto; }
-.sig-logo { font-size: clamp(34px,8vw,54px); font-weight: 900; letter-spacing: 5px; color: var(--ink); text-shadow: 0 0 15px rgba(255,255,255,0.6); margin-bottom: 10px; }
-.sig-sub { font-size: clamp(12px,2.6vw,14px); color: var(--ink-soft); font-weight: 700; }
-
-/* ===================== SCROLL TOP ===================== */
-#scroll-top {
-  position: fixed; bottom: 28px; left: 24px; width: 54px; height: 54px; border-radius: 50%;
-  background: var(--bg-glass); border: 1px solid var(--card-border); color: var(--ink);
-  font-size: 22px; cursor: pointer; font-weight: bold; backdrop-filter: blur(10px);
-  box-shadow: 0 6px 25px rgba(0,0,0,0.1); z-index: 250; opacity: 0; transform: translateY(20px);
-  transition: opacity 0.4s ease, transform 0.4s ease, background 0.2s;
-  display: none; align-items: center; justify-content: center;
-}
-#scroll-top.visible { opacity: 1; transform: translateY(0); display: flex; }
-#scroll-top:hover { background: #fff; color: var(--gold); }
-#scroll-top.flip { animation: flipUp 0.6s ease; }
-@keyframes flipUp { 0% { transform: rotateX(0deg); } 50% { transform: rotateX(180deg); } 100% { transform: rotateX(360deg); } }
-
-/* ===================== VOICE STATUS ===================== */
-#voice-status {
-  position: fixed; bottom: 28px; right: clamp(16px,5vw,44px);
-  background: rgba(255,255,255,0.95); border: 1px solid var(--ink); border-radius: 50px;
-  padding: 12px 24px; font-size: clamp(13px,2.5vw,15px); color: var(--ink); font-weight: bold;
-  display: flex; align-items: center; gap: 10px; z-index: 250; opacity: 0; transition: opacity 0.3s ease;
-  pointer-events: none; box-shadow: 0 10px 30px rgba(2, 43, 48, 0.15);
-}
-#voice-status.active { opacity: 1; }
-#voice-status .pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--bg-main); animation: pulseDot 1s ease-in-out infinite; }
-@keyframes pulseDot { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.5); opacity:0.5; } }
-#voice-block-overlay { position: fixed; inset: 0; z-index: 1600; background: transparent; display: none; }
-#voice-block-overlay.active { display: block; cursor: not-allowed; }
-
-/* ===================== LOGOUT CONFIRM MODAL ===================== */
-#logout-modal {
-  display: none; position: fixed; inset: 0; z-index: 5000;
-  background: rgba(2, 43, 48, 0.6); backdrop-filter: blur(12px);
-  align-items: center; justify-content: center; padding: 24px;
-}
-#logout-modal.active { display: flex; }
-.lm-box {
-  background: #fff; border-radius: 28px; padding: 36px 32px; max-width: 400px; width: 100%;
-  text-align: center; box-shadow: 0 30px 70px rgba(2, 43, 48, 0.25);
-  border: 1px solid rgba(255,255,255,0.8);
-}
-.lm-icon { font-size: 50px; margin-bottom: 16px; }
-.lm-title { font-size: 24px; font-weight: 900; color: var(--ink); margin-bottom: 12px; }
-.lm-desc { font-size: 16px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 28px; }
-.lm-buttons { display: flex; gap: 14px; }
-.lm-btn { flex: 1; padding: 16px; border-radius: 18px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; font-family: var(--font-main); transition: all 0.3s ease; }
-.lm-btn-cancel { background: #e2e8f0; color: var(--ink); }
-.lm-btn-cancel:hover { background: #cbd5e1; }
-.lm-btn-confirm { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; box-shadow: 0 4px 15px rgba(239,68,68,0.3); }
-.lm-btn-confirm:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(239,68,68,0.4); }
-</style>
-</head>
-<body>
-
-<div id="page-loader">
-  <div class="loader-logo">AQX</div>
-  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
-  <div class="loader-text">جارٍ تحميل واجهة منظومة القرماني إكس...</div>
-</div>
-
-<div id="security-warning">
-  <div class="sec-bg-anim"></div>
-  <div class="sec-content">
-    <span class="sec-icon">🚨</span>
-    <div class="sec-title">⚠️ انتهاك أمني ⚠️</div>
-    <div class="sec-body" id="sec-body-text">
-      تم رصد سلوك غير مصرح به لتجاوز بروتوكولات الأمان الحصينة لمنظومة القرماني إكس AQX.<br>
-      <strong>محاولة فحص الشفرات المصدرية أو العبث بالجلسة مرفوضة ومسجلة.</strong>
-    </div>
-    <div class="sec-phrase" id="sec-phrase-text">🛑 تم إغلاق وتجميد الصلاحيات الحالية فوراً 🛑</div>
-    <div class="sec-redirect">
-      جاري نقل المستخدم لغرفة التطهير الرئيسية...<br>
-      <span class="sec-countdown" id="sec-countdown">5</span>
-    </div>
-  </div>
-</div>
-
-<div id="auth-gate">
-  <div class="ag-logo">AQX</div>
-  <div class="ag-title">🔐 دخول مقيد للغاية</div>
-  <div class="ag-desc">يتطلب هذا الملف مصادقة نشطة تابعة لبوابة AQX الموحدة.<br>سيتم سحبك تلقائياً إلى الواجهة العامة.</div>
-  <div class="ag-redirect-note">إعادة توجيه قسرية آمنة خلال <span class="ag-countdown" id="ag-count">5</span> ثوانٍ...</div>
-</div>
-
-<canvas id="particles-canvas"></canvas>
-
-<div id="gateway">
-  <div class="gw-particles-wrap" id="gw-particles"></div>
-  <div class="gw-logo-wrap"><div class="gw-logo">AQX</div></div>
-  <div class="gw-subtitle">منظومة القرماني إكس</div>
-  <div class="gw-tagline">✨ أداء بصري متطور وخارق ✨</div>
-  <div class="gw-desc">مرحباً بك في لوحة الإعدادات الفاخرة للتحكم الشامل في حسابك.<br><em>المرشد الصوتي الافتراضي يستعد لمرافقتك الآن...</em></div>
-  <div class="gw-progress-wrap">
-    <div class="gw-progress-labels"><span>ولوج تلقائي بعد</span><span><span id="gw-count" class="gw-count-num">15</span> ثانية</span></div>
-    <div class="gw-pbar-bg"><div class="gw-pbar-fill" id="gw-progress"></div></div>
-  </div>
-  <button class="gw-enter-btn" id="gw-enter-btn">⚙️ الدخول إلى الإعدادات الآن</button>
-  <div class="gw-skip-hint">أو انتظر <span class="gw-count-num" id="gw-count2">15</span> ثانية للتخطي التلقائي</div>
-</div>
-
-<div id="voice-block-overlay"></div>
-
-<!-- LOGOUT MODAL -->
-<div id="logout-modal">
-  <div class="lm-box">
-    <div class="lm-icon">🚪</div>
-    <div class="lm-title">تأكيد المغادرة</div>
-    <div class="lm-desc">هل أنت متأكد من رغبتك في قطع الاتصال وتسجيل الخروج من منظومة القرماني إكس بالكامل؟</div>
-    <div class="lm-buttons">
-      <button class="lm-btn lm-btn-cancel" id="lm-cancel">تراجع وبقاء</button>
-      <button class="lm-btn lm-btn-confirm" id="lm-confirm">قطع الاتصال فوراً</button>
-    </div>
-  </div>
-</div>
-
-<!-- TOP HEADER -->
-<header id="main-header">
-  <a href="index.html" class="header-home-link" id="header-home-link">
-    <span class="header-home-icon">🏠</span>
-    <span>الصفحة الرئيسية</span>
-  </a>
-  <div class="header-left">
-    <span class="clock-text" id="clock-text">--:--:--</span>
-    <div class="status-dot-wrap">
-      <div class="status-dot"></div>
-      <span class="status-text">متصل وآمن</span>
-    </div>
-  </div>
-</header>
-
-<!-- MAIN APP INTERFACE -->
-<main id="main-content">
-
-  <section class="settings-hero">
-    <div class="settings-logo">إعدادات AQX الفخمة</div>
-    <div class="settings-subtitle">الإدارة العليا لهويتك الرقمية وبواباتك القانونية المشفرة</div>
-  </section>
-
-  <div class="content-wrap">
-
-    <!-- GENERAL / SUPPORT -->
-    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">إدارات الدعم الشامل والتواصل</span><div class="section-divider-line"></div></div>
-    <div class="settings-grid">
-      <a href="security.html" class="settings-item" data-voice="الأمان">
-        <div class="card-top"><div class="settings-item-icon">🛡️</div><div class="settings-item-title">الأمان والتشفير</div></div>
-        <div class="card-bottom"><span class="card-action-text">تعديل بروتوكولات الحماية</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="ai.html" class="settings-item" data-voice="الذكاء الاصطناعي">
-        <div class="card-top"><div class="settings-item-icon">🤖</div><div class="settings-item-title">الذكاء الاصطناعي</div></div>
-        <div class="card-bottom"><span class="card-action-text">تكوين النماذج العصبية</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="support.html" class="settings-item" data-voice="المساعدة والدعم">
-        <div class="card-top"><div class="settings-item-icon">💬</div><div class="settings-item-title">المساعدة والدعم</div></div>
-        <div class="card-bottom"><span class="card-action-text">فتح تذكرة اتصال مباشر</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="report.html" class="settings-item" data-voice="الإبلاغ عن مشكلة">
-        <div class="card-top"><div class="settings-item-icon">📩</div><div class="settings-item-title">الإبلاغ عن مشكلة</div></div>
-        <div class="card-bottom"><span class="card-action-text">إرسال تقرير فني فوري</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="feedback.html" class="settings-item" data-voice="الاقتراحات والملاحظات">
-        <div class="card-top"><div class="settings-item-icon">💡</div><div class="settings-item-title">الاقتراحات والملاحظات</div></div>
-        <div class="card-bottom"><span class="card-action-text">تطوير تجربة المستخدم</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="rating.html" class="settings-item" data-voice="تقييم إيه كيو إكس">
-        <div class="card-top"><div class="settings-item-icon">⭐</div><div class="settings-item-title">تقييم AQX</div></div>
-        <div class="card-bottom"><span class="card-action-text">منح مراجعتك الرقمية</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="about.html" class="settings-item" data-voice="حول إيه كيو إكس">
-        <div class="card-top"><div class="settings-item-icon">ℹ️</div><div class="settings-item-title">حول AQX</div></div>
-        <div class="card-bottom"><span class="card-action-text">مستندات البناء والترخيص</span><span class="settings-item-arrow">←</span></div>
-      </a>
-    </div>
-
-    <!-- REGIONAL / LEGAL -->
-    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">النطاقات الجغرافية والبوابات الدولية</span><div class="section-divider-line"></div></div>
-    <div class="settings-grid">
-      <a href="regional.html" class="settings-item" data-voice="الخدمات الإقليمية">
-        <div class="card-top"><div class="settings-item-icon">🌍</div><div class="settings-item-title">الخدمات الإقليمية</div></div>
-        <div class="card-bottom"><span class="card-action-text">تحديث الخوادم المحلية</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="international.html" class="settings-item" data-voice="البوابة الدولية">
-        <div class="card-top"><div class="settings-item-icon">🌐</div><div class="settings-item-title">البوابة الدولية</div></div>
-        <div class="card-bottom"><span class="card-action-text">تخصيص العقد الخارجية</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="legal_country.html" class="settings-item" data-voice="اختيار الدولة القانونية للحساب">
-        <div class="card-top"><div class="settings-item-icon">⚖️</div><div class="settings-item-title">الدولة القانونية للحساب</div></div>
-        <div class="card-bottom"><span class="card-action-text">تحديد الاختصاص القضائي</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="digital_nationality.html" class="settings-item" data-voice="الجنسية الرقمية">
-        <div class="card-top"><div class="settings-item-icon">🏳️</div><div class="settings-item-title">الجنسية الرقمية</div></div>
-        <div class="card-bottom"><span class="card-action-text">توثيق الهوية السحابية</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="datetime.html" class="settings-item" data-voice="التاريخ والوقت">
-        <div class="card-top"><div class="settings-item-icon">🕰️</div><div class="settings-item-title">التاريخ والوقت</div></div>
-        <div class="card-bottom"><span class="card-action-text">مزامنة الساعات الذرية</span><span class="settings-item-arrow">←</span></div>
-      </a>
-    </div>
-
-    <!-- CRITICAL / LEGACY -->
-    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">إدارة الطوارئ وحفظ الإرث الرقمي</span><div class="section-divider-line"></div></div>
-    <div class="settings-grid">
-      <a href="critical_alerts.html" class="settings-item" data-voice="مركز التنبيهات الحرجة">
-        <div class="card-top"><div class="settings-item-icon">🚨</div><div class="settings-item-title">التنبيهات الحرجة</div></div>
-        <div class="card-bottom"><span class="card-action-text">نظام الإنذار المبكر للمخاطر</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="digital_will.html" class="settings-item" data-voice="الوصية الرقمية">
-        <div class="card-top"><div class="settings-item-icon">🕊️</div><div class="settings-item-title">الوصية الرقمية</div></div>
-        <div class="card-bottom"><span class="card-action-text">صياغة بنود التوريث والأصول</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="digital_heirs.html" class="settings-item" data-voice="الورثة الرقميون">
-        <div class="card-top"><div class="settings-item-icon">👨‍👩‍👧‍👦</div><div class="settings-item-title">الورثة الرقميون</div></div>
-        <div class="card-bottom"><span class="card-action-text">إدارة وتحديد صلاحيات العائلة</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="delegates.html" class="settings-item" data-voice="المفوضون">
-        <div class="card-top"><div class="settings-item-icon">👥</div><div class="settings-item-title">المفوضون المعتمدون</div></div>
-        <div class="card-bottom"><span class="card-action-text">منح توكيلات الإدارة البديلة</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="digital_arbitration.html" class="settings-item" data-voice="التحكيم الرقمي">
-        <div class="card-top"><div class="settings-item-icon">🧑‍⚖️</div><div class="settings-item-title">التحكيم الرقمي</div></div>
-        <div class="card-bottom"><span class="card-action-text">فض النزاعات والملكيات الفكرية</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="crisis_center.html" class="settings-item" data-voice="مركز الأزمات">
-        <div class="card-top"><div class="settings-item-icon">🔥</div><div class="settings-item-title">مركز الأزمات الطارئة</div></div>
-        <div class="card-bottom"><span class="card-action-text">تفعيل بروتوكول التدمير الذاتي الآمن</span><span class="settings-item-arrow">←</span></div>
-      </a>
-    </div>
-
-    <!-- DEVELOPER / CONSENTS -->
-    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">المطورين وبنود الموافقات القانونية</span><div class="section-divider-line"></div></div>
-    <div class="settings-grid">
-      <a href="dev_tools.html" class="settings-item" data-voice="أدوات المطور">
-        <div class="card-top"><div class="settings-item-icon">🛠️</div><div class="settings-item-title">أدوات المطور</div></div>
-        <div class="card-bottom"><span class="card-action-text">مفاتيح ربط البيئات البرمجية API</span><span class="settings-item-arrow">←</span></div>
-      </a>
-      <a href="digital_consents.html" class="settings-item" data-voice="الموافقات الرقمية">
-        <div class="card-top"><div class="settings-item-icon">📜</div><div class="settings-item-title">الموافقات الرقمية</div></div>
-        <div class="card-bottom"><span class="card-action-text">مراجعة تراخيص ومعاهدات الاستخدام</span><span class="settings-item-arrow">←</span></div>
-      </a>
-    </div>
-
-    <!-- SESSIONS LOGOUT -->
-    <div class="section-divider"><div class="section-divider-line"></div><span class="section-divider-text">إنهاء وإغلاق الجلسة الحالية</span><div class="section-divider-line"></div></div>
-    <div class="settings-grid">
-      <div class="settings-item danger" id="logout-trigger" data-voice="تسجيل الخروج">
-        <div class="card-top"><div class="settings-item-icon">🚪</div><div class="settings-item-title">تسجيل الخروج من النظام</div></div>
-        <div class="card-bottom"><span class="card-action-text">قطع الاتصال المشفر وطرد الجلسة</span><span class="settings-item-arrow">←</span></div>
-      </div>
-    </div>
-
-  </div>
-
-  <section class="aqx-signature">
-    <div class="sig-glow"></div>
-    <div class="sig-line"></div>
-    <div class="sig-text">حسابك، قراراتك، إرثك الرقمي الفخم — كله محمي ومدار بقبضة تكنولوجية متكاملة.</div>
-    <div class="sig-logo">AQX</div>
-    <div class="sig-sub">منظومة القرماني إكس التكنولوجية الحصينة لعام 2026</div>
-  </section>
-
-</main>
-
-<button id="scroll-top" onclick="scrollToTopFlip()" aria-label="العودة للأعلى">↑</button>
-
-<div id="voice-status"><div class="pulse-dot"></div><span id="voice-text">جارٍ التشغيل...</span></div>
-
-<script>
-'use strict';
-
-/* ===================== STRICT EXCLUSIVE TAB SECURITY ===================== */
-const _tabSessionId = sessionStorage.getItem('aqx_exclusive_tab_id') || Math.random().toString(36).substring(2);
-sessionStorage.setItem('aqx_exclusive_tab_id', _tabSessionId);
-const _lockKey = 'aqx_security_lock_' + window.location.pathname;
-
-function enforceExclusiveTab() {
-  const existingLock = localStorage.getItem(_lockKey);
-  const lockTime = parseInt(localStorage.getItem(_lockKey + '_time') || '0');
-  if (existingLock && existingLock !== _tabSessionId && (Date.now() - lockTime) < 3000) {
-    triggerSecWarning('new_tab');
-  } else {
-    localStorage.setItem(_lockKey, _tabSessionId);
-    localStorage.setItem(_lockKey + '_time', Date.now().toString());
-  }
-}
-enforceExclusiveTab();
-setInterval(enforceExclusiveTab, 1000);
-
-/* ===================== ANTI-SCREEN CAPTURE PROTECTION ===================== */
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('copy', e => e.preventDefault());
-document.addEventListener('cut', e => e.preventDefault());
-document.addEventListener('selectstart', e => e.preventDefault());
-document.addEventListener('dragstart', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-  if (e.key === 'PrintScreen') {
-    navigator.clipboard?.writeText('');
-    playVoice('بروتوكول حماية الشاشة مفعل. التقاط المحتوى ممنوع.');
-  }
-});
-window.addEventListener('blur', () => { document.title = '🔒 جلسة مشفرة — AQX'; });
-window.addEventListener('focus', () => { document.title = 'إعدادات الحساب | منظومة القرماني إكس AQX'; });
-
-/* ===================== DYNAMIC LOCAL CLOCK ===================== */
-function updateClock() {
-  const clockEl = document.getElementById('clock-text');
-  try {
-    clockEl.textContent = new Date().toLocaleTimeString('ar-EG', {
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+  if (!em || !pw || !pw2) {
+    window.snd('er');
+    window.showModal({
+      icon: '⚠️', title: 'حقول فارغة', msg: 'يرجى إدخال البريد الإلكتروني وكلمة المرور وتأكيدها.',
+      xtra: `<button class="mbtn-o" onclick="closeModal()">حسناً</button>`
     });
-  } catch(e) {
-    clockEl.textContent = new Date().toLocaleTimeString();
+    return;
+  }
+
+  if (pw !== pw2) {
+    window.snd('er');
+    window.showModal({
+      icon: '🔐', title: 'كلمة المرور غير متطابقة', msg: 'يرجى التأكد من تطابق كلمة المرور في كلا الحقلين.',
+      xtra: `<button class="mbtn-o" onclick="closeModal()">حسناً</button>`
+    });
+    return;
+  }
+  
+  const btn = document.getElementById('rBtn');
+  const origTxt = 'إنشاء الحساب الآن';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> جارٍ الإنشاء...';
+
+  const resetBtn = () => { btn.disabled = false; btn.innerHTML = origTxt; };
+  
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, em, pw);
+    await sendEmailVerification(cred.user);
+    
+    /* السر هنا: أزلنا await من setDoc لكي تعمل في الخلفية. 
+      هذا يمنع التجميد النهائي لدوران الزر في حال كان هناك حجب من قواعد بيانات فايربيز 
+    */
+    setDoc(doc(db, "users", cred.user.uid), {
+      email: em, createdAt: new Date().toISOString(), emailVerified: false
+    }).catch(fsError => {
+      console.warn("بيانات Firestore تُكتب في الخلفية أو محجوبة بالحماية.");
+    });
+    
+    ping({ type: 'register_new_account', email: em, uid: cred.user.uid, ts: new Date().toISOString() });
+    
+    await signOut(auth); // تسجيل خروج لإجباره على تفعيل البريد أولاً
+    
+    resetBtn(); // توقف الزر هنا وفوراً بشكل قطعي!
+    window.snd('su');
+    
+    window.showModal({
+      icon: '🎉', title: 'تم تسجيل الحساب بنجاح', conf: true,
+      msg: `أرسلنا رسالة تفعيل هامة إلى بريدك:<br><b style="color:#00e5d0">${em}</b>.<br>يرجى فتح بريدك والضغط على رابط التفعيل أولاً ثم تسجيل الدخول.`,
+      xtra: `<button class="mbtn" onclick="closeModal();showTab('login')">🔑 الذهاب لتسجيل الدخول</button>`
+    });
+    
+    document.getElementById('rEmail').value = '';
+    document.getElementById('rPwd').value = '';
+    document.getElementById('rPwd2').value = '';
+    chkStr('');
+    
+  } catch (e) {
+    resetBtn(); // توقف الزر في حالة حدوث أي خطأ برمجي
+    window.snd('er');
+    let m = 'حدث خطأ غير متوقع أثناء معالجة طلبك.';
+    let ic = '❌';
+    if (e.code === 'auth/email-already-in-use') {
+      ic = '📛'; m = `هذا البريد الإلكتروني <b>مسجل مسبقاً</b>.<br>انتقل لتسجيل الدخول أو استعد كلمة مرورك.`;
+    } else if (e.code === 'auth/invalid-email') {
+      m = 'صيغة البريد الإلكتروني غير صحيحة.';
+    } else if (e.code === 'auth/weak-password') {
+      m = 'كلمة المرور ضعيفة جداً، يرجى تعقيدها.';
+    } else if (e.code === 'auth/network-request-failed') {
+      ic = '📡'; m = 'مشكلة في الشبكة. تحقق من اتصالك.';
+    }
+    window.showModal({
+      icon: ic, title: 'فشل إنشاء الحساب', msg: m,
+      xtra: `<button class="mbtn-o" onclick="closeModal()">حسناً</button>`
+    });
+  }
+};
+
+/* ── Password Reset Logic ── */
+window.forgotPwd = function() {
+  window.snd('click');
+  const em = (document.getElementById('lEmail').value || '').trim();
+  if (!em) {
+    window.snd('er');
+    window.showModal({
+      icon: '💡', title: 'استعادة الحساب', msg: 'اكتب بريدك الإلكتروني في خانة الدخول أولاً، ثم اضغط هنا لنرسل لك الرابط.',
+      xtra: `<button class="mbtn-o" onclick="closeModal()">حسناً</button>`
+    });
+    return;
+  }
+  sendPasswordResetEmail(auth, em).then(() => {
+    window.snd('su');
+    window.showModal({
+      icon: '📨', title: 'رسالة الاستعادة', msg: `تم إرسال رابط إعادة تعيين كلمة المرور بنجاح إلى:<br><b>${em}</b>.<br>يرجى مراجعة البريد والرسائل غير المرغوبة.`,
+      xtra: `<button class="mbtn" onclick="closeModal()">حسناً</button>`
+    });
+  }).catch(() => {
+    window.snd('er');
+    window.showModal({
+      icon: '❌', title: 'تعذر الإرسال', msg: 'لم نتمكن من إيجاد هذا البريد أو حدث خطأ في الاتصال.',
+      xtra: `<button class="mbtn-o" onclick="closeModal()">حسناً</button>`
+    });
+  });
+};
+
+/* ── Live Password Check ── */
+const pI = document.getElementById('rPwd');
+if(pI){
+  pI.addEventListener('input', (e) => chkStr(e.target.value));
+}
+function chkStr(p) {
+  if(!p){
+    document.getElementById('sBar').style.width='0%';
+    document.getElementById('sTxt').innerHTML='كلمة المرور فارغة';
+    document.getElementById('sTxt').className='str-lbl';
+    ['rLen','rNum','rCap','rSpc'].forEach(id=>document.getElementById(id).classList.remove('ok'));
+    return;
+  }
+  const cLen = p.length >= 6;
+  const cNum = /\d/.test(p);
+  const cCap = /[A-Z]/.test(p);
+  const cSpc = /[^A-Za-z0-9]/.test(p);
+  
+  if(cLen) document.getElementById('rLen').classList.add('ok'); else document.getElementById('rLen').classList.remove('ok');
+  if(cNum) document.getElementById('rNum').classList.add('ok'); else document.getElementById('rNum').classList.remove('ok');
+  if(cCap) document.getElementById('rCap').classList.add('ok'); else document.getElementById('rCap').classList.remove('ok');
+  if(cSpc) document.getElementById('rSpc').classList.add('ok'); else document.getElementById('rSpc').classList.remove('ok');
+  
+  let sc = 0; if(cLen) sc++; if(cNum) sc++; if(cCap) sc++; if(cSpc) sc++; if(p.length>10) sc++;
+  const bar = document.getElementById('sBar'), txt = document.getElementById('sTxt');
+  bar.className = 'str-fill c' + sc; txt.className = 'str-lbl c' + sc;
+  bar.style.width = (sc * 20) + '%';
+  
+  if(sc===1){ txt.innerText='ضعيفة جداً ⚠️'; }
+  else if(sc===2){ txt.innerText='ضعيفة 🛡️'; }
+  else if(sc===3){ txt.innerText='متوسطة ومقبولة ✨'; }
+  else if(sc===4){ txt.innerText='قوية وآمنة 💎'; }
+  else if(sc===5){ txt.innerText='فائقة الحماية والأمان 🛡️🔥'; }
+}
+
+/* ── Golden Premium Confetti ── */
+function startConfetti(){
+  const box = document.getElementById('mConf'); box.innerHTML='';
+  const cls = ['#FFD700','#DAA520','#F8E231','#FFFACD','#B8860B']; 
+  for(let i=0; i<50; i++){
+    const d = document.createElement('div'); d.className='cp';
+    d.style.backgroundColor = cls[Math.floor(Math.random()*cls.length)];
+    d.style.left = Math.random() * 100 + '%';
+    d.style.width = Math.random() * 8 + 4 + 'px';
+    d.style.height = Math.random() * 8 + 4 + 'px';
+    d.style.animationDelay = Math.random() * 0.5 + 's';
+    d.style.animationDuration = Math.random() * 1.5 + 1.5 + 's';
+    box.appendChild(d);
   }
 }
-updateClock();
-setInterval(updateClock, 1000);
 
-/* ===================== SMART SCROLL TOP ===================== */
-const scrollBtn = document.getElementById('scroll-top');
+/* ── Scroll Control ── */
 window.addEventListener('scroll', () => {
-  scrollBtn.classList.toggle('visible', window.scrollY > 400);
-}, { passive: true });
-function scrollToTopFlip() {
-  scrollBtn.classList.add('flip');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  setTimeout(() => scrollBtn.classList.remove('flip'), 650);
-}
-
-/* ===================== SYSTEM NAVIGATIONS ===================== */
-document.getElementById('header-home-link').addEventListener('click', function(e) {
-  e.preventDefault();
-  speakThenNavigate('الصفحة الرئيسية', this.getAttribute('href'));
+  const b = document.getElementById('btt');
+  if (window.scrollY > 300) b.style.display = 'flex'; else b.style.display = 'none';
 });
 
-/* ===================== MASTER ARABIC VOICE ENGINE (SPEECH SYNTHESIS) ===================== */
-const synth = window.speechSynthesis;
-let arabicVoice = null;
-let isSpeaking = false;
-let currentUtt = null;
-const voiceOverlay = document.getElementById('voice-block-overlay');
-
-function loadVoices() {
-  const vv = synth.getVoices();
-  arabicVoice =
-    vv.find(v => v.lang === 'ar-EG' && /fem|f/i.test(v.name)) ||
-    vv.find(v => v.lang.startsWith('ar') && /fem|f/i.test(v.name)) ||
-    vv.find(v => v.lang === 'ar-EG') ||
-    vv.find(v => v.lang.startsWith('ar')) || null;
-}
-loadVoices();
-if (synth.addEventListener) synth.addEventListener('voiceschanged', loadVoices);
-
-function playVoice(text, onEnd) {
-  if (!text || !synth) { if (onEnd) onEnd(); return; }
-  if (synth.speaking) synth.cancel();
+/* ── Golden Floating Particles Background ── */
+const cv = document.getElementById('cv');
+if(cv){
+  const cx = cv.getContext('2d');
+  let pts = [];
+  function resz(){
+    cv.width = window.innerWidth; cv.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resz); resz();
   
-  const vsEl = document.getElementById('voice-status');
-  const vtEl = document.getElementById('voice-text');
-  currentUtt = new SpeechSynthesisUtterance(text);
-  currentUtt.lang = 'ar-EG';
-  if (arabicVoice) currentUtt.voice = arabicVoice;
-  currentUtt.rate = 0.95;
-  currentUtt.pitch = 1.15;
+  const goldColors = ['#FFD700', '#DAA520', '#F8E231', '#FFF8DC', '#B8860B'];
   
-  isSpeaking = true;
-  voiceOverlay.classList.add('active');
-  if (vsEl) vsEl.classList.add('active');
-  if (vtEl) vtEl.textContent = text.substring(0, 45) + (text.length > 45 ? '...' : '');
-
-  currentUtt.onend = () => {
-    isSpeaking = false;
-    voiceOverlay.classList.remove('active');
-    if (vsEl) vsEl.classList.remove('active');
-    if (onEnd) onEnd();
-  };
-  currentUtt.onerror = () => {
-    isSpeaking = false;
-    voiceOverlay.classList.remove('active');
-    if (vsEl) vsEl.classList.remove('active');
-    if (onEnd) onEnd();
-  };
-  synth.speak(currentUtt);
-}
-
-function speakThenNavigate(label, href) {
-  playVoice('جاري الانتقال بأمان إلى ' + label, () => {
-    window.location.href = href;
-  });
-}
-
-// تفعيل أحداث الماوس والصوت على الكروت المحدثة بنظام الـ 3D Grid
-document.querySelectorAll('.settings-item').forEach(item => {
-  if (item.id === 'logout-trigger') return;
-  item.addEventListener('click', function(e) {
-    e.preventDefault();
-    const label = this.getAttribute('data-voice') || this.querySelector('.settings-item-title').textContent.trim();
-    speakThenNavigate(label, this.getAttribute('href'));
-  });
-  item.addEventListener('mouseenter', function() {
-    if (!isSpeaking) {
-      const label = this.getAttribute('data-voice') || this.querySelector('.settings-item-title').textContent.trim();
-      playVoice(label);
-    }
-  });
-});
-
-/* ===================== LOGOUT CORE LOGIC (FULLY FIXED & OPERATIONAL) ===================== */
-const logoutTrigger = document.getElementById('logout-trigger');
-const logoutModal = document.getElementById('logout-modal');
-const lmCancel = document.getElementById('lm-cancel');
-const lmConfirm = document.getElementById('lm-confirm');
-
-if (logoutTrigger) {
-  logoutTrigger.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    playVoice('لقد طلبت تسجيل الخروج، هل أنت متأكد؟');
-    logoutModal.classList.add('active');
-  });
-  logoutTrigger.addEventListener('mouseenter', () => {
-    if (!isSpeaking) playVoice('تسجيل الخروج من النظام الموحد');
-  });
-}
-
-if (lmCancel) {
-  lmCancel.addEventListener('click', (e) => {
-    e.preventDefault();
-    logoutModal.classList.remove('active');
-    playVoice('تم إلغاء العملية والعودة للمنظومة الآمنة.');
-  });
-}
-
-if (lmConfirm) {
-  lmConfirm.addEventListener('click', (e) => {
-    e.preventDefault();
-    logoutModal.classList.remove('active');
-    playVoice('تم قطع الاتصال المشفر لـ القرماني إكس بنجاح. نتمنى لك سلامة رقمية دائمًا.', async () => {
-      try {
-        if (window.aqxAuth && window.aqxSignOut) {
-          await window.aqxSignOut(window.aqxAuth);
-        }
-      } catch(err) {
-        console.error('Firebase Logout Error Intercepted:', err);
+  for(let i=0; i<70; i++){
+    pts.push({ 
+      x: Math.random() * window.innerWidth, 
+      y: Math.random() * window.innerHeight, 
+      r: Math.random() * 2 + 0.8, 
+      sX: Math.random() * 0.5 - 0.25, 
+      sY: Math.random() * -0.5 - 0.2, 
+      o: Math.random() * 0.6 + 0.2,
+      c: goldColors[Math.floor(Math.random() * goldColors.length)]
+    });
+  }
+  
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    for(let i=0; i<pts.length; i++){
+      let p = pts[i];
+      cx.beginPath(); 
+      cx.globalAlpha = p.o; 
+      cx.fillStyle = p.c;
+      cx.shadowBlur = 10;
+      cx.shadowColor = p.c;
+      cx.arc(p.x, p.y, p.r, 0, Math.PI*2); 
+      cx.fill();
+      
+      p.x += p.sX; 
+      p.y += p.sY;
+      
+      if(p.x < 0 || p.x > cv.width) p.sX *= -1;
+      if(p.y < -10) {
+        p.y = cv.height + 10;
+        p.x = Math.random() * cv.width;
       }
-      // مسح الهوية المحلية وتصفير الكاش الأمني
-      sessionStorage.clear();
-      window.location.href = 'index.html';
-    });
-  });
-}
-
-/* ===================== ADVANCED GOLD & SILVER RANDOM PARTICLES ENGINE ===================== */
-const canvas = document.getElementById('particles-canvas');
-const ctx = canvas.getContext('2d');
-function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-// ألوان برّاقة من سبائك الذهب والفضة اللامعة لتتطابق مع الفخامة البصرية الفوقية
-const P_COLORS = ['#ffdf7a', '#d4af37', '#aa7c11', '#ffffff', '#e2e8f0', '#94a3b8'];
-const ptcls = [];
-const P_COUNT = window.innerWidth < 600 ? 45 : 95;
-
-for (let i = 0; i < P_COUNT; i++) {
-  ptcls.push({
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    r: Math.random() * 3.5 + 1.2,
-    dx: (Math.random() - 0.5) * 0.7,
-    dy: (Math.random() - 0.5) * 0.6 - 0.15,
-    color: P_COLORS[Math.floor(Math.random() * P_COLORS.length)],
-    phase: Math.random() * Math.PI * 2
-  });
-}
-
-function animParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ptcls.forEach(p => {
-    p.phase += 0.025;
-    const alpha = 0.3 + 0.5 * Math.abs(Math.sin(p.phase));
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = p.color;
-    ctx.globalAlpha = alpha;
-    
-    // إضافة ظلال خفيفة ووهج للجسيمات لتبدو ثلاثية أبعاد تطفو فوق التركواز الفاتح
-    ctx.shadowBlur = 8;
-    ctx.shadowColor = p.color;
-    ctx.fill();
-    
-    ctx.globalAlpha = 1;
-    ctx.shadowBlur = 0;
-    
-    p.x += p.dx;
-    p.y += p.dy;
-    
-    if (p.x < -15) p.x = canvas.width + 15;
-    if (p.x > canvas.width + 15) p.x = -15;
-    if (p.y < -15) p.y = canvas.height + 15;
-    if (p.y > canvas.height + 15) p.y = -15;
-  });
-  requestAnimationFrame(animParticles);
-}
-animParticles();
-
-/* ===================== GATEWAY OVERLAY ===================== */
-let gwTimer = null, gwSecs = 15, gwDone = false;
-(function createGwParticles() {
-  const wrap = document.getElementById('gw-particles');
-  if (!wrap) return;
-  for (let i=0; i<30; i++) {
-    const p = document.createElement('div');
-    p.className = 'gw-p';
-    const sz = Math.random() * 14 + 4, dur = Math.random() * 6 + 4, del = Math.random() * 5;
-    p.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;background:${P_COLORS[Math.floor(Math.random()*P_COLORS.length)]};animation-duration:${dur}s;animation-delay:${del}s;`;
-    wrap.appendChild(p);
+    }
+    cx.globalAlpha = 1;
+    cx.shadowBlur = 0;
+    requestAnimationFrame(loop);
   }
-})();
-
-function startGateway() {
-  playVoice('مرحباً بك في البوابة الفاخرة لإعدادات منظومة القرماني إكس المتطورة.');
-  const cEl = document.getElementById('gw-count'), c2El = document.getElementById('gw-count2'), pEl = document.getElementById('gw-progress');
-  gwTimer = setInterval(() => {
-    gwSecs--;
-    if (cEl) cEl.textContent = gwSecs;
-    if (c2El) c2El.textContent = gwSecs;
-    if (pEl) pEl.style.width = ((15 - gwSecs) / 15 * 100) + '%';
-    if (gwSecs <= 0) { clearInterval(gwTimer); enterSite(); }
-  }, 1000);
+  loop();
 }
-
-function enterSite() {
-  if (gwDone) return; gwDone = true;
-  clearInterval(gwTimer);
-  const gw = document.getElementById('gateway');
-  if (gw) {
-    gw.style.opacity = '0';
-    setTimeout(() => gw.remove(), 600);
-  }
-  playVoice('تم الدخول، أهلاً بك في مقصورة التحكم الاستراتيجية.');
-}
-window.enterSite = enterSite;
-document.getElementById('gw-enter-btn')?.addEventListener('click', enterSite);
-
-/* ===================== HIGH SECURITY DEFENSE (DEVTOOLS KICK) ===================== */
-let secTriggered = false, devToolsCount = 0;
-const MAX_DT_WARNS = 3;
-
-function ringAlarmBell() {
-  try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    const actx = new AudioCtx();
-    [0, 0.2].forEach(t => {
-      const osc = actx.createOscillator();
-      const gain = actx.createGain();
-      osc.type = 'sawtooth'; osc.frequency.value = 950;
-      gain.gain.setValueAtTime(0.3, actx.currentTime + t);
-      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + t + 0.2);
-      osc.connect(gain); gain.connect(actx.destination);
-      osc.start(actx.currentTime + t); osc.stop(actx.currentTime + t + 0.2);
-    });
-  } catch(e) {}
-}
-
-document.addEventListener('keydown', e => {
-  const blocked = e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C','K'].includes(e.key.toUpperCase())) || (e.ctrlKey && ['U','S','P'].includes(e.key.toUpperCase()));
-  if (blocked) { e.preventDefault(); handleDevToolsAttempt(); }
-});
-
-let devOpen = false;
-setInterval(() => {
-  const wDiff = window.outerWidth - window.innerWidth;
-  const hDiff = window.outerHeight - window.innerHeight;
-  if ((wDiff > 160 || hDiff > 160) && !devOpen) { devOpen = true; handleDevToolsAttempt(); }
-  else if (wDiff <= 160 && hDiff <= 160) { devOpen = false; }
-}, 1000);
-
-function handleDevToolsAttempt() {
-  if (secTriggered) return;
-  devToolsCount++;
-  ringAlarmBell();
-  if (devToolsCount < MAX_DT_WARNS) {
-    playVoice('تحذير أمني صارم! محاولة كشف النظام مرفوضة، تبقت لك محاولات محدودة قبل تدمير الجلسة.');
-  } else {
-    triggerSecWarning('devtools');
-  }
-}
-
-function triggerSecWarning(reason) {
-  if (secTriggered) return;
-  secTriggered = true;
-  ringAlarmBell();
-  const warn = document.getElementById('security-warning');
-  const body = document.getElementById('sec-body-text');
-  if (body && reason === 'devtools') {
-    body.innerHTML = '🚨 تم رصد اختراق مباشر للبيئة البرمجية وفحص العناصر!<br><br>تم تفعيل العزل الدفاعي الفوري لحماية منظومة القرماني إكس من التلاعب.';
-  }
-  if (warn) warn.classList.add('active');
-  playVoice('انتهاك أمني خطير، سيتم سحب الصلاحيات وطرد الجلسة فوراً.');
-  let c = 5;
-  const cdEl = document.getElementById('sec-countdown');
-  const t = setInterval(() => { c--; if (cdEl) cdEl.textContent = c; if (c<=0){clearInterval(t); redirectToMain();} }, 1000);
-}
-function redirectToMain() { window.location.href = 'index.html'; }
-
-window.addEventListener('aqxIdleExpired', () => triggerSecWarning('idle'));
-window.addEventListener('aqxSecurityKick', () => triggerSecWarning('kick'));
-
-document.addEventListener('aqxUserNotAuth', () => {
-  document.getElementById('auth-gate').classList.add('active');
-  playVoice('خطأ في الصلاحيات الرقمية، يرجى الولوج عبر البوابة الموحدة.');
-  setTimeout(() => window.location.href = 'index.html', 5000);
-});
-document.addEventListener('aqxUserReady', () => {
-  document.getElementById('auth-gate').classList.remove('active');
-});
-
-/* ===================== SYSTEM LOADER TIMING ===================== */
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const loader = document.getElementById('page-loader');
-    if (loader) { loader.classList.add('fade-out'); setTimeout(()=>loader.remove(), 520); }
-    startGateway();
-  }, 1600);
-});
 </script>
 </body>
 </html>

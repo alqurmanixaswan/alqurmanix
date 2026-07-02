@@ -393,8 +393,8 @@ body {
 #voice-status .pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: #00ffcc; animation: pulseDot 1s ease-in-out infinite; flex-shrink: 0; box-shadow: 0 0 10px #00ffcc; }
 @keyframes pulseDot { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.6); opacity:0.5; } }
 
-#voice-block-overlay { position: fixed; inset: 0; z-index: 1600; background: transparent; display: none; }
-#voice-block-overlay.active { display: block; cursor: not-allowed; }
+#voice-block-overlay { position: fixed; inset: 0; z-index: 1600; background: transparent; display: none; pointer-events: none; }
+#voice-block-overlay.active { display: block; }
 
 @media (prefers-reduced-motion:reduce) {
   *, *::before, *::after { animation-duration:0.01ms !important; transition-duration:0.1ms !important; }
@@ -661,6 +661,8 @@ function scrollToTopFlip() {
 }
 window.scrollToTopFlip = scrollToTopFlip;
 
+const supportsHoverVoice = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
 document.querySelectorAll('.settings-item').forEach(item => {
   if (item.id === 'logout-trigger') return;
   item.addEventListener('click', function(e) {
@@ -673,11 +675,13 @@ document.querySelectorAll('.settings-item').forEach(item => {
       window.location.href = href;
     }
   });
-  item.addEventListener('mouseenter', function() {
-    try {
-      if (!isSpeaking) playVoice(this.getAttribute('data-voice') || this.querySelector('.settings-item-title').textContent.trim());
-    } catch(err) {}
-  });
+  if (supportsHoverVoice) {
+    item.addEventListener('mouseenter', function() {
+      try {
+        if (!isSpeaking) playVoice(this.getAttribute('data-voice') || this.querySelector('.settings-item-title').textContent.trim());
+      } catch(err) {}
+    });
+  }
 });
 
 /* ===================== INSTANT LOGOUT (ROBUST) ===================== */
@@ -701,11 +705,13 @@ logoutTrigger.addEventListener('click', async (e) => {
   }, 400);
 });
 
-logoutTrigger.addEventListener('mouseenter', () => {
-  try {
-    if (!isSpeaking) playVoice('تسجيل الخروج وإنهاء الجلسة فوراً');
-  } catch(err) {}
-});
+if (supportsHoverVoice) {
+  logoutTrigger.addEventListener('mouseenter', () => {
+    try {
+      if (!isSpeaking) playVoice('تسجيل الخروج وإنهاء الجلسة فوراً');
+    } catch(err) {}
+  });
+}
 
 /* ===================== PARTICLES (GOLD & SILVER ONLY) ===================== */
 const canvas = document.getElementById('particles-canvas');
